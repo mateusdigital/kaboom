@@ -1,0 +1,5 @@
+*.o
+bin/
+obj/
+codeblocks/bin/
+codeblocks/obj/
