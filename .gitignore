@@ -1,3 +1,8 @@
+#This is to ignore just for a while...
+assets/
+
+
+#This is ever ignored...
 *.o
 bin/
 obj/
