@@ -34,6 +34,7 @@ void game_handle_events(void);
 /*******************************************************************************
 * Public Function Implementations                                              *
 *******************************************************************************/
+/* Game Loop */
 void game_init(const char *window_name,
                int sdl_window_flags,
                int sdl_renderer_flags)
@@ -56,6 +57,9 @@ void game_init(const char *window_name,
     g_pRenderer = SDL_CreateRenderer(g_pWindow,
                                    -1,
                                    sdl_renderer_flags);
+
+
+    game_load_texture(game_texture_id_bomb);
 }
 
 void game_run()
@@ -84,6 +88,7 @@ void game_quit(void)
 }
 
 
+/* Textures Stuff */
 SDL_Texture* game_load_texture(int texture_id)
 {
     /* Already loaded - Just returns... */
@@ -105,6 +110,20 @@ void game_unload_texture(int texture_id)
     /* COWTODO: Implement... */
 }
 
+void game_draw_texture(SDL_Texture *texture,
+                       int x, int y,
+                       int w, int h,
+                       SDL_RendererFlip flip)
+{
+    SDL_Rect src_rect = {0, 0, w, h};
+    SDL_Rect dst_rect = {x, y, w, h};
+
+    SDL_RenderCopyEx(g_pRenderer,
+                     texture,
+                     &src_rect, &dst_rect,
+                     0, 0,
+                     flip);
+}
 
 
 /*******************************************************************************
@@ -117,6 +136,12 @@ void game_render(void)
 {
     SDL_SetRenderDrawColor(g_pRenderer, 255, 0, 255, 255);
     SDL_RenderClear(g_pRenderer);
+
+    game_draw_texture(g_textures_arr[game_texture_id_bomb],
+                      0, 0,
+                      200, 200,
+                      SDL_FLIP_NONE);
+
     SDL_RenderPresent(g_pRenderer);
 }
 void game_handle_events(void)

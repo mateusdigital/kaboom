@@ -38,5 +38,9 @@ void game_quit(void);
 SDL_Texture* game_load_texture(int texture_id);
 void game_unload_texture(int texture_id);
 
+void game_draw_texture(SDL_Texture *texture,
+                       int x, int y,
+                       int w, int h,
+                       SDL_RendererFlip flip);
 
 #endif /* defined(GAME_H_INCLUDED) */
