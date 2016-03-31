@@ -2,26 +2,39 @@
 #include "game.h"
 /* Game_Kaboom */
 #include "helpers.h"
+#include "game_textures.h"
 
-/* Screen dimension constants */
+
+/*******************************************************************************
+* Screen dimension constants                                                   *
+*******************************************************************************/
 const int SCREEN_WIDTH  = 640;
 const int SCREEN_HEIGHT = 480;
 
-/* Globals */
+
+/*******************************************************************************
+* Globals                                                                      *
+*******************************************************************************/
+/* Public */
 SDL_Window   *g_pWindow   = NULL;
 SDL_Renderer *g_pRenderer = NULL;
-bool         *g_isRunning = false;
+bool          g_isRunning = false;
+/* Private */
+SDL_Texture* g_textures_arr[GAME_TEXTURES_IDS_SIZE] = {NULL};
 
 
-
-/* Private Function Prototypes */
+/*******************************************************************************
+* Private Function Prototypes                                                  *
+*******************************************************************************/
 void game_update(float dt);
 void game_render(void);
 void game_handle_events(void);
 
 
-/* Public Functions Implementation */
-bool game_init(const char *window_name,
+/*******************************************************************************
+* Public Function Implementations                                              *
+*******************************************************************************/
+void game_init(const char *window_name,
                int sdl_window_flags,
                int sdl_renderer_flags)
 {
@@ -30,7 +43,7 @@ bool game_init(const char *window_name,
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
         printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-        return 1;
+        abort();
     }
 
     g_pWindow = SDL_CreateWindow(window_name,
@@ -44,7 +57,6 @@ bool game_init(const char *window_name,
                                    -1,
                                    sdl_renderer_flags);
 }
-
 
 void game_run()
 {
@@ -72,7 +84,31 @@ void game_quit(void)
 }
 
 
-/* Private Function Prototypes */
+SDL_Texture* game_load_texture(int texture_id)
+{
+    /* Already loaded - Just returns... */
+    if(g_textures_arr[texture_id])
+        return g_textures_arr[texture_id];
+
+    /* Texture isn't loaded yet - Load it and
+       save to the textures array */
+    SDL_Surface *tmp_surface = SDL_LoadBMP(game_textures_ids[texture_id]);
+    SDL_Texture *texture     = SDL_CreateTextureFromSurface(g_pRenderer, tmp_surface);
+
+    SDL_FreeSurface(tmp_surface);
+
+    g_textures_arr[texture_id] = texture;
+    return texture;
+}
+void game_unload_texture(int texture_id)
+{
+}
+
+
+
+/*******************************************************************************
+* Private Function Implementations                                             *
+*******************************************************************************/
 void game_update(float dt)
 {
 }
