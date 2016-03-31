@@ -1,0 +1,27 @@
+# depslib dependency file v1.0
+1459402491 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/main.c
+	"game.h"
+
+1459402712 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/game.h
+	<stdio.h>
+	<SDL2/SDL.h>
+	"game_types.h"
+
+1459401961 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/game_types.h
+
+1459402582 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/codeblocks/game.c
+	"game.h"
+
+1459404176 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/game.c
+	"game.h"
+	"helpers.h"
+
+1459404419 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/helpers.h
+
+1459404371 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/codeblocks/helpers.c
+	"helpers.h"
+	<stdarg.h>
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+
