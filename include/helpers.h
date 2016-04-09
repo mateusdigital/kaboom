@@ -1,6 +1,14 @@
 #ifndef HELPERS_H_INCLUDED
 #define HELPERS_H_INCLUDED
 
+void _game_fatal(const char *fmt, ...);
+
+#define GAME_VERIFY(_expr_, _format_, ...)        \
+        if(!(_expr_)) {                           \
+            _game_fatal(_format_, ##__VA_ARGS__); \
+        }
+
+
 #ifdef NDEBUG
     #define GAME_LOG(_format_, ...)  do {} while(0)
 
