@@ -2,10 +2,10 @@
 #include "game.h"
 /* Game_Kaboom */
 #include "helpers.h"
-#include "game_textures.h"
+#include "game_scene.h"
 
 /*******************************************************************************
-* Screen dimension constants                                                   *
+* Constants                                                                    *
 *******************************************************************************/
 const int SCREEN_WIDTH  = 800;
 const int SCREEN_HEIGHT = 600;
@@ -17,9 +17,11 @@ const int SCREEN_HEIGHT = 600;
 /* Public */
 SDL_Window   *g_pWindow   = NULL;
 SDL_Renderer *g_pRenderer = NULL;
-bool          g_isRunning = false;
+int           g_isRunning = 0;
 /* Private */
-SDL_Texture* g_textures_arr[GAME_TEXTURES_IDS_SIZE] = { NULL };
+scene_t scenes_arr[100];
+scenes_arr_count  = 0;
+scenes_curr_index = 0;
 
 
 /*******************************************************************************
@@ -31,7 +33,7 @@ void game_handle_events(void    );
 
 
 /*******************************************************************************
-* Public Function Implementations                                              *
+* Game Lifecycle                                                               *
 *******************************************************************************/
 /* Game Loop */
 void game_init(const char *window_name,
@@ -39,7 +41,6 @@ void game_init(const char *window_name,
                int         sdl_renderer_flags)
 {
     GAME_LOG("Initializing SDL.");
-
 
     /* SDL Initialization */
     GAME_VERIFY(SDL_Init(SDL_INIT_EVERYTHING) >= 0,
@@ -62,6 +63,16 @@ void game_init(const char *window_name,
 
     GAME_VERIFY(g_pRenderer, "SDL Cannot create renderer.");
 
+    scene_t game_scene;
+    game_scene.id = 1;
+    game_scene.load_func          = game_scene_load;
+    game_scene.unload_func        = game_scene_unload;
+    game_scene.update_func        = game_scene_update;
+    game_scene.draw_func          = game_scene_draw;
+    game_scene.handle_event_func  = game_scene_handle_event;
+
+    game_add_scene(game_scene);
+    game_change_to_scene(1);
 }
 
 void game_run()
@@ -77,7 +88,7 @@ void game_run()
     Uint32 frame_time;
 
     /* Game Loop :D */
-    g_isRunning = true;
+    g_isRunning = 1;
     while(g_isRunning)
     {
         frame_start = SDL_GetTicks();
@@ -106,51 +117,38 @@ void game_quit(void)
     SDL_Quit();
 }
 
-
-/* Textures Stuff */
-SDL_Texture* game_load_texture(int texture_id)
+/*******************************************************************************
+* Scene Management                                                             *
+*******************************************************************************/
+void game_add_scene(scene_t scene)
 {
-    /* Already loaded - Just returns... */
-    if(g_textures_arr[texture_id])
-        return g_textures_arr[texture_id];
-
-    /* Texture isn't loaded yet - Load it and save to the textures array */
-    SDL_Surface *tmp_surface = SDL_LoadBMP(game_textures_ids[texture_id]);
-    GAME_VERIFY(tmp_surface,
-                "Cannot create surface with filename: %s",
-                game_textures_ids[texture_id]);
-
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(g_pRenderer, tmp_surface);
-    GAME_VERIFY(texture,
-                "Failed to create texture from surface with filename: %s",
-                game_textures_ids[texture_id]);
-
-    /* Prevent leak */
-    SDL_FreeSurface(tmp_surface);
-
-    g_textures_arr[texture_id] = texture;
-
-    return texture;
-}
-void game_unload_texture(int texture_id)
-{
-    /* COWTODO: Implement... */
+    scenes_arr[scenes_arr_count] = scene;
+    ++scenes_arr_count;
 }
 
-void game_draw_texture(SDL_Texture *texture,
-                       int x, int y,
-                       int w, int h,
-                       SDL_RendererFlip flip)
+void game_change_to_scene(int scene_id)
 {
-    SDL_Rect src_rect = {0, 0, w, h};
-    SDL_Rect dst_rect = {x, y, w, h};
+    if(scenes_arr_count != 0)
+    {
+        (scenes_arr[scenes_curr_index]).unload_func();
+    }
 
-    SDL_RenderCopyEx(g_pRenderer,
-                     texture,
-                     &src_rect, &dst_rect,
-                     0, 0,
-                     flip);
+    scenes_curr_index = -1;
+    for(int i = 0; i < scenes_arr_count; ++i)
+    {
+        if(scenes_arr[i].id == scene_id)
+            scenes_curr_index = i;
+    }
+
+    GAME_VERIFY(scenes_curr_index != -1, "Scene id (%d) not found");
+    (scenes_arr[scenes_curr_index]).load_func();
 }
+
+void game_remove_scene(int scene_id)
+{
+    //COWTODO: Implement.
+}
+
 
 
 /*******************************************************************************
@@ -158,33 +156,27 @@ void game_draw_texture(SDL_Texture *texture,
 *******************************************************************************/
 void game_update(float dt)
 {
-/*
-    Uint8 *k = SDL_GetKeyboardState(0);
-
-    if(k[SDL_SCANCODE_LEFT])
-    if(k[SDL_SCANCODE_RIGHT])
-*/
+    (scenes_arr[scenes_curr_index]).update_func(dt);
 }
+
 void game_render(void)
 {
     SDL_SetRenderDrawColor(g_pRenderer, 255, 0, 255, 255);
     SDL_RenderClear(g_pRenderer);
 
-
-    /*
-    game_draw_texture(g_textures_arr[game_texture_id_ballon],
-                      x, 100,
-                      40, 40,
-                      SDL_FLIP_NONE);
-    */
+    (scenes_arr[scenes_curr_index]).draw_func();
     SDL_RenderPresent(g_pRenderer);
 }
+
 void game_handle_events(void)
 {
     static SDL_Event s_event;
     while(SDL_PollEvent(&s_event))
     {
         if(s_event.type == SDL_QUIT)
-            g_isRunning = false;
+            g_isRunning = 0;
+
+        (scenes_arr[scenes_curr_index]).handle_event_func(&s_event);
     }
 }
+

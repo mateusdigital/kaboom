@@ -1,15 +1,13 @@
-#ifndef GAME_H_INCLUDED
-#define GAME_H_INCLUDED
+#ifndef __Game_Kaboom_include_game_h__
+#define __Game_Kaboom_include_game_h__
 
-/* std */
-#include <stdio.h>
 /* SDL */
 #include <SDL2/SDL.h>
 /* Game_Kaboom */
-#include "game_types.h"
+#include "scene.h"
 
 /*******************************************************************************
-* Screen dimension constants                                                   *
+* Constants                                                                    *
 *******************************************************************************/
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
@@ -20,13 +18,12 @@ extern const int SCREEN_HEIGHT;
 *******************************************************************************/
 extern SDL_Window   *g_pWindow;
 extern SDL_Renderer *g_pRenderer;
-extern bool          g_isRunning;
+extern int           g_isRunning;
 
 
 /*******************************************************************************
-* Public Function Prototypes                                                   *
+* Game Lifecycle                                                               *
 *******************************************************************************/
-/* Game loop */
 void game_init(const char *window_name,
                int sdl_window_flags,
                int sdl_renderer_flags);
@@ -35,13 +32,12 @@ void game_run(void);
 void game_quit(void);
 
 
-/* Texture Stuff */
-SDL_Texture* game_load_texture(int texture_id);
-void game_unload_texture(int texture_id);
+/*******************************************************************************
+* Scene Management                                                             *
+*******************************************************************************/
+void game_add_scene(scene_t scene);
+void game_change_to_scene(int scene_id);
+void game_remove_scene(int scene_id);
 
-void game_draw_texture(SDL_Texture *texture,
-                       int x, int y,
-                       int w, int h,
-                       SDL_RendererFlip flip);
 
-#endif /* defined(GAME_H_INCLUDED) */
+#endif /* defined(__Game_Kaboom_include_game_h__) */
