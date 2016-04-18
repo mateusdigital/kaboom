@@ -1,5 +1,5 @@
-#ifndef HELPERS_H_INCLUDED
-#define HELPERS_H_INCLUDED
+#ifndef __Game_Kaboom_include_helpers_h__
+#define __Game_Kaboom_include_helpers_h__
 
 void _game_fatal(const char *fmt, ...);
 
@@ -24,4 +24,4 @@ void _game_fatal(const char *fmt, ...);
 
 #endif /* NDEBUG */
 
-#endif /* HELPERS_H_INCLUDED */
+#endif /* __Game_Kaboom_include_helpers_h__ */
