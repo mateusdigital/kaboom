@@ -27,6 +27,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="../include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -38,13 +39,26 @@
 			<Add option="`sdl-config --cflags`" />
 		</Compiler>
 		<Linker>
-			<Add option="`sdl-config --libs`" />
+			<Add library="SDL2" />
 		</Linker>
+		<Unit filename="../include/bomb.h" />
+		<Unit filename="../include/bomber.h" />
 		<Unit filename="../include/game.h" />
-		<Unit filename="../include/game_textures.h" />
-		<Unit filename="../include/game_types.h" />
+		<Unit filename="../include/game_scene.h" />
 		<Unit filename="../include/helpers.h" />
+		<Unit filename="../include/paddle.h" />
+		<Unit filename="../include/scene.h" />
+		<Unit filename="../include/sprite.h" />
+		<Unit filename="../src/bomb.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/bomber.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../src/game.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/game_scene.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/game_textures.c">
@@ -54,6 +68,12 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/paddle.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/sprite.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
