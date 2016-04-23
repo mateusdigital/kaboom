@@ -1,5 +1,5 @@
-#ifndef PADDLE_H_INCLUDED
-#define PADDLE_H_INCLUDED
+#ifndef __Game_Kaboom_include_paddle_h__
+#define __Game_Kaboom_include_paddle_h__
 
 /* Game_Kaboom */
 #include "sprite.h"
@@ -42,7 +42,7 @@ paddle_t paddle_init(int     x, int     y,
                      int speed);
 
 void paddle_update(paddle_t *paddle, float dt);
-void paddle_draw(paddle_t *paddle);
+void paddle_draw  (paddle_t *paddle);
 
 
-#endif // PADDLE_H_INCLUDED //
+#endif // __Game_Kaboom_include_paddle_h__ //

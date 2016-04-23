@@ -6,6 +6,7 @@
 /* Game_Kaboom */
 #include "scene.h"
 
+
 /*******************************************************************************
 * Constants                                                                    *
 *******************************************************************************/
@@ -28,16 +29,16 @@ void game_init(const char *window_name,
                int sdl_window_flags,
                int sdl_renderer_flags);
 
-void game_run(void);
+void game_run (void);
 void game_quit(void);
 
 
 /*******************************************************************************
 * Scene Management                                                             *
 *******************************************************************************/
-void game_add_scene(scene_t scene);
+void game_add_scene      (scene_t scene);
 void game_change_to_scene(int scene_id);
-void game_remove_scene(int scene_id);
+void game_remove_scene   (int scene_id);
 
 
 #endif /* defined(__Game_Kaboom_include_game_h__) */

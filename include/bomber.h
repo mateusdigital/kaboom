@@ -1,5 +1,5 @@
-#ifndef BOMBER_H_INCLUDED
-#define BOMBER_H_INCLUDED
+#ifndef __Game_Kaboom_include_bomber_h__
+#define __Game_Kaboom_include_bomber_h__
 
 /* Game_Kaboom */
 #include "sprite.h"
@@ -53,6 +53,6 @@ bomber_t bomber_init(int     x, int     y,
                      int bombs_to_drop);
 
 void bomber_update(bomber_t *bomber, float dt);
-void bomber_draw(bomber_t *bomber);
+void bomber_draw  (bomber_t *bomber);
 
-#endif // BOMBER_H_INCLUDED
+#endif // __Game_Kaboom_include_bomber_h__
