@@ -48,7 +48,7 @@ def generate():
     for i in xrange(0, list_images_size):
         #Get the filename of image and the 'name'
         #of the image without the extension.
-        image_filename = list_images[i];
+        image_filename = list_images[i].lower();
         name, ext      = os.path.splitext(image_filename);
 
         #Write the info.

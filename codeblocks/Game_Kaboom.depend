@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1459612301 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/main.c
+1461441371 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/main.c
 	"game.h"
 
-1460991220 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/game.h
+1461441775 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/game.h
 	<SDL2/SDL.h>
 	"scene.h"
 
@@ -11,12 +11,12 @@
 1459402582 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/codeblocks/game.c
 	"game.h"
 
-1460991244 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/game.c
+1461441371 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/game.c
 	"game.h"
 	"helpers.h"
 	"game_scene.h"
 
-1460990427 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/helpers.h
+1461441371 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/helpers.h
 
 1459404371 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/codeblocks/helpers.c
 	"helpers.h"
@@ -25,7 +25,7 @@
 	<stdio.h>
 	<string.h>
 
-1460167806 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/helpers.c
+1461441371 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/helpers.c
 	"helpers.h"
 	<stdarg.h>
 	<stdlib.h>
@@ -37,20 +37,20 @@
 
 1459409752 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/header.h
 
-1460990673 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/game_textures.c
+1462975547 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/game_textures.c
 	"game_textures.h"
 
-1460990673 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/game_textures.h
+1462975547 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/game_textures.h
 
 1460173539 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/splash_scene.h
 	"scene.h"
 
-1460994144 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/scene.h
+1461441371 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/scene.h
 
-1460994205 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/game_scene.h
+1461441803 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/game_scene.h
 	<SDL2/SDL.h>
 
-1461008083 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/game_scene.c
+1462977346 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/game_scene.c
 	"game_scene.h"
 	"game.h"
 	"helpers.h"
@@ -58,40 +58,42 @@
 	"game_textures.h"
 	"bomb.h"
 	"bomber.h"
+	"paddle.h"
 
 1460173498 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/splash_scene.c
 	"splash_scene.h"
 	"helpers.h"
 
-1460994105 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/sprite.h
+1461445074 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/sprite.h
 	<SDL2/SDL.h>
 
-1460995117 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/sprite.c
+1462972398 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/sprite.c
 	"sprite.h"
+	<SDL2/SDL_image.h>
 	"game.h"
 	"helpers.h"
 	"game_textures.h"
 
-1461006226 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/bomb.c
+1462976559 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/bomb.c
 	"bomb.h"
 	"game_textures.h"
 
-1460996814 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/bomb.h
+1462975491 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/bomb.h
 	"sprite.h"
 
-1461002949 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/bomber.c
+1462976752 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/bomber.c
 	"bomber.h"
 	<stdlib.h>
 	<time.h>
 	"game_textures.h"
 
-1461002923 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/bomber.h
+1462976694 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/bomber.h
 	"sprite.h"
 
-1461008881 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/paddle.c
+1461445870 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/paddle.c
 	"paddle.h"
 	"game_textures.h"
 
-1461008819 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/paddle.h
+1461441993 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/paddle.h
 	"sprite.h"
 

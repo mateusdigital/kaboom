@@ -21,9 +21,11 @@ typedef struct _sprite_t
 /*******************************************************************************
 *                                                                              *
 *******************************************************************************/
-sprite_t sprite_load  (int texture_id);
-sprite_t sprite_unload(int texture_id);
+void sprite_init(sprite_t *sprite,
+                 int texture_id,
+                 int frame_w, int frame_h,
+                 int frame_x, int frame_y);
 
-void sprite_draw(sprite_t *sprite);
+void sprite_draw(sprite_t *sprite, int x, int y);
 
 #endif /* __Game_Kaboom_include_sprite_h__ */

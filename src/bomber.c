@@ -6,32 +6,78 @@
 /* Game_Kaboom */
 #include "game_textures.h"
 
-bomber_t bomber_init(int     x, int     y,
-                     int min_x, int max_x,
-                     int speed,
-                     int bombs_to_drop)
+
+/*******************************************************************************
+* Private Constants                                                            *
+*******************************************************************************/
+enum {
+    BOMBER_SPRITE_FRAME_W       = 14,
+    BOMBER_SPRITE_FRAME_H       = 30,
+
+    BOMBER_SPRITE_INDEX_DEAD    =  0,
+    BOMBER_SPRITE_INDEX_WAITING =  1,
+    BOMBER_SPRITE_INDEX_MOVING  =  2,
+
+    BOMBER_SPEED = 100,
+};
+
+
+/*******************************************************************************
+* Private Functions Declarations                                               *
+*******************************************************************************/
+void _init_sprite(bomber_t *bomber, int sprite_index);
+
+
+/*******************************************************************************
+* Public Functions Definitions                                                 *
+*******************************************************************************/
+void bomber_init(bomber_t *bomber,
+                 int min_x, int max_x,
+                 void (*callback)(bomber_t *bomber))
 {
-    bomber_t bomber;
+    /* Sprites */
+    _init_sprite(bomber, BOMBER_SPRITE_INDEX_DEAD   );
+    _init_sprite(bomber, BOMBER_SPRITE_INDEX_WAITING);
+    _init_sprite(bomber, BOMBER_SPRITE_INDEX_MOVING );
 
-    bomber.sprite = sprite_load(game_texture_id_slime);
-    bomber.sprite.x = x;
-    bomber.sprite.y = y;
+    /* Boundaries */
+    bomber->min_x = min_x;
+    bomber->max_x = max_x;
 
-    bomber.bombs_to_drop           = bombs_to_drop;
-    bomber.bombs_dropped           = 0;
-    bomber.seconds_between_drops   = 1;
-    bomber.seconds_since_last_drop = 0;
+    /* Callback */
+    bomber->drop_bomb_func = callback;
 
-    bomber.min_x    = min_x;
-    bomber.max_x    = max_x;
-    bomber.target_x = 0;
-
-    bomber.speed = speed;
-
-    bomber.state = BOMBER_STATE_WAITING;
+    /* Start losing */
+    bomber_lose(bomber);
 
     return bomber;
 }
+
+/* Reset */
+void bomber_reset(bomber_t *bomber, bomber_options_t options)
+{
+    bomber->state               = BOMBER_STATE_WAITING;
+    bomber->current_frame_index = BOMBER_SPRITE_INDEX_WAITING;
+    bomber->bomber_options      = options;
+}
+
+/* Win / Lose */
+void bomber_win(bomber_t *bomber)
+{
+    bomber->state               = BOMBER_STATE_WAITING;
+    bomber->current_frame_index = BOMBER_SPRITE_INDEX_WAITING;
+
+    bomber->bomber_options.bombs_remaining = 0;
+}
+void bomber_lose(bomber_t *bomber)
+{
+    bomber->state               = BOMBER_STATE_DEAD;
+    bomber->current_frame_index = BOMBER_SPRITE_INDEX_DEAD;
+
+    bomber->bomber_options.bombs_remaining = 0;
+}
+
+
 
 void bomber_update(bomber_t *bomber, float dt)
 {
@@ -41,29 +87,36 @@ void bomber_update(bomber_t *bomber, float dt)
     */
     if(bomber->state == BOMBER_STATE_WAITING)
     {
+        bomber->current_frame_index = BOMBER_SPRITE_INDEX_WAITING;
+
         /* Wait for next turn */
-        if(bomber->bombs_dropped >= bomber->bombs_to_drop)
+        if(bomber->bomber_options.bombs_dropped >=
+           bomber->bomber_options.bombs_remaining)
+        {
             return;
+        }
 
         /* Change the state and select a new drop stop */
         bomber->state    = BOMBER_STATE_MOVING;
         bomber->target_x = bomber->min_x + (rand() % bomber->max_x);
-        bomber->speed    = (bomber->sprite.x >= bomber->target_x)
-                           ? -100
-                           : +100;
+        bomber->speed    = (bomber->x >= bomber->target_x)
+                           ? -BOMBER_SPEED
+                           : +BOMBER_SPEED;
     }
+
     /* Moving
        1 - Check if we reach the drop stop.
        2 - Keep going to the drop stop.
     */
     else if(bomber->state == BOMBER_STATE_MOVING)
     {
-        bomber->sprite.x += (bomber->speed * dt);
+        bomber->current_frame_index = BOMBER_SPRITE_INDEX_MOVING;
+        bomber->x += (bomber->speed * dt);
 
         /* We reach the drop spot -> Drop the bomb MUAMAUAMUA */
-        if(bomber->speed < 0 && bomber->sprite.x < bomber->target_x)
+        if(bomber->speed < 0 && bomber->x < bomber->target_x)
             bomber->state = BOMBER_STATE_DROPPING;
-        else if(bomber->speed > 0 && bomber->sprite.x > bomber->target_x)
+        else if(bomber->speed > 0 && bomber->x > bomber->target_x)
             bomber->state = BOMBER_STATE_DROPPING;
     }
     /* Dropping
@@ -72,16 +125,18 @@ void bomber_update(bomber_t *bomber, float dt)
     */
     else if(bomber->state == BOMBER_STATE_DROPPING)
     {
-        bomber->seconds_since_last_drop += dt;
+        bomber->current_frame_index = BOMBER_SPRITE_INDEX_MOVING;
+
+        bomber->bomber_options.seconds_since_last_drop += dt;
 
         /* We wait enough -> Drop the bomb, reset timers and inform listeners */
-        if(bomber->seconds_since_last_drop >=
-           bomber->seconds_between_drops)
+        if(bomber->bomber_options.seconds_since_last_drop >=
+           bomber->bomber_options.seconds_between_drops)
         {
-            bomber->seconds_since_last_drop -= bomber->seconds_between_drops;
+            bomber->bomber_options.seconds_since_last_drop -= bomber->bomber_options.seconds_between_drops;
             bomber->state = BOMBER_STATE_WAITING;
 
-            bomber->bombs_dropped++;
+            bomber->bomber_options.bombs_dropped++;
             bomber->drop_bomb_func(bomber);
         }
     }
@@ -89,5 +144,18 @@ void bomber_update(bomber_t *bomber, float dt)
 
 void bomber_draw(bomber_t *bomber)
 {
-    sprite_draw(&bomber->sprite);
+    sprite_draw(&bomber->sprites[bomber->current_frame_index],
+                bomber->x, bomber->y);
+}
+
+
+/*******************************************************************************
+* Private Functions Definitions                                                *
+*******************************************************************************/
+void _init_sprite(bomber_t *bomber, int sprite_index)
+{
+    sprite_init(&bomber->sprites[sprite_index],
+                 game_texture_id_bomber,
+                 BOMBER_SPRITE_FRAME_W, BOMBER_SPRITE_FRAME_H,
+                 sprite_index, 0);
 }

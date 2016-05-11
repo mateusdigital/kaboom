@@ -18,12 +18,12 @@ paddle_t paddle_init(int     x, int     y,
 {
     paddle_t paddle;
 
-    for(int i = 0; i < MAX_PADDLES_COUNT; ++i)
-    {
-        paddle.sprites[i]   = sprite_load(game_texture_id_vulture2);
-        paddle.sprites[i].x = x;
-        paddle.sprites[i].y = y + ((paddle.sprites[i].h + PADDLE_OFFSET_Y) * i);
-    }
+//    for(int i = 0; i < MAX_PADDLES_COUNT; ++i)
+//    {
+//        paddle.sprites[i]   = sprite_load(game_texture_id_vulture2);
+//        paddle.sprites[i].x = x;
+//        paddle.sprites[i].y = y + ((paddle.sprites[i].h + PADDLE_OFFSET_Y) * i);
+//    }
 
     paddle.paddles_remaining            = MAX_PADDLES_COUNT;
     paddle.paddle_first_available_index = 0;
@@ -65,6 +65,6 @@ void paddle_draw(paddle_t *paddle)
             i <= paddle->paddle_last_available_index;
         ++i)
     {
-        sprite_draw(&paddle->sprites[i]);
+//        sprite_draw(&paddle->sprites[i]);
     }
 }

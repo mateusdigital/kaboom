@@ -9,21 +9,42 @@
 #include "bomber.h"
 #include "paddle.h"
 
-#define kMaxBombs 200
+
+/*******************************************************************************
+* Private Constants                                                            *
+*******************************************************************************/
+enum {
+    GAME_SCENE_BOMBS_ARR_SIZE = 100,
+};
+
 
 /*******************************************************************************
 * Vars                                                                         *
 *******************************************************************************/
-bomb_t bombs_arr[kMaxBombs];
-int bombs_count = 0;
+int      current_turn;
 bomber_t bomber;
-paddle_t paddle;
+bomb_t*  bombs_arr[GAME_SCENE_BOMBS_ARR_SIZE];
+
 
 /*******************************************************************************
 * Private Functions Declarations                                               *
 *******************************************************************************/
-void game_on_bomber_drop_bomb(bomber_t *bomber);
-void check_bomb_paddle_collision(bomb_t *bomb, paddle_t *paddle);
+/* Turn Management */
+void _new_turn(void);
+void _reset_turn(void);
+
+/* Reset and Helpers */
+void _reset_bomber(void);
+void _reset_bomb(bomb_t *bomb);
+void _reset_all_availale_bombs();
+bomb_t* _get_first_available_bomb();
+
+/* Game Objects Callbacks */
+void _on_bomber_drop_bomb(bomber_t *bomber);
+void _on_bomb_reach_target();
+
+/* Others */
+void _check_bomb_paddle_collision(bomb_t *bomb, paddle_t *paddle);
 
 
 /*******************************************************************************
@@ -34,16 +55,14 @@ void game_scene_load()
     GAME_LOG("game_scene_load");
     srand(2);
 
+    /* */
+    current_turn = 0;
+
     /* Initialize the Bomber */
-    bomber = bomber_init(100, 100, /* x, y         */
-                           0, 500, /* min_x, max_x */
-                              100, /* speed        */
-                               5); /* bombs        */
-
-    bomber.drop_bomb_func = game_on_bomber_drop_bomb;
-
-    /* Initializer the Player */
-    paddle = paddle_init(100, 400, 0, 500, 100);
+    bomber_init(&bomber,
+                0,
+                SCREEN_WIDTH,
+                _on_bomber_drop_bomb);
 }
 
 void game_scene_unload()
@@ -53,86 +72,130 @@ void game_scene_unload()
 
 void game_scene_update(float dt)
 {
-    GAME_LOG("game_scene_update");
-
-    /* Get the input */
-    Uint8 *keys = SDL_GetKeyboardState(NULL);
-    paddle.direction = 0;
-    if(keys[SDL_SCANCODE_LEFT])
-        paddle.direction -= 1;
-    if(keys[SDL_SCANCODE_RIGHT])
-        paddle.direction += 1;
-
-
-    /* Bombs */
-    for(int i = 0; i < bombs_count; ++i)
-        bomb_update(&bombs_arr[i], dt);
-
     /* Bomber */
     bomber_update(&bomber, dt);
 
-    /* Paddles */
-    paddle_update(&paddle, dt);
+    /* Bombs */
+    for(int i = 0; i < GAME_SCENE_BOMBS_ARR_SIZE; ++i)
+    {
+        bomb_t *b = bombs_arr[i];
+        if(!b) break;
 
-    /* Check collisions */
-    for(int i = 0; i < bombs_count; ++i)
-        check_bomb_paddle_collision(&bombs_arr[i], &paddle);
+        bomb_update(b, dt);
+    }
+
+    Uint8 *keys = SDL_GetKeyboardState(NULL);
+    if(keys[SDL_SCANCODE_SPACE])
+        _reset_turn();
 }
 
 void game_scene_draw()
 {
-    GAME_LOG("game_scene_draw");
-
-    /* Bombs */
-    for(int i = 0; i < bombs_count; ++i)
-        bomb_draw(&bombs_arr[i]);
-
     /* Bomber */
     bomber_draw(&bomber);
 
-    /* Paddles */
-    paddle_draw(&paddle);
+    /* Bombs */
+    for(int i = 0; i < GAME_SCENE_BOMBS_ARR_SIZE; ++i)
+    {
+        bomb_t *b = bombs_arr[i];
+        if(!b) break;
+
+        bomb_draw(b);
+    }
 }
 
 void game_scene_handle_event(SDL_Event *event)
-{
-    GAME_LOG("game_scene_handle");
-}
+{}
 
 
 /*******************************************************************************
 * Private Functions Definitions                                                *
 *******************************************************************************/
-void game_on_bomber_drop_bomb(bomber_t *bomber)
+/* Turn Management */
+void _new_turn(void)
 {
-    bombs_arr[bombs_count] = bomb_init(bomber->sprite.x,
-                                       bomber->sprite.y,
-                                       50,
-                                       SCREEN_HEIGHT);
-    ++bombs_count;
+    ++current_turn;
+    _reset_turn();
 }
-void check_bomb_paddle_collision(bomb_t *bomb, paddle_t *paddle)
+void _reset_turn(void)
 {
-    SDL_Rect bomb_rect = { bomb->sprite.x, bomb->sprite.y,
-                           bomb->sprite.w, bomb->sprite.h };
+    if(current_turn == 0)
+        _new_turn();
 
-    int first_index = paddle->paddle_first_available_index;
-    int last_index  = paddle->paddle_last_available_index;
+    _reset_bomber();
+    _reset_all_availale_bombs();
+}
 
-    SDL_Rect paddle_rect = { paddle->sprites[first_index].x,
-    /* +------+ Y1 */        paddle->sprites[first_index].y,
-    /* +------+    */        paddle->sprites[first_index].w,
-    /*             */     /* Here we are setting the height of the rectangle */
-    /* +------+ Y2 */     /* as the sum of top of higher paddle(Y1) + the    */
-    /* +------+ H2 */     /* top of the lower paddle(Y2 + the height of      */
-                          /* lower (H2), this makes the rect fill the        */
-                          /* entire range that paddles can touch.            */
-                             paddle->sprites[first_index].y +  /* Y1 */
-                             paddle->sprites[last_index].y  +  /* Y2 */
-                             paddle->sprites[first_index].h }; /* H2 */
 
-    if(SDL_HasIntersection(&bomb_rect, &paddle_rect))
+/* Reset and Helpers */
+void _reset_bomber(void)
+{
+    bomber_options_t opt;
+
+    opt.bombs_dropped           = 0;
+    opt.bombs_remaining         = 10;
+    opt.seconds_between_drops   = 1;
+    opt.seconds_since_last_drop = 0;
+
+    bomber_reset(&bomber, opt);
+}
+
+void _reset_bomb(bomb_t *bomb)
+{
+    bomb_reset(bomb,
+               bomber.x, bomber.y,
+               50,
+               SCREEN_HEIGHT);
+}
+void _reset_all_availale_bombs()
+{
+    for(int i = 0; i < GAME_SCENE_BOMBS_ARR_SIZE; ++i)
     {
-        bomb->state = BOMB_STATE_DEAD;
+        if(bombs_arr[i] == NULL)
+            break;
+        _reset_bomb(bombs_arr[i]);
     }
+}
+bomb_t* _get_first_available_bomb()
+{
+    for(int i = 0; i < GAME_SCENE_BOMBS_ARR_SIZE; ++i)
+    {
+        if(bombs_arr[i] == NULL)
+        {
+            bombs_arr[i] = malloc(sizeof(bomb_t));
+            bomb_init(bombs_arr[i], _on_bomb_reach_target);
+
+            return bombs_arr[i];
+        }
+
+        else if(bombs_arr[i]->state == BOMB_STATE_DEAD)
+        {
+            return bombs_arr[i];
+        }
+    }
+}
+
+/* Game Object Callbacks */
+void _on_bomber_drop_bomb(bomber_t *bomber)
+{
+    bomb_t *bomb = _get_first_available_bomb();
+    _reset_bomb(bomb);
+}
+void _on_bomb_reach_target()
+{
+    /* Make all bombs to explode */
+    for(int i = 0; i < GAME_SCENE_BOMBS_ARR_SIZE; ++i)
+    {
+        bomb_t *bomb = bombs_arr[i];
+        if(!bomb) break;
+
+        bomb_explode(bomb);
+    }
+
+    /* Make bomber win */
+    bomber_win(&bomber);
+}
+
+void _check_bomb_paddle_collision(bomb_t *bomb, paddle_t *paddle)
+{
 }
