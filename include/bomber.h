@@ -67,9 +67,7 @@ typedef struct _bomber_t
 * Functions                                                                    *
 *******************************************************************************/
 /* Init / Clean */
-void bomber_init(bomber_t *bomber,
-                 int min_x, int max_x,
-                 void (*callback)(bomber_t *bomber));
+void bomber_init(bomber_t *bomber, void (*callback)(bomber_t *bomber));
 
 void bomber_clean(bomber_t *bomber);
 

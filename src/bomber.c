@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 /* Game_Kaboom */
+#include "game.h"
 #include "game_textures.h"
 
 
@@ -11,8 +12,8 @@
 * Private Constants                                                            *
 *******************************************************************************/
 enum {
-    BOMBER_SPRITE_FRAME_W       = 14,
-    BOMBER_SPRITE_FRAME_H       = 30,
+    BOMBER_SPRITE_FRAME_W       = 43,
+    BOMBER_SPRITE_FRAME_H       = 90,
 
     BOMBER_SPRITE_INDEX_DEAD    =  0,
     BOMBER_SPRITE_INDEX_WAITING =  1,
@@ -31,9 +32,7 @@ void _init_sprite(bomber_t *bomber, int sprite_index);
 /*******************************************************************************
 * Public Functions Definitions                                                 *
 *******************************************************************************/
-void bomber_init(bomber_t *bomber,
-                 int min_x, int max_x,
-                 void (*callback)(bomber_t *bomber))
+void bomber_init(bomber_t *bomber, void (*callback)(bomber_t *bomber))
 {
     /* Sprites */
     _init_sprite(bomber, BOMBER_SPRITE_INDEX_DEAD   );
@@ -41,8 +40,8 @@ void bomber_init(bomber_t *bomber,
     _init_sprite(bomber, BOMBER_SPRITE_INDEX_MOVING );
 
     /* Boundaries */
-    bomber->min_x = min_x;
-    bomber->max_x = max_x;
+    bomber->min_x = 0;
+    bomber->max_x = SCREEN_WIDTH - BOMBER_SPRITE_FRAME_W;
 
     /* Callback */
     bomber->drop_bomb_func = callback;
