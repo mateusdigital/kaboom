@@ -1,70 +1,136 @@
 /* Header */
 #include "paddle.h"
 /* Game_Kaboom */
+#include "game.h"
+#include "helpers.h"
 #include "game_textures.h"
 
+
 /*******************************************************************************
-* CONSTANTS                                                                    *
+* Private Constants                                                            *
 *******************************************************************************/
-#define PADDLE_OFFSET_Y 10
+enum {
+    PADDLE_SPRITE_NORMAL_INDEX = 0,
+};
+
+#define PADDLE_FRAME_TIME 0.3f
 
 
 /*******************************************************************************
 * Functions                                                                    *
 *******************************************************************************/
-paddle_t paddle_init(int     x, int     y,
-                     int min_x, int max_x,
-                     int speed)
+/* Init */
+void paddle_init(paddle_t *paddle)
 {
-    paddle_t paddle;
+     /* Sprite */
+    for(int i = 0; i < PADDLE_SPRITES_SIZE; ++i)
+    {
+        sprite_init(&paddle->sprites[i],
+                    game_texture_id_paddle,
+                    PADDLE_SPRITE_W, PADDLE_SPRITE_H,
+                    i, 0);
 
-//    for(int i = 0; i < MAX_PADDLES_COUNT; ++i)
-//    {
-//        paddle.sprites[i]   = sprite_load(game_texture_id_vulture2);
-//        paddle.sprites[i].x = x;
-//        paddle.sprites[i].y = y + ((paddle.sprites[i].h + PADDLE_OFFSET_Y) * i);
-//    }
 
-    paddle.paddles_remaining            = MAX_PADDLES_COUNT;
-    paddle.paddle_first_available_index = 0;
-    paddle.paddle_last_available_index  = paddle.paddles_remaining -1;
+        paddle->animations[i].current_sprite_index         = 0;
+        paddle->animations[i].time_to_change_frame         = PADDLE_FRAME_TIME;
+        paddle->animations[i].time_since_last_frame_change = 0;
+        paddle->animations[i].enabled                      = 1;
+    }
 
-    paddle.min_x = min_x;
-    paddle.max_x = max_x;
+    /* Paddle Info */
+    paddle->lives = PADDLE_MAX_LIVES;
 
-    paddle.speed     = speed;
-    paddle.direction = 0;
+    /* Boundaries */
+    paddle->min_x = 0;
+    paddle->max_x = SCREEN_WIDTH - PADDLE_SPRITE_W;
 
-    return paddle;
+    /* Movement */
+    paddle->x = (SCREEN_WIDTH / 2) - (PADDLE_SPRITE_W / 2);
+    paddle->y = SCREEN_HEIGHT - (PADDLE_OFFSET_Y * PADDLE_MAX_LIVES)
+                - (PADDLE_SPRITE_H * PADDLE_MAX_LIVES);
+    paddle->speed     = PADDLE_SPEED;
+    paddle->direction = PADDLE_DIR_NONE;
 }
 
+/* Actions */
+void paddle_reset(paddle_t *paddle)
+{
+
+}
+
+void paddle_kill(paddle_t *paddle)
+{
+    --paddle->lives;
+}
+
+void paddle_change_direction(paddle_t *paddle, int direction)
+{
+    paddle->direction = direction;
+}
+
+/* Helpers */
+void paddle_check_collision_with_bomb(paddle_t *paddle, bomb_t *bomb)
+{
+    for(int i = 0; i < paddle->lives; ++i)
+    {
+        SDL_Rect r1 = { paddle->x,
+                        paddle->y + (PADDLE_SPRITE_H * i) + (PADDLE_OFFSET_Y * i),
+                        PADDLE_SPRITE_W,
+                        PADDLE_SPRITE_H };
+
+        SDL_Rect r2 = bomb_get_hitbox(bomb);
+
+        if(SDL_HasIntersection(&r1, &r2))
+        {
+            bomb_kill(bomb);
+            paddle->animations[i].enabled = 1;
+        }
+    }
+}
+
+
+/* Update / Draw */
 void paddle_update(paddle_t *paddle, float dt)
 {
-    int displacement = (paddle->speed * paddle->direction * dt);
+    /* Move */
+    paddle->x += paddle->direction * paddle->speed * dt;
 
-    for(int i  = paddle->paddle_first_available_index;
-            i <= paddle->paddle_last_available_index;
-        ++i)
+    /* Make the paddle stay in bounds */
+    if(paddle->x <= paddle->min_x)
+        paddle->x = paddle->min_x;
+    else if(paddle->x >= paddle->max_x)
+        paddle->x = paddle->max_x;
+
+    /* Animation */
+    for(int i = 0; i < paddle->lives; ++i)
     {
-        /* Update the position */
-        sprite_t *sprite = &paddle->sprites[i];
-        sprite->x += displacement;
+        paddle_hit_animation_t *anim = &(paddle->animations[i]);
 
-        /* Mantain the paddle into the boundaries */
-        if(sprite->x <= paddle->min_x)
-            sprite->x = paddle->min_x;
-        else if(sprite->x + sprite->w >= paddle->max_x)
-            sprite->x = paddle->max_x - sprite->w;
+        GAME_LOG("i %d - %d", i, anim->enabled);
+        if(!anim->enabled)
+            continue;
+
+        anim->time_since_last_frame_change += dt;
+        if(anim->time_since_last_frame_change > anim->time_to_change_frame)
+        {
+            anim->time_since_last_frame_change -= anim->time_to_change_frame;
+            anim->current_sprite_index = (anim->current_sprite_index + 1)
+                                          % PADDLE_SPRITES_SIZE;
+
+            if(anim->current_sprite_index == 0)
+                anim->enabled = 0;
+        }
     }
 }
 
 void paddle_draw(paddle_t *paddle)
 {
-    /* Only draw the still available paddles */
-    for(int i  = paddle->paddle_first_available_index;
-            i <= paddle->paddle_last_available_index;
-        ++i)
+    /* The other paddles aren't animated and could not exists */
+    for(int i = 0; i < paddle->lives; ++i)
     {
-//        sprite_draw(&paddle->sprites[i]);
+        int index = paddle->animations[i].current_sprite_index;
+        sprite_draw(&paddle->sprites[index],
+                    paddle->x,
+                    paddle->y + (PADDLE_SPRITE_H * i) + (PADDLE_OFFSET_Y * i));
     }
 }
