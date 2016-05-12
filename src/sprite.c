@@ -68,7 +68,7 @@ void sprite_draw(sprite_t *sprite, int x, int y)
     SDL_Rect src_rect = { sprite->x, sprite->y,
                           sprite->w, sprite->h };
     SDL_Rect dst_rect = { x, y,
-                          sprite->w * 3, sprite->h * 3};
+                          sprite->w, sprite->h};
 
     SDL_RenderCopyEx(g_pRenderer,          /* Renderer               */
                      sprite->texture,      /* Texture                */
