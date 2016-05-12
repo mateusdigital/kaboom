@@ -24,6 +24,7 @@ enum {
 int      current_turn;
 bomber_t bomber;
 bomb_t*  bombs_arr[GAME_SCENE_BOMBS_ARR_SIZE];
+paddle_t paddle;
 
 
 /*******************************************************************************
@@ -43,9 +44,6 @@ bomb_t* _get_first_available_bomb();
 void _on_bomber_drop_bomb(bomber_t *bomber);
 void _on_bomb_reach_target();
 
-/* Others */
-void _check_bomb_paddle_collision(bomb_t *bomb, paddle_t *paddle);
-
 
 /*******************************************************************************
 * Public Functions Definitions                                                 *
@@ -58,11 +56,9 @@ void game_scene_load()
     /* */
     current_turn = 0;
 
-    /* Initialize the Bomber */
-    bomber_init(&bomber,
-                0,
-                SCREEN_WIDTH,
-                _on_bomber_drop_bomb);
+    /* Init Objects */
+    bomber_init(&bomber, _on_bomber_drop_bomb);
+    paddle_init(&paddle);
 }
 
 void game_scene_unload()
@@ -72,6 +68,16 @@ void game_scene_unload()
 
 void game_scene_update(float dt)
 {
+    Uint8 *keys = SDL_GetKeyboardState(NULL);
+    if(keys[SDL_SCANCODE_SPACE])
+        _reset_turn();
+
+    paddle_change_direction(&paddle, PADDLE_DIR_NONE);
+    if(keys[SDL_SCANCODE_LEFT])
+        paddle_change_direction(&paddle, PADDLE_DIR_LEFT);
+    if(keys[SDL_SCANCODE_RIGHT])
+        paddle_change_direction(&paddle, PADDLE_DIR_RIGHT);
+
     /* Bomber */
     bomber_update(&bomber, dt);
 
@@ -84,9 +90,21 @@ void game_scene_update(float dt)
         bomb_update(b, dt);
     }
 
-    Uint8 *keys = SDL_GetKeyboardState(NULL);
-    if(keys[SDL_SCANCODE_SPACE])
-        _reset_turn();
+    /* Paddle */
+    paddle_update(&paddle, dt);
+
+    /* Check Collisions */
+    for(int i = 0; i < GAME_SCENE_BOMBS_ARR_SIZE; ++i)
+    {
+        bomb_t *bomb = bombs_arr[i];
+        if(!bomb)
+            break;
+
+        if(bomb->state != BOMB_STATE_ALIVE)
+            continue;
+
+        paddle_check_collision_with_bomb(&paddle, bomb);
+    }
 }
 
 void game_scene_draw()
@@ -102,6 +120,9 @@ void game_scene_draw()
 
         bomb_draw(b);
     }
+
+    /* Paddle */
+    paddle_draw(&paddle);
 }
 
 void game_scene_handle_event(SDL_Event *event)
@@ -194,8 +215,4 @@ void _on_bomb_reach_target()
 
     /* Make bomber win */
     bomber_win(&bomber);
-}
-
-void _check_bomb_paddle_collision(bomb_t *bomb, paddle_t *paddle)
-{
 }
