@@ -8,17 +8,18 @@
 * Private Constants                                                            *
 *******************************************************************************/
 enum {
-    BOMB_ALIVE_SPRITE_FRAME_W = 10,
-    BOMB_ALIVE_SPRITE_FRAME_H = 15,
+    BOMB_ALIVE_SPRITE_FRAME_W = 30,
+    BOMB_ALIVE_SPRITE_FRAME_H = 45,
 
-    BOMB_EXPLODED_SPRITE_FRAME_W = 16,
-    BOMB_EXPLODED_SPRITE_FRAME_H = 15,
+    BOMB_EXPLODED_SPRITE_FRAME_W = 48,
+    BOMB_EXPLODED_SPRITE_FRAME_H = 45,
 
     BOMB_SPEED = 100,
 };
 
 #define BOMB_FRAME_TIME_ALIVE    0.4f
 #define BOMB_FRAME_TIME_EXPLODED 0.2f
+
 
 /*******************************************************************************
 * Functions                                                                    *
@@ -80,6 +81,11 @@ void bomb_reset(bomb_t *bomb, int x, int y, int speed, int max_y)
     bomb->max_y = max_y;
 }
 
+void bomb_kill(bomb_t *bomb)
+{
+    bomb->state = BOMB_STATE_DEAD;
+}
+
 void bomb_explode(bomb_t *bomb)
 {
     /* Dead bombs doesn't explode :D */
@@ -94,6 +100,17 @@ void bomb_explode(bomb_t *bomb)
 
     /* State */
     bomb->state = BOMB_STATE_EXPLODED;
+}
+
+/* Helpers */
+SDL_Rect bomb_get_hitbox(bomb_t *bomb)
+{
+    return (SDL_Rect) {
+        .x = bomb->x,
+        .y = bomb->y,
+        .w = BOMB_ALIVE_SPRITE_FRAME_W,
+        .h = BOMB_ALIVE_SPRITE_FRAME_H
+    };
 }
 
 /* Update / Draw */
@@ -119,10 +136,10 @@ void bomb_update(bomb_t *bomb, float dt)
 void bomb_draw(bomb_t *bomb)
 {
     /* Do not draw dead bombs */
-    if(bomb->state == BOMB_STATE_DEAD)
-        return;
+    //if(bomb->state == BOMB_STATE_DEAD)
+    //    return;
 
-    int index = bomb->current_sprite_index;
+    int index = 0;bomb->current_sprite_index;
     sprite_t *sprite = (bomb->state == BOMB_STATE_ALIVE)
                         ? &bomb->alive_sprites_arr   [index]
                         : &bomb->exploted_sprites_arr[index];

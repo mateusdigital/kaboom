@@ -60,7 +60,11 @@ void bomb_reset(bomb_t *bomb,
                 int x, int y,
                 int speed, int max_y);
 
+void bomb_kill   (bomb_t *bomb);
 void bomb_explode(bomb_t *bomb);
+
+/* Helpers */
+SDL_Rect bomb_get_hitbox(bomb_t *bomb);
 
 /* Update / Draw */
 void bomb_update(bomb_t *bomb, float dt);
