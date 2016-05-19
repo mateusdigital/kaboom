@@ -6,6 +6,7 @@
 //Game_Kaboom
 #include "GameKaboom_Utils.h"
 #include "Bomber.h"
+#include "Bomb.h"
 
 
 NS_GAMEKABOOM_BEGIN
@@ -28,6 +29,13 @@ public:
 private:
     //Inits
     void initBomber();
+    void initBombs ();
+
+
+    //Bomb Helpers
+    void resetAllBombs();
+    int  getFirstAvaiableBombIndex();
+    std::unique_ptr<Bomb> createBombHelper();
 
     //Bomber Callbacks
     void onBomberBombDropped(const Lore::Vector2 &pos);
@@ -36,6 +44,7 @@ private:
     // iVars //
 private:
     Bomber m_bomber;
+    std::vector<unique_ptr<Bomb>> m_bombsVec;
 };
 
 NS_GAMEKABOOM_END

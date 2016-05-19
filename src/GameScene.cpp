@@ -9,6 +9,7 @@ USING_NS_GAMEKABOOM;
 void GameScene::load()
 {
     initBomber();
+    initBombs ();
 }
 
 void GameScene::unload()
@@ -24,12 +25,20 @@ void GameScene::update(float dt)
     if(inputMgr->isKeyClick(SDL_SCANCODE_SPACE))
         m_bomber.startDropBombs();
 
+    //Bomber
     m_bomber.update(dt);
+    //Bombs
+    for(auto &bomb : m_bombsVec)
+        bomb->update(dt);
 }
 
 void GameScene::draw()
 {
+    //Bomber
     m_bomber.draw();
+    //Bombs
+    for(auto &bomb : m_bombsVec)
+        bomb->draw();
 }
 
 
@@ -52,6 +61,22 @@ void GameScene::initBomber()
     auto allBombsDropped = COREGAME_CALLBACK_0(GameScene::onBomberAllBombsDropped, this);
     m_bomber.setOnAllBombsDroppedCallback(allBombsDropped);
 }
+
+void GameScene::initBombs()
+{
+    for(int i = 0; i < 10; ++i)
+    {
+        m_bombsVec.push_back(std::move(createBombHelper()));
+        m_bombsVec[i]->setPosition(Lore::Vector2(50 *i, 50));
+    }
+}
+
+//Helpers
+std::unique_ptr<Bomb> GameScene::createBombHelper()
+{
+    return std::unique_ptr<Bomb>(new Bomb());
+}
+
 
 //Bomber Callbacks
 void GameScene::onBomberBombDropped(const Lore::Vector2 &pos)
