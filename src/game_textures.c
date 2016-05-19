@@ -7,14 +7,17 @@
 
 
 const int game_texture_id_bomber = 0;
-const int game_texture_id_bomb_alive = 1;
-const int game_texture_id_bomb_exploded = 2;
+const int game_texture_id_paddle = 1;
+const int game_texture_id_bomb_alive = 2;
+const int game_texture_id_bomb_exploded = 3;
 const char* game_textures_ids[GAME_TEXTURES_IDS_SIZE] = {
 
    "assets/Bomber.png", /* 0 - game_texture_id_Bomber; */
 
-   "assets/Bomb_Alive.png", /* 1 - game_texture_id_Bomb_Alive; */
+   "assets/Paddle.png", /* 1 - game_texture_id_Paddle; */
 
-   "assets/Bomb_Exploded.png", /* 2 - game_texture_id_Bomb_Exploded; */
+   "assets/Bomb_Alive.png", /* 2 - game_texture_id_Bomb_Alive; */
+
+   "assets/Bomb_Exploded.png", /* 3 - game_texture_id_Bomb_Exploded; */
 
 };

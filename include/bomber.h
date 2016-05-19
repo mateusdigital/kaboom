@@ -28,8 +28,9 @@ typedef enum _bomber_state_t
 
 typedef struct _bomber_options_t
 {
-    int bombs_remaining;
+    int bombs_total;
     int bombs_dropped;
+    int bombs_left;
 
     float seconds_between_drops;
     float seconds_since_last_drop;

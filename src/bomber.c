@@ -5,6 +5,7 @@
 #include <time.h>
 /* Game_Kaboom */
 #include "game.h"
+#include "helpers.h"
 #include "game_textures.h"
 
 
@@ -27,6 +28,10 @@ enum {
 * Private Functions Declarations                                               *
 *******************************************************************************/
 void _init_sprite(bomber_t *bomber, int sprite_index);
+
+void _update_dropping(bomber_t *bomber, float dt);
+void _update_waiting (bomber_t *bomber, float dt);
+void _update_moving  (bomber_t *bomber, float dt);
 
 
 /*******************************************************************************
@@ -65,79 +70,26 @@ void bomber_win(bomber_t *bomber)
 {
     bomber->state               = BOMBER_STATE_WAITING;
     bomber->current_frame_index = BOMBER_SPRITE_INDEX_WAITING;
-
-    bomber->bomber_options.bombs_remaining = 0;
 }
 void bomber_lose(bomber_t *bomber)
 {
     bomber->state               = BOMBER_STATE_DEAD;
     bomber->current_frame_index = BOMBER_SPRITE_INDEX_DEAD;
-
-    bomber->bomber_options.bombs_remaining = 0;
 }
 
 
 
 void bomber_update(bomber_t *bomber, float dt)
 {
-    /* Waiting
-       1 - Check there is bomb to drop.
-       2 - If so, selected a new drop stop.
-    */
-    if(bomber->state == BOMBER_STATE_WAITING)
+    bomber_options_t *opt = &(bomber->bomber_options);
+    if(opt->bombs_left == 0)
+        return;
+
+    switch(bomber->state)
     {
-        bomber->current_frame_index = BOMBER_SPRITE_INDEX_WAITING;
-
-        /* Wait for next turn */
-        if(bomber->bomber_options.bombs_dropped >=
-           bomber->bomber_options.bombs_remaining)
-        {
-            return;
-        }
-
-        /* Change the state and select a new drop stop */
-        bomber->state    = BOMBER_STATE_MOVING;
-        bomber->target_x = bomber->min_x + (rand() % bomber->max_x);
-        bomber->speed    = (bomber->x >= bomber->target_x)
-                           ? -BOMBER_SPEED
-                           : +BOMBER_SPEED;
-    }
-
-    /* Moving
-       1 - Check if we reach the drop stop.
-       2 - Keep going to the drop stop.
-    */
-    else if(bomber->state == BOMBER_STATE_MOVING)
-    {
-        bomber->current_frame_index = BOMBER_SPRITE_INDEX_MOVING;
-        bomber->x += (bomber->speed * dt);
-
-        /* We reach the drop spot -> Drop the bomb MUAMAUAMUA */
-        if(bomber->speed < 0 && bomber->x < bomber->target_x)
-            bomber->state = BOMBER_STATE_DROPPING;
-        else if(bomber->speed > 0 && bomber->x > bomber->target_x)
-            bomber->state = BOMBER_STATE_DROPPING;
-    }
-    /* Dropping
-       1 - Check if we wait enough time to drop the bomb.
-       2 - Drop the bomb and inform the listeners
-    */
-    else if(bomber->state == BOMBER_STATE_DROPPING)
-    {
-        bomber->current_frame_index = BOMBER_SPRITE_INDEX_MOVING;
-
-        bomber->bomber_options.seconds_since_last_drop += dt;
-
-        /* We wait enough -> Drop the bomb, reset timers and inform listeners */
-        if(bomber->bomber_options.seconds_since_last_drop >=
-           bomber->bomber_options.seconds_between_drops)
-        {
-            bomber->bomber_options.seconds_since_last_drop -= bomber->bomber_options.seconds_between_drops;
-            bomber->state = BOMBER_STATE_WAITING;
-
-            bomber->bomber_options.bombs_dropped++;
-            bomber->drop_bomb_func(bomber);
-        }
+        case BOMBER_STATE_WAITING  : _update_waiting (bomber, dt); break;
+        case BOMBER_STATE_MOVING   : _update_moving  (bomber, dt); break;
+        case BOMBER_STATE_DROPPING : _update_dropping(bomber, dt); break;
     }
 }
 
@@ -157,4 +109,59 @@ void _init_sprite(bomber_t *bomber, int sprite_index)
                  game_texture_id_bomber,
                  BOMBER_SPRITE_FRAME_W, BOMBER_SPRITE_FRAME_H,
                  sprite_index, 0);
+}
+
+void _update_dropping(bomber_t *bomber, float dt)
+{
+    /* Dropping
+       1 - Check if we wait enough time to drop the bomb.
+       2 - Drop the bomb and inform the listeners
+    */
+    bomber->current_frame_index = BOMBER_SPRITE_INDEX_MOVING;
+
+    bomber_options_t *opt = &(bomber->bomber_options);
+    opt->seconds_since_last_drop += dt;
+
+    /* We wait enough -> Drop the bomb, reset timers and inform listeners */
+    if(opt->seconds_since_last_drop >= opt->seconds_between_drops)
+    {
+        opt->seconds_since_last_drop -= opt->seconds_between_drops;
+        bomber->state = BOMBER_STATE_WAITING;
+
+        ++opt->bombs_dropped;
+        --opt->bombs_left;
+
+        if(opt->bombs_left >= 0)
+            bomber->drop_bomb_func(bomber);
+    }
+}
+void _update_waiting(bomber_t *bomber, float dt)
+{
+    /* Waiting
+       1 - Check there is bomb to drop.
+       2 - If so, selected a new drop stop.
+    */
+    bomber->current_frame_index = BOMBER_SPRITE_INDEX_WAITING;
+
+    /* Change the state and select a new drop stop */
+    bomber->state    = BOMBER_STATE_MOVING;
+    bomber->target_x = bomber->min_x + (rand() % bomber->max_x);
+    bomber->speed    = (bomber->x >= bomber->target_x)
+                        ? -BOMBER_SPEED
+                        : +BOMBER_SPEED;
+}
+void _update_moving(bomber_t *bomber, float dt)
+{
+    /* Moving
+       1 - Check if we reach the drop stop.
+       2 - Keep going to the drop stop.
+    */
+    bomber->current_frame_index = BOMBER_SPRITE_INDEX_MOVING;
+    bomber->x += (bomber->speed * dt);
+
+    /* We reach the drop spot -> Drop the bomb MUAMAUAMUA */
+    if(bomber->speed < 0 && bomber->x < bomber->target_x)
+       bomber->state = BOMBER_STATE_DROPPING;
+    else if(bomber->speed > 0 && bomber->x > bomber->target_x)
+       bomber->state = BOMBER_STATE_DROPPING;
 }

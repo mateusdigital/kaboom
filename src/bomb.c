@@ -136,10 +136,10 @@ void bomb_update(bomb_t *bomb, float dt)
 void bomb_draw(bomb_t *bomb)
 {
     /* Do not draw dead bombs */
-    //if(bomb->state == BOMB_STATE_DEAD)
-    //    return;
+    if(bomb->state == BOMB_STATE_DEAD)
+        return;
 
-    int index = 0;bomb->current_sprite_index;
+    int index = bomb->current_sprite_index;
     sprite_t *sprite = (bomb->state == BOMB_STATE_ALIVE)
                         ? &bomb->alive_sprites_arr   [index]
                         : &bomb->exploted_sprites_arr[index];

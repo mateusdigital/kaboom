@@ -72,7 +72,7 @@ void paddle_kill (paddle_t *paddle);
 void paddle_change_direction(paddle_t *paddle, int direction);
 
 /* Helpers */
-void paddle_check_collision_with_bomb(paddle_t *paddle, bomb_t *bomb);
+int paddle_check_collision_with_bomb(paddle_t *paddle, bomb_t *bomb);
 
 /* Update / Draw */
 void paddle_update(paddle_t *paddle, float dt);

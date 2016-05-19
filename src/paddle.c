@@ -69,7 +69,7 @@ void paddle_change_direction(paddle_t *paddle, int direction)
 }
 
 /* Helpers */
-void paddle_check_collision_with_bomb(paddle_t *paddle, bomb_t *bomb)
+int paddle_check_collision_with_bomb(paddle_t *paddle, bomb_t *bomb)
 {
     for(int i = 0; i < paddle->lives; ++i)
     {
@@ -84,8 +84,12 @@ void paddle_check_collision_with_bomb(paddle_t *paddle, bomb_t *bomb)
         {
             bomb_kill(bomb);
             paddle->animations[i].enabled = 1;
+
+            return 1;
         }
     }
+
+    return 0;
 }
 
 
@@ -106,7 +110,6 @@ void paddle_update(paddle_t *paddle, float dt)
     {
         paddle_hit_animation_t *anim = &(paddle->animations[i]);
 
-        GAME_LOG("i %d - %d", i, anim->enabled);
         if(!anim->enabled)
             continue;
 

@@ -7,9 +7,10 @@
 #define __game_textures_h__
 
 
-#define GAME_TEXTURES_IDS_SIZE 3
+#define GAME_TEXTURES_IDS_SIZE 4
 extern const char* game_textures_ids[GAME_TEXTURES_IDS_SIZE];
 extern const int game_texture_id_bomber;
+extern const int game_texture_id_paddle;
 extern const int game_texture_id_bomb_alive;
 extern const int game_texture_id_bomb_exploded;
 
