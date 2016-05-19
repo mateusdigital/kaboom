@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="GameKaboom" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Lore" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../../game" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Lore" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-Wall" />
+			<Add option="`sdl-config --cflags`" />
+			<Add directory="../../../Lore" />
+			<Add directory="../../lib/CoreClock/include" />
+			<Add directory="../../lib/CoreGame/include" />
+			<Add directory="../../lib/CoreRandom/include" />
+			<Add directory="../include" />
+		</Compiler>
+		<Linker>
+			<Add option="`sdl2-config --libs`" />
+			<Add library="SDL2_image" />
+			<Add library="SDL2_ttf" />
+		</Linker>
+		<Unit filename="../../include/AssetsManager.h" />
+		<Unit filename="../../include/Font.h" />
+		<Unit filename="../../include/GameManager.h" />
+		<Unit filename="../../include/GameObject.h" />
+		<Unit filename="../../include/IDrawable.h" />
+		<Unit filename="../../include/ITransformable.h" />
+		<Unit filename="../../include/IUpdatable.h" />
+		<Unit filename="../../include/InputManager.h" />
+		<Unit filename="../../include/Lore_Utils.h" />
+		<Unit filename="../../include/Rectangle.h" />
+		<Unit filename="../../include/SDLHelpers.h" />
+		<Unit filename="../../include/Scene.h" />
+		<Unit filename="../../include/SoundManager.h" />
+		<Unit filename="../../include/Sprite.h" />
+		<Unit filename="../../include/Text.h" />
+		<Unit filename="../../include/Texture.h" />
+		<Unit filename="../../include/Vector2.h" />
+		<Unit filename="../../include/WindowManager.h" />
+		<Unit filename="../../lib/CoreClock/include/Clock.h" />
+		<Unit filename="../../lib/CoreClock/include/CoreClock.h" />
+		<Unit filename="../../lib/CoreClock/include/CoreClock_Utils.h" />
+		<Unit filename="../../lib/CoreClock/src/Clock.cpp" />
+		<Unit filename="../../lib/CoreGame/include/CoreGame.h" />
+		<Unit filename="../../lib/CoreGame/include/CoreGame_Macros.h" />
+		<Unit filename="../../lib/CoreGame/include/CoreGame_Utils.h" />
+		<Unit filename="../../lib/CoreGame/include/Macros/CoreGame_Assert.h" />
+		<Unit filename="../../lib/CoreGame/include/Macros/CoreGame_Disallow.h" />
+		<Unit filename="../../lib/CoreGame/include/Macros/CoreGame_Singleton.h" />
+		<Unit filename="../../lib/CoreGame/include/Status.h" />
+		<Unit filename="../../lib/CoreGame/src/GameCore_Macros.cpp" />
+		<Unit filename="../../lib/CoreGame/src/Status.cpp" />
+		<Unit filename="../../lib/CoreRandom/include/CoreRandom.h" />
+		<Unit filename="../../lib/CoreRandom/include/CoreRandom_Utils.h" />
+		<Unit filename="../../lib/CoreRandom/include/Random.h" />
+		<Unit filename="../../lib/CoreRandom/src/Random.cpp" />
+		<Unit filename="../../src/AssetsManager.cpp" />
+		<Unit filename="../../src/Font.cpp" />
+		<Unit filename="../../src/GameManager.cpp" />
+		<Unit filename="../../src/GameObject.cpp" />
+		<Unit filename="../../src/ITransformable.cpp" />
+		<Unit filename="../../src/InputManager.cpp" />
+		<Unit filename="../../src/Rectangle.cpp" />
+		<Unit filename="../../src/SDLHelpers.cpp" />
+		<Unit filename="../../src/SoundManager.cpp" />
+		<Unit filename="../../src/Sprite.cpp" />
+		<Unit filename="../../src/Text.cpp" />
+		<Unit filename="../../src/Texture.cpp" />
+		<Unit filename="../../src/Vector2.cpp" />
+		<Unit filename="../../src/WindowManager.cpp" />
+		<Unit filename="../include/Bomber.h" />
+		<Unit filename="../include/GameKaboom_Utils.h" />
+		<Unit filename="../include/GameScene.h" />
+		<Unit filename="../include/MenuScene.h" />
+		<Unit filename="../src/Bomber.cpp" />
+		<Unit filename="../src/GameScene.cpp" />
+		<Unit filename="../src/MenuScene.cpp" />
+		<Unit filename="../src/main.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
