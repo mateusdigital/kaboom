@@ -17,6 +17,10 @@ public:
     typedef std::function<void (const Lore::Vector2 &bombPos)> BombDroppedCallback;
     typedef std::function<void ()> AllBombsDroppedCallback;
 
+private:
+    enum class MoveState { MovingToTarget, DroppingBomb };
+
+
     // CTOR / DTOR //
 public:
     Bomber();
@@ -65,6 +69,10 @@ public:
 private:
     void initSprites();
 
+    void changeSpriteFrame(int frameIndex);
+
+    void deciceNextDropSpot();
+    void dropBomb();
 
     // iVars //
 private:
@@ -75,6 +83,7 @@ private:
 
     //Movement / Bounds
     Lore::Vector2 m_speed;
+    Lore::Vector2 m_initialPosition;
     Lore::Vector2 m_minBounds;
     Lore::Vector2 m_maxBounds;
 
@@ -87,8 +96,15 @@ private:
 
     bool m_isDroppingBombs;
 
+    //Callbacks
+    BombDroppedCallback     m_bombDroppedCallback;
+    AllBombsDroppedCallback m_allBombsDroppedCallback;
+
     //Other
     CoreRandom::Random m_random;
+
+    MoveState m_moveState;
+    float     m_dropSpot;
 };
 
 NS_GAMEKABOOM_END
