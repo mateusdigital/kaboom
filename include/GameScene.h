@@ -24,6 +24,15 @@ public:
     virtual void draw()           override;
 
 
+    // Private Methods //
+private:
+    //Inits
+    void initBomber();
+
+    //Bomber Callbacks
+    void onBomberBombDropped(const Lore::Vector2 &pos);
+    void onBomberAllBombsDropped();
+
     // iVars //
 private:
     Bomber m_bomber;
