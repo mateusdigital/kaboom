@@ -93,10 +93,12 @@
 		<Unit filename="../../src/Texture.cpp" />
 		<Unit filename="../../src/Vector2.cpp" />
 		<Unit filename="../../src/WindowManager.cpp" />
+		<Unit filename="../include/Bomb.h" />
 		<Unit filename="../include/Bomber.h" />
 		<Unit filename="../include/GameKaboom_Utils.h" />
 		<Unit filename="../include/GameScene.h" />
 		<Unit filename="../include/MenuScene.h" />
+		<Unit filename="../src/Bomb.cpp" />
 		<Unit filename="../src/Bomber.cpp" />
 		<Unit filename="../src/GameScene.cpp" />
 		<Unit filename="../src/MenuScene.cpp" />
