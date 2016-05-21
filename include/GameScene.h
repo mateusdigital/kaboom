@@ -31,20 +31,32 @@ private:
     void initBomber();
     void initBombs ();
 
-
     //Bomb Helpers
     void resetAllBombs();
-    int  getFirstAvaiableBombIndex();
-    std::unique_ptr<Bomb> createBombHelper();
+    void stopAllBombs ();
 
-    //Bomber Callbacks
+    int  getFirstAvaiableBombIndex();
+    void createBombHelper();
+
+    void explodeNextBomb();
+
+
+    //Bomber / Bomb Callbacks
     void onBomberBombDropped(const Lore::Vector2 &pos);
     void onBomberAllBombsDropped();
 
+    void onBombExplodeFinished();
+    void onBombReachTarget();
+
+
     // iVars //
 private:
+    //GameObjects
     Bomber m_bomber;
     std::vector<unique_ptr<Bomb>> m_bombsVec;
+
+    //HouseKepping
+    int m_turnNumber;
 };
 
 NS_GAMEKABOOM_END
