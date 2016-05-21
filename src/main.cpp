@@ -19,8 +19,8 @@ int main()
     auto soundMgr  = Lore::SoundManager::instance ();
 
     winMgr->initialize("Lore Test",
-                        600, 480,
-                        600, 480,
+                        800, 600,
+                        800, 600,
                         0, 0);
 
     assetsMgr->initialize("./assets");
