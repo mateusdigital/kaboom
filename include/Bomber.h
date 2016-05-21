@@ -35,7 +35,8 @@ public:
 
     // Actions //
 public:
-    void startDropBombs();
+    void startDropBombs(int turnNumber);
+    void stopDropBombs ();
 
     void makeWinTurn ();
     void makeLoseTurn();

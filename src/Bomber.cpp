@@ -12,6 +12,9 @@ constexpr int kFrameIndex_Happy    = 1;
 constexpr int kFrameIndex_Sad      = 0;
 constexpr int kFrameIndex_BigMouth = 2;
 
+constexpr int kBombOffsetX = 20;
+constexpr int kBombOffsetY = 20;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // CTOR / DTOR                                                                //
@@ -82,10 +85,12 @@ void Bomber::draw()
 ////////////////////////////////////////////////////////////////////////////////
 // Actions                                                                    //
 ////////////////////////////////////////////////////////////////////////////////
-void Bomber::startDropBombs()
+void Bomber::startDropBombs(int turnNumber)
 {
     m_isDroppingBombs = true;
-    m_turnBombs       = m_turnNumber + 1;
+
+    m_turnNumber      = turnNumber;
+    m_turnBombs       = m_turnNumber;
     m_bombsRemaining  = m_turnBombs;
     m_bombsDropped    = 0;
 
@@ -93,6 +98,10 @@ void Bomber::startDropBombs()
     deciceNextDropSpot();
 }
 
+void Bomber::stopDropBombs()
+{
+    m_isDroppingBombs = false;
+}
 
 void Bomber::makeWinTurn()
 {
@@ -229,7 +238,10 @@ void Bomber::dropBomb()
     ++m_bombsDropped;
 
     //COWTODO: Fix to correct offset.
-    m_bombDroppedCallback(m_sprite.getPosition());
+    auto bombPosition = m_sprite.getPosition();
+    bombPosition.x += kBombOffsetX;
+    bombPosition.y += kBombOffsetY;
+    m_bombDroppedCallback(bombPosition);
 
     cout << "Bomb dropped" << endl;
 }
