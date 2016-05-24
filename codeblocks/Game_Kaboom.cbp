@@ -45,6 +45,7 @@
 			<Add library="SDL2_ttf" />
 		</Linker>
 		<Unit filename="../../include/AssetsManager.h" />
+		<Unit filename="../../include/Color.h" />
 		<Unit filename="../../include/Font.h" />
 		<Unit filename="../../include/GameManager.h" />
 		<Unit filename="../../include/GameObject.h" />
@@ -69,20 +70,25 @@
 		<Unit filename="../../lib/CoreGame/include/CoreGame.h" />
 		<Unit filename="../../lib/CoreGame/include/CoreGame_Macros.h" />
 		<Unit filename="../../lib/CoreGame/include/CoreGame_Utils.h" />
+		<Unit filename="../../lib/CoreGame/include/Log.h" />
 		<Unit filename="../../lib/CoreGame/include/Macros/CoreGame_Assert.h" />
+		<Unit filename="../../lib/CoreGame/include/Macros/CoreGame_Callbacks.h" />
 		<Unit filename="../../lib/CoreGame/include/Macros/CoreGame_Disallow.h" />
 		<Unit filename="../../lib/CoreGame/include/Macros/CoreGame_Singleton.h" />
 		<Unit filename="../../lib/CoreGame/include/Status.h" />
 		<Unit filename="../../lib/CoreGame/src/GameCore_Macros.cpp" />
+		<Unit filename="../../lib/CoreGame/src/Log.cpp" />
 		<Unit filename="../../lib/CoreGame/src/Status.cpp" />
 		<Unit filename="../../lib/CoreRandom/include/CoreRandom.h" />
 		<Unit filename="../../lib/CoreRandom/include/CoreRandom_Utils.h" />
 		<Unit filename="../../lib/CoreRandom/include/Random.h" />
 		<Unit filename="../../lib/CoreRandom/src/Random.cpp" />
 		<Unit filename="../../src/AssetsManager.cpp" />
+		<Unit filename="../../src/Color.cpp" />
 		<Unit filename="../../src/Font.cpp" />
 		<Unit filename="../../src/GameManager.cpp" />
 		<Unit filename="../../src/GameObject.cpp" />
+		<Unit filename="../../src/IDrawable.cpp" />
 		<Unit filename="../../src/ITransformable.cpp" />
 		<Unit filename="../../src/InputManager.cpp" />
 		<Unit filename="../../src/Rectangle.cpp" />
