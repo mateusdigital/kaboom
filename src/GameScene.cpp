@@ -4,15 +4,19 @@
 //Usings
 USING_NS_GAMEKABOOM;
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // Load / Unload                                                              //
 ////////////////////////////////////////////////////////////////////////////////
 void GameScene::load()
 {
+    m_score      = 0;
     m_turnNumber = 10;
+    m_state      = State::GameOver;
 
     initBomber();
     initBombs ();
+    initTexts ();
 }
 
 void GameScene::unload()
@@ -26,6 +30,29 @@ void GameScene::unload()
 ////////////////////////////////////////////////////////////////////////////////
 void GameScene::update(float dt)
 {
+    if(m_state == State::Paused)
+    {
+
+    }
+    else if(m_state == State::Playing)
+    {
+
+    }
+    else if(m_state == State::Victory)
+    {
+
+    }
+    else if(m_state == State::Defeat)
+    {
+
+    }
+    else if(m_state == State::GameOver)
+    {
+
+    }
+
+    m_pauseBlinkTimer.update(dt);
+
     auto inputMgr = Lore::InputManager::instance();
     if(inputMgr->isKeyClick(SDL_SCANCODE_SPACE))
         m_bomber.startDropBombs(m_turnNumber);
@@ -44,6 +71,8 @@ void GameScene::draw()
     //Bombs
     for(auto &bomb : m_bombsVec)
         bomb->draw();
+
+    m_pauseText.draw();
 }
 
 
@@ -73,6 +102,33 @@ void GameScene::initBombs()
 {
     for(int i = 0; i < 10; ++i)
         createBombHelper();
+}
+
+void GameScene::initTexts()
+{
+    const char * const kFontName = "nokiafc22.ttf";
+    constexpr int kFontSize_PauseText = 100;
+    constexpr float kClockInterval_PauseText = 0.5;
+
+    //Pause Text
+    m_pauseText.loadFont(kFontName, kFontSize_PauseText);
+    m_pauseText.setString("Paused");
+    m_pauseText.setForegroundColor(Lore::Color::White());
+    m_pauseText.setBackgroundColor(Lore::Color::Black());
+    m_pauseText.setPosition(Lore::Vector2(100, 100));
+
+    m_pauseBlinkTimer.setInterval(kClockInterval_PauseText);
+    m_pauseBlinkTimer.setRepeatCount(CoreClock::Clock::kRepeatForever);
+    m_pauseBlinkTimer.setTickCallback([this](){
+        auto i = SDL_GetTicks();
+        COREGAME_DLOG(CoreGame::Log::Type::Debug1,
+                      "ticks %d", i);
+
+        auto visible = (m_pauseBlinkTimer.getTickCount() % 2 == 0);
+        m_pauseText.setIsVisible(visible);
+    });
+
+    m_pauseBlinkTimer.start();
 }
 
 //Bomb Helpers
@@ -106,7 +162,7 @@ void GameScene::createBombHelper()
     auto bomb = std::unique_ptr<Bomb>(new Bomb());
 
     auto explode = COREGAME_CALLBACK_0(GameScene::onBombExplodeFinished, this);
-    auto reach   = COREGAME_CALLBACK_0(GameScene::onBombReachTarget,    this);
+    auto reach   = COREGAME_CALLBACK_0(GameScene::onBombReachTarget,     this);
 
     bomb->setMovementBounds(Lore::Vector2(0, winH));
 
@@ -130,10 +186,26 @@ void GameScene::explodeNextBomb()
     }
 }
 
+
+//Texts Helpers
+void GameScene::updateScoreText()
+{
+
+}
+
+void GameScene::updateTurnNumberText()
+{
+
+}
+
+
 //Bomber / Bomb Callbacks
 void GameScene::onBomberBombDropped(const Lore::Vector2 &pos)
 {
-    cout << "Bomber drop bomb at " << pos.x << ", " << pos.y << endl;
+
+    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
+                  "Bomber drop bomb at: %.2f %.2f",
+                  pos.x, pos.y);
 
     int index = getFirstAvaiableBombIndex();
     m_bombsVec[index]->setPosition(pos);
@@ -142,22 +214,26 @@ void GameScene::onBomberBombDropped(const Lore::Vector2 &pos)
 
 void GameScene::onBomberAllBombsDropped()
 {
-    cout << "Bomber drop all bomb" << endl;
+    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
+                  "Bomber drop all bomb");
 }
 
 void GameScene::onBombExplodeFinished()
 {
-    cout << "Bomb explode finished" << endl;
+    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
+                  "Bomb explode finished");
+
     explodeNextBomb();
 }
 
 void GameScene::onBombReachTarget()
 {
-    cout << "Bomb reach target" << endl;
+    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
+                  "Bomb reach target");
 
     m_bomber.stopDropBombs();
+    m_bomber.makeWinTurn  ();
 
     stopAllBombs   ();
     explodeNextBomb();
 }
-

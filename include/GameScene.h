@@ -13,6 +13,18 @@ NS_GAMEKABOOM_BEGIN
 
 class GameScene : public Lore::Scene
 {
+    // Enums //
+private:
+    enum class State
+    {
+        Playing,
+        Paused,
+        Victory,
+        Defeat,
+        GameOver
+    };
+
+
     // Load / Unload //
 public:
     virtual void load  () override;
@@ -30,6 +42,7 @@ private:
     //Inits
     void initBomber();
     void initBombs ();
+    void initTexts ();
 
     //Bomb Helpers
     void resetAllBombs();
@@ -39,6 +52,11 @@ private:
     void createBombHelper();
 
     void explodeNextBomb();
+
+
+    //Texts Helpers
+    void updateScoreText     ();
+    void updateTurnNumberText();
 
 
     //Bomber / Bomb Callbacks
@@ -53,10 +71,19 @@ private:
 private:
     //GameObjects
     Bomber m_bomber;
-    std::vector<unique_ptr<Bomb>> m_bombsVec;
+    std::vector<std::unique_ptr<Bomb>> m_bombsVec;
+
+    //Texts
+    Lore::Text       m_pauseText;
+    CoreClock::Clock m_pauseBlinkTimer;
+
+    Lore::Text m_scoreText;
+    Lore::Text m_turnText;
 
     //HouseKepping
-    int m_turnNumber;
+    int   m_turnNumber;
+    int   m_score;
+    State m_state;
 };
 
 NS_GAMEKABOOM_END
