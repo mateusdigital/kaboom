@@ -105,12 +105,12 @@ void Bomber::stopDropBombs()
 
 void Bomber::makeWinTurn()
 {
-
+    changeSpriteFrame(kFrameIndex_Happy);
 }
 
 void Bomber::makeLoseTurn()
 {
-
+    changeSpriteFrame(kFrameIndex_Sad);
 }
 
 
@@ -225,10 +225,12 @@ void Bomber::dropBomb()
     //Dropped all bombs?
     if(m_bombsRemaining == 0)
     {
+        COREGAME_DLOG(CoreGame::Log::Type::Debug1,
+                      "All bombs has been dropped");
+
         m_isDroppingBombs = false;
         m_allBombsDroppedCallback();
 
-        cout << "All bombs has been dropped" << endl;
         changeSpriteFrame(kFrameIndex_Sad);
         return;
     }
@@ -243,5 +245,6 @@ void Bomber::dropBomb()
     bombPosition.y += kBombOffsetY;
     m_bombDroppedCallback(bombPosition);
 
-    cout << "Bomb dropped" << endl;
+    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
+                 "Bomb dropped");
 }
