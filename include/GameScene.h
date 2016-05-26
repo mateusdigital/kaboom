@@ -31,7 +31,7 @@ public:
     virtual void unload() override;
 
 
-    // Update / Draw / Handle Events //
+    // Update / Draw //
 public:
     virtual void update(float dt) override;
     virtual void draw()           override;
@@ -51,13 +51,12 @@ private:
     int  getFirstAvaiableBombIndex();
     void createBombHelper();
 
-    void explodeNextBomb();
+    bool explodeNextBomb();
 
 
     //Texts Helpers
     void updateScoreText     ();
     void updateTurnNumberText();
-
 
     //Bomber / Bomb Callbacks
     void onBomberBombDropped(const Lore::Vector2 &pos);
@@ -66,6 +65,22 @@ private:
     void onBombExplodeFinished();
     void onBombReachTarget();
 
+    //Others
+    void changeState(State state);
+    void resetTurn   ();
+    void resetNewTurn();
+
+
+    // GameStates Update Helpeers //
+    void updateHelper_Playing (float dt);
+    void updateHelper_Paused  (float dt);
+    void updateHelper_Victory (float dt);
+    void updateHelper_Defeat  (float dt);
+    void updateHelper_GameOver(float dt);
+
+
+    // Draw Helpers //
+    void drawBackgroundHelper();
 
     // iVars //
 private:
