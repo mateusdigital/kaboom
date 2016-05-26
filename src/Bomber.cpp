@@ -122,6 +122,8 @@ void Bomber::makeLoseTurn()
 void Bomber::setInitialPosition(const Lore::Vector2 &pos)
 {
     m_initialPosition = pos;
+
+    m_sprite.setOrigin(Lore::ITransformable::OriginHelpers::BottomLeft());
     m_sprite.setPosition(pos);
 }
 
