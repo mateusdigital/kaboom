@@ -76,9 +76,11 @@
 		<Unit filename="../../lib/CoreGame/include/Macros/CoreGame_Disallow.h" />
 		<Unit filename="../../lib/CoreGame/include/Macros/CoreGame_Singleton.h" />
 		<Unit filename="../../lib/CoreGame/include/Status.h" />
+		<Unit filename="../../lib/CoreGame/include/StringUtils.h" />
 		<Unit filename="../../lib/CoreGame/src/GameCore_Macros.cpp" />
 		<Unit filename="../../lib/CoreGame/src/Log.cpp" />
 		<Unit filename="../../lib/CoreGame/src/Status.cpp" />
+		<Unit filename="../../lib/CoreGame/src/StringUtils.cpp" />
 		<Unit filename="../../lib/CoreRandom/include/CoreRandom.h" />
 		<Unit filename="../../lib/CoreRandom/include/CoreRandom_Utils.h" />
 		<Unit filename="../../lib/CoreRandom/include/Random.h" />
