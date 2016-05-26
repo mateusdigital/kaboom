@@ -167,7 +167,7 @@ Bomb::State Bomb::getState() const
 void Bomb::initSprites()
 {
     //Load the sprites.
-    m_aliveSprite.loadTexture("Bomb_Alive.png");
+    m_aliveSprite.loadTexture   ("Bomb_Alive.png");
     m_explodedSprite.loadTexture("Bomb_Exploded.png");
 
     //Setup the Frames Properties.
@@ -188,7 +188,7 @@ void Bomb::initSprites()
 void Bomb::initTimers()
 {
     //Setup the Animation Timer
-    m_animationTimer.setInterval   (kTimerSpriteFrameChange);
+    m_animationTimer.setInterval(kTimerSpriteFrameChange);
     m_animationTimer.setRepeatCount(CoreClock::Clock::kRepeatForever);
 
     auto animCallback = COREGAME_CALLBACK_0(Bomb::onAnimationTimerTick, this);
@@ -197,7 +197,7 @@ void Bomb::initTimers()
     m_animationTimer.start();
 
     //Setup the Explode Timer.
-    m_explodeTimer.setInterval   (kTimerBombExplode);
+    m_explodeTimer.setInterval(kTimerBombExplode);
     m_explodeTimer.setRepeatCount(1);
 
     auto explodeCallback = COREGAME_CALLBACK_0(Bomb::onExplodeTimerTick, this);
