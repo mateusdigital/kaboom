@@ -12,8 +12,9 @@ constexpr int kFrameIndex_Happy    = 1;
 constexpr int kFrameIndex_Sad      = 0;
 constexpr int kFrameIndex_BigMouth = 2;
 
-constexpr int kBombOffsetX = 20;
-constexpr int kBombOffsetY = 20;
+constexpr int kBodyOffsetY =  10;
+constexpr int kBombOffsetX =   5;
+constexpr int kBombOffsetY = -45;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,9 +123,10 @@ void Bomber::makeLoseTurn()
 void Bomber::setInitialPosition(const Lore::Vector2 &pos)
 {
     m_initialPosition = pos;
+    m_initialPosition.y += kBodyOffsetY;
 
     m_sprite.setOrigin(Lore::ITransformable::OriginHelpers::BottomLeft());
-    m_sprite.setPosition(pos);
+    m_sprite.setPosition(m_initialPosition);
 }
 
 void Bomber::setMovementBounds(const Lore::Vector2 &min,
@@ -241,7 +243,7 @@ void Bomber::dropBomb()
     --m_bombsRemaining;
     ++m_bombsDropped;
 
-    //COWTODO: Fix to correct offset.
+
     auto bombPosition = m_sprite.getPosition();
     bombPosition.x += kBombOffsetX;
     bombPosition.y += kBombOffsetY;
