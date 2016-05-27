@@ -13,7 +13,7 @@ const char * const kFontName = "nokiafc22.ttf";
 constexpr int kFontSize_PauseText = 100;
 constexpr int kFontSize_ScoreText = 20;
 constexpr int kFontSize_TurnText  = 20;
-constexpr int kTextOffset = 20;
+constexpr int kTextOffset         = 20;
 
 // Timers //
 constexpr float kClockInterval_PauseText = 0.5; //Half a second.
@@ -314,7 +314,9 @@ void GameScene::updateHelper_Playing(float dt)
         COREGAME_DLOG(CoreGame::Log::Type::Debug1,
                      "Changing state to Paused");
 
+        m_pauseText.setIsVisible(false);
         changeState(GameScene::State::Paused);
+
         return;
     }
 
@@ -335,7 +337,9 @@ void GameScene::updateHelper_Paused(float dt)
         COREGAME_DLOG(CoreGame::Log::Type::Debug1,
                       "Changing state to Playing");
 
+        m_pauseText.setIsVisible(true);
         changeState(GameScene::State::Playing);
+
         return;
     }
 
@@ -386,6 +390,7 @@ void GameScene::updateHelper_GameOver(float dt)
 //Background
 void GameScene::drawBackgroundHelper()
 {
+    //COWTODO: Clean this up.
     auto winMgr   = Lore::WindowManager::instance();
     auto renderer = winMgr->getRenderer();
 
