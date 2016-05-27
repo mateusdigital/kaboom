@@ -11,8 +11,9 @@ USING_NS_GAMEKABOOM;
 constexpr int kSpriteFramesCount_Alive    = 4;
 constexpr int kSpriteFramesCount_Exploded = 3;
 
-constexpr float kTimerSpriteFrameChange = 0.3f;
-constexpr float kTimerBombExplode       = 0.3f;
+constexpr float kTimerSpriteFrameChange_Alive     = 0.14f;
+constexpr float kTimerSpriteFrameChange_Exploding = 0.07f;
+constexpr int   kRepeatCount_Exploding = 5;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,26 +23,19 @@ Bomb::Bomb() :
     //HouseKeeping
     m_state(Bomb::State::Dead),
     //Sprite / Animation
-    //m_aliveSprite    - Initialized in initSprites()
-    //m_explodedSprite - Initialized in initSprites()
-    m_pCurrentSprite(nullptr),
-    //m_aliveFrames    - Initialized in initSprites()
-    //m_explodedFrames - Initialized in initSprites()
-    m_pCurrentFrames(nullptr),
-    m_frameIndex    (0),
-    //m_animationTimer - Initialized in initTimers()
+    //m_aliveAnimation     - Initialized in InitAnimations
+    //m_explodingAnimation - Initialized in InitAnimations
+    m_pCurrentAnimation(nullptr),
     //Movement / Bounds
     m_pos            (Lore::Vector2::Zero()),
     m_speed          (Lore::Vector2::Zero()),
     m_initialPosition(Lore::Vector2::Zero())
-    //Exploded
-    //m_explodeTimer - Initialized in initTimers()
     //Callback
     //m_reachTargetCallback      - Default initialized
-    //m_explodedFinishedCallback - Default initialized
+    //m_explodingFinishedCallback - Default initialized
 {
-    initSprites();
-    initTimers ();
+    initAnimations();
+    initTimers    ();
 }
 
 Bomb::~Bomb()
@@ -58,9 +52,11 @@ void Bomb::update(float dt)
     if(m_state == Bomb::State::Dead)
         return;
 
-    m_animationTimer.update(dt);
-    m_explodeTimer.update  (dt);
+    //Update timers.
+    m_aliveAnimation.update    (dt);
+    m_explodingAnimation.update(dt);
 
+    //Just move if it is alive.
     if(m_state == Bomb::State::Alive)
     {
         setPosition(getPosition() + (m_speed * dt));
@@ -75,8 +71,7 @@ void Bomb::draw()
     if(m_state == Bomb::State::Dead)
         return;
 
-    m_pCurrentSprite->setPosition(m_pos);
-    m_pCurrentSprite->draw();
+    m_pCurrentAnimation->draw(m_pos);
 }
 
 
@@ -86,30 +81,24 @@ void Bomb::draw()
 void Bomb::reset()
 {
     m_state = Bomb::State::Dead;
-
-    m_explodeTimer.stop();
 }
 
 void Bomb::explode()
 {
     m_state = Bomb::State::Exploding;
 
-    m_pCurrentSprite = &m_explodedSprite;
-    m_pCurrentFrames = &m_explodedFrames;
-    changeSpriteFrame(0);
-
-    m_explodeTimer.start();
+    m_pCurrentAnimation->stop();
+    m_pCurrentAnimation = &m_explodingAnimation;
+    m_pCurrentAnimation->start();
 }
 
 void Bomb::startDropping(int turnNumber)
 {
     m_state = Bomb::State::Alive;
 
-    m_pCurrentSprite = &m_aliveSprite;
-    m_pCurrentFrames = &m_aliveFrames;
-    changeSpriteFrame(0);
-
-    m_explodeTimer.stop();
+    m_pCurrentAnimation->stop();
+    m_pCurrentAnimation = &m_aliveAnimation;
+    m_pCurrentAnimation->start();
 
     //COWTODO: Decide the speed;
     m_speed = Lore::Vector2(0, 200);
@@ -119,6 +108,7 @@ void Bomb::stopDropping()
 {
     m_speed = Lore::Vector2::Zero();
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Setters                                                                    //
@@ -164,52 +154,127 @@ Bomb::State Bomb::getState() const
 // Private Methods                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 //Inits
-void Bomb::initSprites()
+void Bomb::initAnimations()
 {
-    //Load the sprites.
-    m_aliveSprite.loadTexture   ("Bomb_Alive.png");
-    m_explodedSprite.loadTexture("Bomb_Exploded.png");
-
-    //Setup the Frames Properties.
-    setupFrames(m_aliveSprite,    m_aliveFrames,    kSpriteFramesCount_Alive);
-    setupFrames(m_explodedSprite, m_explodedFrames, kSpriteFramesCount_Exploded);
-    m_frameIndex = 0;
+    //Setup the Frames.
+    m_aliveAnimation.setupFrames("Bomb_Alive.png",
+                                  kSpriteFramesCount_Alive);
+    m_aliveAnimation.name = "Alive";
+    m_explodingAnimation.setupFrames("Bomb_Exploded.png",
+                                     kSpriteFramesCount_Exploded);
+    m_explodingAnimation.name = "Exploding";
 
     //Set the pointers.
-    m_pCurrentSprite = &m_aliveSprite;
-    m_pCurrentFrames = &m_aliveFrames;
-
-    changeSpriteFrame(0);
-
-    bool flipped = Lore::GameManager::instance()->getRandomNumber(0, 1);
-    m_pCurrentSprite->setFlipX(flipped);
+    m_pCurrentAnimation = &m_aliveAnimation;
 }
 
 void Bomb::initTimers()
 {
-    //Setup the Animation Timer
-    m_animationTimer.setInterval(kTimerSpriteFrameChange);
-    m_animationTimer.setRepeatCount(CoreClock::Clock::kRepeatForever);
+    //Setup the Alive Timer
+    m_aliveAnimation.setupTimer(
+            kTimerSpriteFrameChange_Alive,
+            CoreClock::Clock::kRepeatForever,
+            COREGAME_CALLBACK_0(Bomb::onAliveAnimationTimerTick, this),
+            [](){} //Empty callback.
+    );
 
-    auto animCallback = COREGAME_CALLBACK_0(Bomb::onAnimationTimerTick, this);
-    m_animationTimer.setTickCallback(animCallback);
-
-    m_animationTimer.start();
-
-    //Setup the Explode Timer.
-    m_explodeTimer.setInterval(kTimerBombExplode);
-    m_explodeTimer.setRepeatCount(1);
-
-    auto explodeCallback = COREGAME_CALLBACK_0(Bomb::onExplodeTimerTick, this);
-    m_explodeTimer.setTickCallback(explodeCallback);
+    //Setup the Exploding Timer
+    m_explodingAnimation.setupTimer(
+            kTimerSpriteFrameChange_Exploding,
+            kRepeatCount_Exploding,
+            COREGAME_CALLBACK_0(Bomb::onExplodingAnimationTimerTick, this),
+            COREGAME_CALLBACK_0(Bomb::onExplodingAnimationFinished, this)
+    );
 }
 
 
-//Helpers
-void Bomb::setupFrames(const Lore::Sprite &sprite,
-                       std::vector<Lore::Rectangle> &framesVec,
-                       int framesCount)
+//Timer Callback
+void Bomb::onAliveAnimationTimerTick()
 {
+    m_pCurrentAnimation->incrementFrame();
+}
+
+void Bomb::onExplodingAnimationTimerTick()
+{
+    auto gameMgr     = Lore::GameManager::instance();
+    auto framesCount = m_pCurrentAnimation->framesVec.size() -1;
+
+    auto r = gameMgr->getRandomNumber(0, 255);
+    auto g = gameMgr->getRandomNumber(0, 255);
+    auto b = gameMgr->getRandomNumber(0, 255);
+
+    auto frameIndex = gameMgr->getRandomNumber(0, framesCount);
+
+    m_pCurrentAnimation->sprite.setColor(Lore::Color(r, g, b));
+    m_pCurrentAnimation->changeFrame(frameIndex);
+}
+
+void Bomb::onExplodingAnimationFinished()
+{
+    m_state = Bomb::State::Dead;
+    m_explodedFinishedCallback();
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Bomb Animation Info                                                        //
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// Animation Management                                                       //
+////////////////////////////////////////////////////////////////////////////////
+void Bomb::AnimationInfo::start()
+{
+    timer.start();
+    frameIndex = 0;
+    changeFrame(frameIndex);
+}
+
+void Bomb::AnimationInfo::stop()
+{
+    timer.stop();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Frame Management                                                           //
+////////////////////////////////////////////////////////////////////////////////
+void Bomb::AnimationInfo::incrementFrame()
+{
+    frameIndex = (frameIndex + 1) % framesVec.size();
+    changeFrame(frameIndex);
+}
+
+void Bomb::AnimationInfo::changeFrame(int index)
+{
+    sprite.setSourceRectangle(framesVec[index]);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Update / Draw                                                              //
+////////////////////////////////////////////////////////////////////////////////
+void Bomb::AnimationInfo::update(float dt)
+{
+    timer.update(dt);
+}
+
+void Bomb::AnimationInfo::draw(const Lore::Vector2 &pos)
+{
+    sprite.setPosition(pos);
+    sprite.draw();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Setup                                                                      //
+////////////////////////////////////////////////////////////////////////////////
+void Bomb::AnimationInfo::setupFrames(const std::string &spriteName,
+                                      int framesCount)
+{
+    //Load the texture.
+    sprite.loadTexture(spriteName);
+
     //Get the Frame Properties.
     auto rect   = sprite.getSourceRectangle();
     auto frameW = rect.getWidth () / framesCount;
@@ -220,27 +285,23 @@ void Bomb::setupFrames(const Lore::Sprite &sprite,
 
     for(int i = 0; i < framesCount; ++i)
     {
-        Lore::Rectangle frameRect(i * frameW, 0, frameW, frameH);
-        framesVec.push_back(frameRect);
+        framesVec.push_back(
+            Lore::Rectangle(i * frameW, 0,
+                            frameW, frameH)
+        );
     }
+
+    frameIndex = 0;
+    changeFrame(frameIndex);
 }
 
-void Bomb::changeSpriteFrame(int frameIndex)
+void Bomb::AnimationInfo::setupTimer(float interval,
+                                     int repeatCount,
+                                     const CoreClock::Clock::Callback &tickCallback,
+                                     const CoreClock::Clock::Callback &doneCallback)
 {
-    m_frameIndex = frameIndex;
-    m_pCurrentSprite->setSourceRectangle((*m_pCurrentFrames)[m_frameIndex]);
-}
-
-
-//Timer Callback
-void Bomb::onAnimationTimerTick()
-{
-    auto frameIndex = (++m_frameIndex % m_pCurrentFrames->size());
-    changeSpriteFrame(frameIndex);
-}
-
-void Bomb::onExplodeTimerTick()
-{
-    m_state = State::Dead;
-    m_explodedFinishedCallback();
+    timer.setInterval    (interval);
+    timer.setRepeatCount (repeatCount);
+    timer.setTickCallback(tickCallback);
+    timer.setDoneCallback(doneCallback);
 }

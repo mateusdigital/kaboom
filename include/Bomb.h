@@ -12,6 +12,38 @@ NS_GAMEKABOOM_BEGIN
 
 class Bomb : public Lore::IDrawable, public Lore::IUpdatable
 {
+    // Inner Types //
+private:
+    struct AnimationInfo
+    {
+        std::string name;
+        Lore::Sprite                  sprite;
+        std::vector<Lore::Rectangle>  framesVec;
+        int                           frameIndex;
+        CoreClock::Clock              timer;
+
+        // Animation Management //
+        void start();
+        void stop ();
+
+        // Frame Management //
+        void incrementFrame();
+        void changeFrame(int index);
+
+        // Update / Draw //
+        void update(float dt);
+        void draw  (const Lore::Vector2 &pos);
+
+        // Setup //
+        void setupFrames(const std::string &spriteName,
+                         int framesCount);
+
+        void setupTimer(float interval,
+                        int repeatCount,
+                        const CoreClock::Clock::Callback &tickCallback,
+                        const CoreClock::Clock::Callback &doneCallback);
+    };
+
     // Enums / Constants / Typdefs //
 public:
     enum class State
@@ -64,20 +96,13 @@ public:
     // Private Methods //
 private:
     //Init
-    void initSprites();
-    void initTimers ();
-
-    //Helpers
-    void setupFrames(const Lore::Sprite &sprite,
-                     std::vector<Lore::Rectangle> &framesVec,
-                     int framesCount);
-
-    void changeSpriteFrame(int frameIndex);
+    void initAnimations();
+    void initTimers    ();
 
     //Timer Callbacks
-    void onAnimationTimerTick();
-    void onExplodeTimerTick  ();
-
+    void onAliveAnimationTimerTick    ();
+    void onExplodingAnimationTimerTick();
+    void onExplodingAnimationFinished ();
 
     // iVars //
 private:
@@ -85,25 +110,15 @@ private:
     State m_state;
 
     //Sprite / Animation
-    Lore::Sprite  m_aliveSprite;
-    Lore::Sprite  m_explodedSprite;
-    Lore::Sprite *m_pCurrentSprite;
-
-    std::vector<Lore::Rectangle>  m_aliveFrames;
-    std::vector<Lore::Rectangle>  m_explodedFrames;
-    std::vector<Lore::Rectangle> *m_pCurrentFrames;
-
-    int m_frameIndex;
-    CoreClock::Clock m_animationTimer;
+    AnimationInfo  m_aliveAnimation;
+    AnimationInfo  m_explodingAnimation;
+    AnimationInfo *m_pCurrentAnimation;
 
     //Movement / Bounds
     Lore::Vector2 m_pos;
     Lore::Vector2 m_speed;
     Lore::Vector2 m_initialPosition;
     Lore::Vector2 m_maxBounds;
-
-    //Exploded
-    CoreClock::Clock m_explodeTimer;
 
     //Callback
     ReachTargetCallback     m_reachTargetCallback;
