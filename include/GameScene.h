@@ -7,14 +7,14 @@
 #include "GameKaboom_Utils.h"
 #include "Bomber.h"
 #include "Bomb.h"
-
+#include "Paddle.h"
 
 NS_GAMEKABOOM_BEGIN
 
 class GameScene : public Lore::Scene
 {
     // Enums //
-private:
+public:
     enum class State
     {
         Playing,
@@ -41,6 +41,7 @@ public:
 private:
     //Inits
     void initBomber();
+    void initPaddle();
     void initBombs ();
     void initTexts ();
 
@@ -86,6 +87,7 @@ private:
 private:
     //GameObjects
     Bomber m_bomber;
+    Paddle m_paddle;
     std::vector<std::unique_ptr<Bomb>> m_bombsVec;
 
     //Texts
@@ -99,6 +101,7 @@ private:
     int   m_turnNumber;
     int   m_score;
     State m_state;
+    int   m_bombsCaught;
 };
 
 NS_GAMEKABOOM_END

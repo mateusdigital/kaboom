@@ -4,6 +4,23 @@
 //Usings
 USING_NS_GAMEKABOOM;
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Helper Functions                                                           //
+////////////////////////////////////////////////////////////////////////////////
+std::string _Helper_GetStateName(GameScene::State state)
+{
+    switch(state)
+    {
+        case GameScene::State::Playing  : return "Playing" ;
+        case GameScene::State::Paused   : return "Paused"  ;
+        case GameScene::State::Victory  : return "Victory" ;
+        case GameScene::State::Defeat   : return "Defeat"  ;
+        case GameScene::State::GameOver : return "GameOver";
+    }
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Constants                                                                  //
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,7 +37,11 @@ constexpr float kClockInterval_PauseText = 0.5; //Half a second.
 
 // Positions / Sizes //
 constexpr int kSize_SkyHeight = 150;
-constexpr int kPos_Player     = kSize_SkyHeight;
+constexpr int kPos_Bomber     = kSize_SkyHeight;
+constexpr int kPos_Player     = 400;
+
+//Score
+constexpr int kScoreMutilplier = 50;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,11 +49,13 @@ constexpr int kPos_Player     = kSize_SkyHeight;
 ////////////////////////////////////////////////////////////////////////////////
 void GameScene::load()
 {
-    m_score      = 0;
-    m_turnNumber = 10;
-    m_state      = State::Defeat;
+    m_score       = 0;
+    m_turnNumber  = 10;
+    m_state       = State::Defeat;
+    m_bombsCaught = 0 ;
 
     initBomber();
+    initPaddle();
     initBombs ();
     initTexts ();
 }
@@ -70,6 +93,9 @@ void GameScene::draw()
     for(auto &bomb : m_bombsVec)
         bomb->draw();
 
+    //Paddle
+    m_paddle.draw();
+
     //Texts.
     m_pauseText.draw();
     m_scoreText.draw();
@@ -89,7 +115,7 @@ void GameScene::initBomber()
 
     //Position / Movement
     m_bomber.setInitialPosition(Lore::Vector2(winW / 2, //Center
-                                              kPos_Player));
+                                              kPos_Bomber));
 
     m_bomber.setMovementBounds(Lore::Vector2(   0, 0 /*Y is indifferent */),
                                Lore::Vector2(winW, 0 /*Y is indifferent */));
@@ -100,6 +126,18 @@ void GameScene::initBomber()
 
     auto allBombs = COREGAME_CALLBACK_0(GameScene::onBomberAllBombsDropped, this);
     m_bomber.setOnAllBombsDroppedCallback(allBombs);
+}
+
+void GameScene::initPaddle()
+{
+    auto winW = Lore::WindowManager::instance()->getWindowWidth();
+
+    //Position / Movement
+    m_paddle.setInitialPosition(Lore::Vector2(winW / 2, //Center
+                                              kPos_Player));
+
+    m_paddle.setMovementBounds(Lore::Vector2(   0, 0 /*Y is indifferent */),
+                               Lore::Vector2(winW, 0 /*Y is indifferent */));
 }
 
 void GameScene::initBombs()
@@ -212,12 +250,12 @@ bool GameScene::explodeNextBomb()
 ////////////////////////////////////////////////////////////////////////////////
 void GameScene::updateScoreText()
 {
-
+    m_scoreText.setString("Score: %05d", m_score * kScoreMutilplier);
 }
 
 void GameScene::updateTurnNumberText()
 {
-
+    m_turnText.setString("Level: %02d", m_turnNumber);
 }
 
 
@@ -227,9 +265,7 @@ void GameScene::updateTurnNumberText()
 //Bomber
 void GameScene::onBomberBombDropped(const Lore::Vector2 &pos)
 {
-    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                  "Bomber drop bomb at: %.2f %.2f",
-                  pos.x, pos.y);
+    KABOOM_DLOG("Bomber drop bomb at: %.2f %.2f", pos.x, pos.y);
 
     int index = getFirstAvaiableBombIndex();
     m_bombsVec[index]->setPosition(pos);
@@ -238,33 +274,42 @@ void GameScene::onBomberBombDropped(const Lore::Vector2 &pos)
 
 void GameScene::onBomberAllBombsDropped()
 {
-    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                  "Bomber drop all bomb");
+    KABOOM_DLOG("Bomber drop all bomb");
 }
 
 //Bomb
 void GameScene::onBombExplodeFinished()
 {
-    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                  "Bomb explode finished");
+    KABOOM_DLOG("Bomb explode finished - Player has %d lives",
+                m_paddle.getLives());
 
     if(!explodeNextBomb())
     {
-        COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                     "Changing state to Defeat");
+        //Kill one of player paddles.
+        m_paddle.kill();
 
-        changeState(State::Defeat);
+        if(m_paddle.getLives() != 0)
+        {
+            KABOOM_DLOG("Changing state to Defeat");
+            changeState(State::Defeat);
+        }
+        else
+        {
+            KABOOM_DLOG("Changing state to GameOver");
+            changeState(State::GameOver);
+        }
     }
 }
 
 void GameScene::onBombReachTarget()
 {
-    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                  "Bomb reach target");
+    KABOOM_DLOG("Bomb reach target");
 
+    //Bomber
     m_bomber.stopDropBombs();
     m_bomber.makeWinTurn  ();
 
+    //Bombs
     stopAllBombs   ();
     explodeNextBomb();
 }
@@ -275,15 +320,18 @@ void GameScene::onBombReachTarget()
 ////////////////////////////////////////////////////////////////////////////////
 void GameScene::changeState(State state)
 {
+    KABOOM_DLOG("-- CHANGE STATE -- \nFrom %s\nTo:%s",
+                _Helper_GetStateName(m_state).c_str(),
+                _Helper_GetStateName(state  ).c_str());
     m_state = state;
 }
 
 void GameScene::resetTurn()
 {
-    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                  "Reset turn:\n\t Current Turn: %d", m_turnNumber);
+    KABOOM_DLOG("Reset turn:\n\t Current Turn: %d", m_turnNumber);
 
     //
+    m_bombsCaught = 0;
     resetAllBombs();
     m_bomber.startDropBombs(m_turnNumber);
 }
@@ -291,14 +339,18 @@ void GameScene::resetTurn()
 void GameScene::resetNewTurn()
 {
     using namespace CoreGame;
-    COREGAME_DLOG(Log::Type::Debug1,
-                  "Reset new turn:\n\t %s\n\t %s",
-                  StringUtils::format("Current Turn: %d", m_turnNumber).c_str(),
-                  StringUtils::format("Next Turn: %d", m_turnNumber + 1).c_str()
+    KABOOM_DLOG("Reset new turn:\n\t %s\n\t %s",
+                StringUtils::format("Current Turn: %d", m_turnNumber).c_str(),
+                StringUtils::format("Next Turn: %d", m_turnNumber + 1).c_str()
     );
 
-    //Update the turn number;
     ++m_turnNumber;
+
+    m_bombsCaught = 0;
+    resetAllBombs();
+    m_bomber.startDropBombs(m_turnNumber);
+
+    updateTurnNumberText();
 }
 
 
@@ -311,8 +363,7 @@ void GameScene::updateHelper_Playing(float dt)
     auto inputMgr = Lore::InputManager::instance();
     if(inputMgr->isKeyClick(SDL_SCANCODE_P))
     {
-        COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                     "Changing state to Paused");
+        KABOOM_DLOG("Changing state to Paused");
 
         m_pauseText.setIsVisible(false);
         changeState(GameScene::State::Paused);
@@ -320,13 +371,51 @@ void GameScene::updateHelper_Playing(float dt)
         return;
     }
 
+    //Paddle
+    m_paddle.update(dt);
+
     //Bomber
     m_bomber.update(dt);
 
     //Bombs
     for(auto &bomb : m_bombsVec)
         bomb->update(dt);
-}
+
+    //Check collisions.
+    for(auto &bomb : m_bombsVec)
+    {
+        //We don't care for non alive bombs...
+        if(bomb->getState() != Bomb::State::Alive)
+            continue;
+
+        if(m_paddle.checkCollision(bomb->getHitBox()))
+        {
+            bomb->kill();
+
+            //Update the HouseKeeping vars..
+            ++m_bombsCaught;
+            ++m_score;
+
+            //Log
+            KABOOM_DLOG("Bombs caught count: %d - Total Bombs count %d",
+                        m_bombsCaught, m_bomber.getTurnBombsCount());
+
+            //Update the Score Text
+            updateScoreText();
+
+            //Check if Player won this level.
+            if(m_bombsCaught == m_bomber.getTurnBombsCount())
+            {
+                KABOOM_DLOG("All bombs were caught - Changing to state Victory");
+
+                m_bomber.makeLoseTurn();
+                changeState(State::Victory);
+            }
+
+        }//if(m_paddle.checkCollision...)
+
+    }//for(auto &bomb : m_bombs)
+}//updateHelper_Playing
 
 void GameScene::updateHelper_Paused(float dt)
 {
@@ -334,8 +423,7 @@ void GameScene::updateHelper_Paused(float dt)
     auto inputMgr = Lore::InputManager::instance();
     if(inputMgr->isKeyClick(SDL_SCANCODE_P))
     {
-        COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                      "Changing state to Playing");
+        KABOOM_DLOG("Changing state to Playing");
 
         m_pauseText.setIsVisible(true);
         changeState(GameScene::State::Playing);
@@ -352,14 +440,16 @@ void GameScene::updateHelper_Victory(float dt)
     auto inputMgr = Lore::InputManager::instance();
     if(inputMgr->isKeyClick(SDL_SCANCODE_SPACE))
     {
-        COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                      "Changing state to Playing");
+        KABOOM_DLOG("Changing state to Playing");
 
         resetNewTurn();
         changeState(GameScene::State::Playing);
 
         return;
     }
+
+    //Paddle
+    m_paddle.update(dt);
 }
 
 void GameScene::updateHelper_Defeat(float dt)
@@ -368,8 +458,7 @@ void GameScene::updateHelper_Defeat(float dt)
     auto inputMgr = Lore::InputManager::instance();
     if(inputMgr->isKeyClick(SDL_SCANCODE_SPACE))
     {
-        COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                      "Changing state to Playing");
+        KABOOM_DLOG("Changing state to Playing");
 
         resetTurn();
         changeState(GameScene::State::Playing);
