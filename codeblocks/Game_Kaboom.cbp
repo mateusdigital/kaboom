@@ -43,6 +43,7 @@
 			<Add option="`sdl2-config --libs`" />
 			<Add library="SDL2_image" />
 			<Add library="SDL2_ttf" />
+			<Add library="SDL2_mixer" />
 		</Linker>
 		<Unit filename="../../include/AssetsManager.h" />
 		<Unit filename="../../include/Color.h" />
@@ -106,10 +107,12 @@
 		<Unit filename="../include/GameKaboom_Utils.h" />
 		<Unit filename="../include/GameScene.h" />
 		<Unit filename="../include/MenuScene.h" />
+		<Unit filename="../include/Paddle.h" />
 		<Unit filename="../src/Bomb.cpp" />
 		<Unit filename="../src/Bomber.cpp" />
 		<Unit filename="../src/GameScene.cpp" />
 		<Unit filename="../src/MenuScene.cpp" />
+		<Unit filename="../src/Paddle.cpp" />
 		<Unit filename="../src/main.cpp" />
 		<Extensions>
 			<code_completion />
