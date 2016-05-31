@@ -70,7 +70,7 @@ void Bomber::update(float dt)
         deciceNextDropSpot();
     }
 
-    //Not at drop stop - Move towards it
+    //Not at drop stop - Move towards it.
     else
     {
         m_sprite.move(m_speed * dt);
@@ -229,13 +229,12 @@ void Bomber::dropBomb()
     //Dropped all bombs?
     if(m_bombsRemaining == 0)
     {
-        COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                      "All bombs has been dropped");
+        KABOOM_DLOG("All bombs has been dropped");
 
         m_isDroppingBombs = false;
         m_allBombsDroppedCallback();
 
-        changeSpriteFrame(kFrameIndex_Sad);
+        changeSpriteFrame(kFrameIndex_Happy);
         return;
     }
 
@@ -243,12 +242,12 @@ void Bomber::dropBomb()
     --m_bombsRemaining;
     ++m_bombsDropped;
 
-
+    //Adjust the bomb to be placed where the bomber is.
     auto bombPosition = m_sprite.getPosition();
     bombPosition.x += kBombOffsetX;
     bombPosition.y += kBombOffsetY;
     m_bombDroppedCallback(bombPosition);
 
-    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
-                 "Bomb dropped");
+    KABOOM_DLOG("Bomb dropped - Dropped %d - Remaining %d",
+                m_bombsDropped, m_bombsRemaining);
 }
