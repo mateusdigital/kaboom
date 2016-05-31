@@ -22,6 +22,7 @@ constexpr int   kRepeatCount_Exploding = 5;
 Bomb::Bomb() :
     //HouseKeeping
     m_state(Bomb::State::Dead),
+    m_hitBox(Lore::Rectangle::Empty()),
     //Sprite / Animation
     //m_aliveAnimation     - Initialized in InitAnimations
     //m_explodingAnimation - Initialized in InitAnimations
@@ -109,6 +110,12 @@ void Bomb::stopDropping()
     m_speed = Lore::Vector2::Zero();
 }
 
+void Bomb::kill()
+{
+    KABOOM_DLOG("Killing bomb.");
+
+    m_state = Bomb::State::Dead;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Setters                                                                    //
@@ -116,6 +123,7 @@ void Bomb::stopDropping()
 void Bomb::setPosition(const Lore::Vector2 &pos)
 {
     m_pos = pos;
+    m_hitBox.setLocation(m_pos);
 }
 
 void Bomb::setMovementBounds(const Lore::Vector2 &bounds)
@@ -143,6 +151,11 @@ const Lore::Vector2& Bomb::getPosition() const
     return m_pos;
 }
 
+const Lore::Rectangle& Bomb::getHitBox() const
+{
+    return m_hitBox;
+}
+
 Bomb::State Bomb::getState() const
 {
     return m_state;
@@ -166,6 +179,9 @@ void Bomb::initAnimations()
 
     //Set the pointers.
     m_pCurrentAnimation = &m_aliveAnimation;
+
+    //Set the hit box.
+    m_hitBox.setSize(m_pCurrentAnimation->framesVec[0].getSize());
 }
 
 void Bomb::initTimers()

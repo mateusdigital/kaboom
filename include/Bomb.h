@@ -77,6 +77,7 @@ public:
     void startDropping(int turnNumber);
     void stopDropping ();
 
+    void kill();
 
     // Setters //
 public:
@@ -90,6 +91,8 @@ public:
     // Getters //
 public:
     const Lore::Vector2& getPosition() const;
+    const Lore::Rectangle& getHitBox() const;
+
     State getState() const;
 
 
@@ -108,6 +111,7 @@ private:
 private:
     //HouseKeeping
     State m_state;
+    Lore::Rectangle m_hitBox;
 
     //Sprite / Animation
     AnimationInfo  m_aliveAnimation;
