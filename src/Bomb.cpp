@@ -11,9 +11,9 @@ USING_NS_GAMEKABOOM;
 constexpr int kSpriteFramesCount_Alive    = 4;
 constexpr int kSpriteFramesCount_Exploded = 3;
 
-constexpr float kTimerSpriteFrameChange_Alive     = 0.14f;
+constexpr float kTimerSpriteFrameChange_Alive     = 0.10f;
 constexpr float kTimerSpriteFrameChange_Exploding = 0.07f;
-constexpr int   kRepeatCount_Exploding = 5;
+constexpr int   kRepeatCount_Exploding = 3;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@ constexpr int   kRepeatCount_Exploding = 5;
 ////////////////////////////////////////////////////////////////////////////////
 Bomb::Bomb() :
     //HouseKeeping
+    //m_turnInfo - Set in reset.
     m_state(Bomb::State::Dead),
     m_hitBox(Lore::Rectangle::Empty()),
     //Sprite / Animation
@@ -30,7 +31,7 @@ Bomb::Bomb() :
     //Movement / Bounds
     m_pos            (Lore::Vector2::Zero()),
     m_speed          (Lore::Vector2::Zero()),
-    m_initialPosition(Lore::Vector2::Zero())
+    m_maxY           (0)
     //Callback
     //m_reachTargetCallback      - Default initialized
     //m_explodingFinishedCallback - Default initialized
@@ -62,7 +63,7 @@ void Bomb::update(float dt)
     {
         setPosition(getPosition() + (m_speed * dt));
 
-        if(getPosition().y >= m_maxBounds.y)
+        if(getPosition().y >= m_maxY)
             m_reachTargetCallback();
     }
 }
@@ -79,9 +80,12 @@ void Bomb::draw()
 ////////////////////////////////////////////////////////////////////////////////
 // Actions                                                                    //
 ////////////////////////////////////////////////////////////////////////////////
-void Bomb::reset()
+void Bomb::reset(const TurnInfo &turnInfo)
 {
-    m_state = Bomb::State::Dead;
+    m_turnInfo = turnInfo;
+
+    m_state   = Bomb::State::Dead;
+    m_speed.y = m_turnInfo.bombSpeed;
 }
 
 void Bomb::explode()
@@ -93,7 +97,7 @@ void Bomb::explode()
     m_pCurrentAnimation->start();
 }
 
-void Bomb::startDropping(int turnNumber)
+void Bomb::startDropping()
 {
     m_state = Bomb::State::Alive;
 
@@ -101,8 +105,8 @@ void Bomb::startDropping(int turnNumber)
     m_pCurrentAnimation = &m_aliveAnimation;
     m_pCurrentAnimation->start();
 
-    //COWTODO: Decide the speed;
-    m_speed = Lore::Vector2(0, 200);
+    auto flipped = Lore::GameManager::instance()->getRandomBool();
+    m_pCurrentAnimation->sprite.setFlipX(flipped);
 }
 
 void Bomb::stopDropping()
@@ -113,9 +117,9 @@ void Bomb::stopDropping()
 void Bomb::kill()
 {
     KABOOM_DLOG("Killing bomb.");
-
     m_state = Bomb::State::Dead;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Setters                                                                    //
@@ -126,9 +130,9 @@ void Bomb::setPosition(const Lore::Vector2 &pos)
     m_hitBox.setLocation(m_pos);
 }
 
-void Bomb::setMovementBounds(const Lore::Vector2 &bounds)
+void Bomb::setMovementBounds(int maxY)
 {
-    m_maxBounds = bounds;
+    m_maxY = maxY;
 }
 
 void Bomb::setOnReachTargetCallback(const ReachTargetCallback &callback)
@@ -170,12 +174,13 @@ Bomb::State Bomb::getState() const
 void Bomb::initAnimations()
 {
     //Setup the Frames.
+    m_aliveAnimation.name = "Alive";
     m_aliveAnimation.setupFrames("Bomb_Alive.png",
                                   kSpriteFramesCount_Alive);
-    m_aliveAnimation.name = "Alive";
+
+    m_explodingAnimation.name = "Exploding";
     m_explodingAnimation.setupFrames("Bomb_Exploded.png",
                                      kSpriteFramesCount_Exploded);
-    m_explodingAnimation.name = "Exploding";
 
     //Set the pointers.
     m_pCurrentAnimation = &m_aliveAnimation;
@@ -199,7 +204,7 @@ void Bomb::initTimers()
             kTimerSpriteFrameChange_Exploding,
             kRepeatCount_Exploding,
             COREGAME_CALLBACK_0(Bomb::onExplodingAnimationTimerTick, this),
-            COREGAME_CALLBACK_0(Bomb::onExplodingAnimationFinished, this)
+            COREGAME_CALLBACK_0(Bomb::onExplodingAnimationFinished,  this)
     );
 }
 
@@ -242,7 +247,7 @@ void Bomb::onExplodingAnimationFinished()
 void Bomb::AnimationInfo::start()
 {
     timer.start();
-    frameIndex = 0;
+    frameIndex = Lore::GameManager::instance()->getRandomNumber(0, framesVec.size());
     changeFrame(frameIndex);
 }
 

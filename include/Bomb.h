@@ -3,10 +3,10 @@
 
 //std
 #include <functional>
-//Lore
-#include "Lore.h"
 //Game_Kaboom
 #include "GameKaboom_Utils.h"
+#include "TurnInfo.h"
+
 
 NS_GAMEKABOOM_BEGIN
 
@@ -44,6 +44,7 @@ private:
                         const CoreClock::Clock::Callback &doneCallback);
     };
 
+
     // Enums / Constants / Typdefs //
 public:
     enum class State
@@ -71,18 +72,19 @@ public:
 
     // Actions //
 public:
-    void reset  ();
+    void reset(const TurnInfo &turnInfo);
     void explode();
 
-    void startDropping(int turnNumber);
+    void startDropping();
     void stopDropping ();
 
     void kill();
 
+
     // Setters //
 public:
     void setPosition(const Lore::Vector2 &pos);
-    void setMovementBounds(const Lore::Vector2 &bounds);
+    void setMovementBounds(int maxY);
 
     void setOnReachTargetCallback    (const ReachTargetCallback     &callback);
     void setOnExplodeFinishedCallback(const ExplodeFinishedCallback &callback);
@@ -107,10 +109,12 @@ private:
     void onExplodingAnimationTimerTick();
     void onExplodingAnimationFinished ();
 
+
     // iVars //
 private:
     //HouseKeeping
-    State m_state;
+    TurnInfo        m_turnInfo;
+    State           m_state;
     Lore::Rectangle m_hitBox;
 
     //Sprite / Animation
@@ -121,10 +125,9 @@ private:
     //Movement / Bounds
     Lore::Vector2 m_pos;
     Lore::Vector2 m_speed;
-    Lore::Vector2 m_initialPosition;
-    Lore::Vector2 m_maxBounds;
+    int           m_maxY;
 
-    //Callback
+    //Callbacks
     ReachTargetCallback     m_reachTargetCallback;
     ExplodeFinishedCallback m_explodedFinishedCallback;
 };
