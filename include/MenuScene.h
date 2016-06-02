@@ -1,8 +1,6 @@
 #ifndef __Game_Kaboom_include_MenuScene_h__
 #define __Game_Kaboom_include_MenuScene_h__
 
-//Lore
-#include "Lore.h"
 //Game_Kaboom
 #include "GameKaboom_Utils.h"
 
