@@ -1,13 +1,13 @@
 #ifndef __Game_Kaboom_include_GameScene_h__
 #define __Game_Kaboom_include_GameScene_h__
 
-//Lore
-#include "Lore.h"
 //Game_Kaboom
 #include "GameKaboom_Utils.h"
 #include "Bomber.h"
-#include "Bomb.h"
+#include "BombManager.h"
+#include "GameBackground.h"
 #include "Paddle.h"
+
 
 NS_GAMEKABOOM_BEGIN
 
@@ -25,6 +25,11 @@ public:
     };
 
 
+    // CTOR / DTOR //
+public:
+    virtual ~GameScene();
+
+
     // Load / Unload //
 public:
     virtual void load  () override;
@@ -37,42 +42,46 @@ public:
     virtual void draw()           override;
 
 
-    // Private Methods //
+    // Inits //
 private:
-    //Inits
     void initBomber();
     void initPaddle();
     void initBombs ();
     void initTexts ();
-
-    //Bomb Helpers
-    void resetAllBombs();
-    void stopAllBombs ();
-
-    int  getFirstAvaiableBombIndex();
-    void createBombHelper();
-
-    bool explodeNextBomb();
+    void initSounds();
 
 
-    //Texts Helpers
+    // Texts Helpers //
+private:
     void updateScoreText     ();
     void updateTurnNumberText();
 
-    //Bomber / Bomb Callbacks
-    void onBomberBombDropped(const Lore::Vector2 &pos);
-    void onBomberAllBombsDropped();
 
-    void onBombExplodeFinished();
+    // Bomber / Bomb Manager Callbacks //
+private:
+    //Bomber
+    void onBomberBombDropped(const Lore::Vector2 &pos);
+
+    //Bombs
+    void onBombCaught    ();
+    void onAllBombsCaught();
+
     void onBombReachTarget();
 
-    //Others
-    void changeState(State state);
+    void onBombExplode     ();
+    void onAllBombsExploded();
+
+
+    // Others //
+private:
     void resetTurn   ();
     void resetNewTurn();
 
+    void checkCollisions();
 
-    // GameStates Update Helpeers //
+
+    // Update Helpers //
+private:
     void updateHelper_Playing (float dt);
     void updateHelper_Paused  (float dt);
     void updateHelper_Victory (float dt);
@@ -80,15 +89,49 @@ private:
     void updateHelper_GameOver(float dt);
 
 
-    // Draw Helpers //
-    void drawBackgroundHelper();
+    // Init Helpers //
+private:
+    void initHelper_Text(Lore::Text &text,
+                         const std::string   &fontName, int fontSize,
+                         const std::string   &str,
+                         const Lore::Vector2 &origin,
+                         const Lore::Vector2 &position);
+
+
+    // Sound Helpers //
+private:
+    void soundHelper_Play(const std::string &name);
+    void soundHelper_Stop(const std::string &name);
+    void soundHelper_Unmute();
+    void soundHelper_Mute  ();
+
+
+    // Game State Helpers //
+private:
+    //Playing / Paused
+    void gameStateHelper_PlayingToPaused();
+    void gameStateHelper_PausedToPlaying();
+
+    //Playing / Defeat
+    void gameStateHelper_PlayingToDefeat();
+    void gameStateHelper_DefeatToPlaying();
+
+    //Playing / Victory
+    void gameStateHelper_PlayingToVictory();
+    void gameStateHelper_VictoryToPlaying();
+
+    //Playing / GameOver
+    void gameStateHelper_PlayingToGameOver();
+    void gameStateHelper_GameOverToPlaying();
+
 
     // iVars //
 private:
     //GameObjects
-    Bomber m_bomber;
-    Paddle m_paddle;
-    std::vector<std::unique_ptr<Bomb>> m_bombsVec;
+    GameBackground m_background;
+    Bomber         m_bomber;
+    Paddle         m_paddle;
+    BombManager    m_bombManager;
 
     //Texts
     Lore::Text       m_pauseText;
@@ -101,7 +144,6 @@ private:
     int   m_turnNumber;
     int   m_score;
     State m_state;
-    int   m_bombsCaught;
 };
 
 NS_GAMEKABOOM_END
