@@ -8,6 +8,8 @@ USING_NS_GAMEKABOOM;
 ////////////////////////////////////////////////////////////////////////////////
 // Constants                                                                  //
 ////////////////////////////////////////////////////////////////////////////////
+constexpr int kSpriteFrames = 3;
+
 constexpr int kFrameIndex_Happy    = 1;
 constexpr int kFrameIndex_Sad      = 0;
 constexpr int kFrameIndex_BigMouth = 2;
@@ -15,6 +17,8 @@ constexpr int kFrameIndex_BigMouth = 2;
 constexpr int kBodyOffsetY =  10;
 constexpr int kBombOffsetX =   5;
 constexpr int kBombOffsetY = -45;
+
+constexpr int kMoveMinDisplacement = 50;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,19 +32,17 @@ Bomber::Bomber() :
     //Movement / Bounds
     m_speed          (Lore::Vector2::Zero()),
     m_initialPosition(Lore::Vector2::Zero()),
-    m_minBounds      (Lore::Vector2::Zero()),
-    m_maxBounds      (Lore::Vector2::Zero()),
+    m_minBounds      (0),
+    m_maxBounds      (0),
     //Turn / Bombs
-    m_turnNumber     (0),
-    m_turnBombs      (0),
+    //m_turnInfo - Initialized in reset.
     m_bombsDropped   (0),
     m_bombsRemaining (0),
     m_isDroppingBombs(0),
     //Callbacks
-    // m_bombDroppedCallback     - Default initialized.
-    // m_allBombsDroppedCallback - Default initialized.
+    // m_bombDroppedCallback - Default initialized.
     //Other
-    m_random(0)
+    m_random(CoreRandom::Random::kRandomSeed)
 {
     initSprites();
 }
@@ -63,8 +65,8 @@ void Bomber::update(float dt)
     auto x = m_sprite.getPosition().x;
 
     //Reach the drop spot - Drop a bomb.
-    if(x <= m_dropSpot && m_speed.x < 0 ||
-       x >= m_dropSpot && m_speed.x > 0)
+    if((x <= m_dropSpot && m_speed.x < 0) ||
+       (x >= m_dropSpot && m_speed.x > 0))
     {
         dropBomb();
         deciceNextDropSpot();
@@ -86,14 +88,17 @@ void Bomber::draw()
 ////////////////////////////////////////////////////////////////////////////////
 // Actions                                                                    //
 ////////////////////////////////////////////////////////////////////////////////
-void Bomber::startDropBombs(int turnNumber)
+void Bomber::reset(const TurnInfo &turnInfo)
+{
+    m_isDroppingBombs = false;
+    m_turnInfo        = turnInfo;
+    m_bombsRemaining  = m_turnInfo.bombsCount;
+    m_bombsDropped    = 0;
+}
+
+void Bomber::startDropBombs()
 {
     m_isDroppingBombs = true;
-
-    m_turnNumber      = turnNumber;
-    m_turnBombs       = m_turnNumber;
-    m_bombsRemaining  = m_turnBombs;
-    m_bombsDropped    = 0;
 
     changeSpriteFrame(kFrameIndex_BigMouth);
     deciceNextDropSpot();
@@ -120,22 +125,19 @@ void Bomber::makeLoseTurn()
 // Setters                                                                    //
 ////////////////////////////////////////////////////////////////////////////////
 //Position / Movement
-void Bomber::setInitialPosition(const Lore::Vector2 &pos)
+void Bomber::setInitialPosition(int x, int y)
 {
-    m_initialPosition = pos;
-    m_initialPosition.y += kBodyOffsetY;
+    m_initialPosition.x = x - m_sprite.getBounds().getWidth() / 2;
+    m_initialPosition.y = y + kBodyOffsetY;
 
     m_sprite.setOrigin(Lore::ITransformable::OriginHelpers::BottomLeft());
     m_sprite.setPosition(m_initialPosition);
 }
 
-void Bomber::setMovementBounds(const Lore::Vector2 &min,
-                               const Lore::Vector2 &max)
+void Bomber::setMovementBounds(int min, int max)
 {
     m_minBounds = min;
-    m_maxBounds = max;
-
-    m_maxBounds.x -= m_sprite.getBounds().getWidth();
+    m_maxBounds = max - m_sprite.getBounds().getWidth();
 }
 
 
@@ -145,26 +147,10 @@ void Bomber::setOnBombDroppedCallback(const BombDroppedCallback &callback)
     m_bombDroppedCallback = callback;
 }
 
-void Bomber::setOnAllBombsDroppedCallback(const AllBombsDroppedCallback &callback)
-{
-    m_allBombsDroppedCallback = callback;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Getters                                                                    //
 ////////////////////////////////////////////////////////////////////////////////
-int Bomber::getTurnNumber() const
-{
-    return m_turnNumber;
-}
-
-
-int Bomber::getTurnBombsCount() const
-{
-    return m_turnBombs;
-}
-
 int Bomber::getTurnBombsDroppedCount() const
 {
     return m_bombsDropped;
@@ -187,12 +173,7 @@ bool Bomber::isDroppingBombs() const
 ////////////////////////////////////////////////////////////////////////////////
 void Bomber::initSprites()
 {
-    //COWTODO: Clean up.
-    constexpr int kSpriteFrames = 3;
-
-    //
     m_sprite.loadTexture("Bomber.png");
-    m_frameIndex = 0;
 
     //Get the Frame Properties.
     auto rect   = m_sprite.getSourceRectangle();
@@ -204,8 +185,9 @@ void Bomber::initSprites()
 
     for(int i = 0; i < kSpriteFrames; ++i)
     {
-        Lore::Rectangle frameRect(i * frameW, 0, frameW, frameH);
-        m_spriteFrames.push_back(frameRect);
+        m_spriteFrames.push_back(
+            Lore::Rectangle(i * frameW, 0, frameW, frameH)
+        );
     }
 
     //Set the initial frame.
@@ -220,8 +202,22 @@ void Bomber::changeSpriteFrame(int frameIndex)
 
 void Bomber::deciceNextDropSpot()
 {
-    m_dropSpot = m_random.next(m_minBounds.x, m_maxBounds.x);
-    m_speed.x  = (m_dropSpot < m_sprite.getPosition().x) ? -200 : +200;
+    m_dropSpot = m_random.next(m_minBounds, m_maxBounds);
+
+    if(m_dropSpot < m_sprite.getPosition().x)
+    {
+        m_dropSpot -= kMoveMinDisplacement;
+        m_speed.x = -m_turnInfo.bomberSpeed;
+    }
+    else
+    {
+        m_dropSpot += kMoveMinDisplacement;
+        m_speed.x = +m_turnInfo.bomberSpeed;
+    }
+
+    m_dropSpot = static_cast<int>(Lore::MathHelper::clamp(m_dropSpot,
+                                                          m_minBounds,
+                                                          m_maxBounds));
 }
 
 void Bomber::dropBomb()
@@ -229,12 +225,11 @@ void Bomber::dropBomb()
     //Dropped all bombs?
     if(m_bombsRemaining == 0)
     {
-        KABOOM_DLOG("All bombs has been dropped");
+        KABOOM_DLOG("Bomber::dropBomb - All bombs has been dropped");
 
         m_isDroppingBombs = false;
-        m_allBombsDroppedCallback();
-
         changeSpriteFrame(kFrameIndex_Happy);
+
         return;
     }
 
@@ -249,5 +244,6 @@ void Bomber::dropBomb()
     m_bombDroppedCallback(bombPosition);
 
     KABOOM_DLOG("Bomb dropped - Dropped %d - Remaining %d",
-                m_bombsDropped, m_bombsRemaining);
+                m_bombsDropped,
+                m_bombsRemaining);
 }

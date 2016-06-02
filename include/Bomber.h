@@ -3,10 +3,10 @@
 
 //std
 #include <functional>
-//Lore
-#include "Lore.h"
 //Game_Kaboom
 #include "GameKaboom_Utils.h"
+#include "TurnInfo.h"
+
 
 NS_GAMEKABOOM_BEGIN
 
@@ -15,7 +15,6 @@ class Bomber : public Lore::IDrawable, public Lore::IUpdatable
     // Enums / Constants / Typdefs //
 public:
     typedef std::function<void (const Lore::Vector2 &bombPos)> BombDroppedCallback;
-    typedef std::function<void ()> AllBombsDroppedCallback;
 
 private:
     enum class MoveState { MovingToTarget, DroppingBomb };
@@ -35,7 +34,9 @@ public:
 
     // Actions //
 public:
-    void startDropBombs(int turnNumber);
+    void reset(const TurnInfo &turnInfo);
+
+    void startDropBombs();
     void stopDropBombs ();
 
     void makeWinTurn ();
@@ -45,21 +46,15 @@ public:
     // Setters //
 public:
     //Position / Movement
-    void setInitialPosition(const Lore::Vector2 &pos);
-
-    void setMovementBounds(const Lore::Vector2 &min,
-                           const Lore::Vector2 &max);
+    void setInitialPosition(int x, int y);
+    void setMovementBounds(int min, int max);
 
     //Callbacks
     void setOnBombDroppedCallback(const BombDroppedCallback &callback);
-    void setOnAllBombsDroppedCallback(const AllBombsDroppedCallback &callback);
 
 
     // Getters //
 public:
-    int getTurnNumber() const;
-
-    int getTurnBombsCount         () const;
     int getTurnBombsDroppedCount  () const;
     int getTurnBombsRemainingCount() const;
 
@@ -85,21 +80,18 @@ private:
     //Movement / Bounds
     Lore::Vector2 m_speed;
     Lore::Vector2 m_initialPosition;
-    Lore::Vector2 m_minBounds;
-    Lore::Vector2 m_maxBounds;
+    int           m_minBounds;
+    int           m_maxBounds;
 
     //Turn / Bombs
-    int m_turnNumber;
-
-    int m_turnBombs;
-    int m_bombsDropped;
-    int m_bombsRemaining;
+    TurnInfo m_turnInfo;
+    int      m_bombsDropped;
+    int      m_bombsRemaining;
 
     bool m_isDroppingBombs;
 
     //Callbacks
-    BombDroppedCallback     m_bombDroppedCallback;
-    AllBombsDroppedCallback m_allBombsDroppedCallback;
+    BombDroppedCallback m_bombDroppedCallback;
 
     //Other
     CoreRandom::Random m_random;
