@@ -1,10 +1,6 @@
 #ifndef __Game_Kaboom_include_Paddle_h__
 #define __Game_Kaboom_include_Paddle_h__
 
-//std
-#include <functional>
-//Lore
-#include "Lore.h"
 //Game_Kaboom
 #include "GameKaboom_Utils.h"
 
@@ -48,10 +44,8 @@ public:
 
     // Setters //
 public:
-    void setInitialPosition(const Lore::Vector2 &pos);
-
-    void setMovementBounds(const Lore::Vector2 &min,
-                           const Lore::Vector2 &max);
+    void setInitialPosition(int x, int y);
+    void setMovementBounds (int min, int max);
 
 
     // Getters //
@@ -85,8 +79,8 @@ private:
     int m_lives;
 
     //Movement
-    Lore::Vector2 m_maxBounds;
-    Lore::Vector2 m_minBounds;
+    int m_maxX;
+    int m_minX;
 
     //Sprite
     std::vector<AnimationInfo> m_spritesInfoVec;

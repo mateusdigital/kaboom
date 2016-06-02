@@ -24,15 +24,11 @@ Paddle::Paddle() :
     m_hitBox      (Lore::Rectangle::Empty()),
     m_lives       (kInitialLivesCount),
     //Movement
-    m_maxBounds(Lore::Vector2::Zero()),
-    m_minBounds(Lore::Vector2::Zero())
+    m_maxX(0),
+    m_minX(0)
     //m_spritesInfoVec - Initialized in initSprites
 {
     initSprites();
-
-    //COWTODO: Clean up...
-    auto soundMgr = Lore::SoundManager::instance();
-    soundMgr->loadEffect("./assets/bomb_caught.wav");
 }
 
 Paddle::~Paddle()
@@ -47,7 +43,11 @@ Paddle::~Paddle()
 void Paddle::update(float dt)
 {
     handleInput();
-    m_basePosition = m_basePosition + (m_speed *dt);
+    m_basePosition = m_basePosition + (m_speed * dt);
+
+    //Calculate the bounds.
+         if(m_basePosition.x < m_minX) m_basePosition.x = m_minX;
+    else if(m_basePosition.x > m_maxX) m_basePosition.x = m_maxX;
 
     for(int i = 0; i < m_lives; ++i)
         m_spritesInfoVec[i].update(dt);
@@ -63,16 +63,16 @@ void Paddle::draw()
 ////////////////////////////////////////////////////////////////////////////////
 // Setters                                                                    //
 ////////////////////////////////////////////////////////////////////////////////
-void Paddle::setInitialPosition(const Lore::Vector2 &pos)
+void Paddle::setInitialPosition(int x, int y)
 {
-    m_basePosition = pos;
+    m_basePosition.x = x - m_spritesInfoVec[0].frames[0].getWidth() / 2;
+    m_basePosition.y = y;
 }
 
-void Paddle::setMovementBounds(const Lore::Vector2 &min,
-                               const Lore::Vector2 &max)
+void Paddle::setMovementBounds(int min, int max)
 {
-    m_minBounds = min;
-    m_maxBounds = max;
+    m_minX = min;
+    m_maxX = max - m_spritesInfoVec[0].frames[0].getWidth();
 }
 
 
@@ -106,9 +106,6 @@ bool Paddle::checkCollision(const Lore::Rectangle &rect)
         if(paddleRect.intersects(rect))
         {
             m_spritesInfoVec[i].start();
-
-            //COWTODO: Clean up...
-            Lore::SoundManager::instance()->playEffect("./assets/bomb_caught.wav", 0);
             return true;
         }
     }
@@ -124,17 +121,6 @@ bool Paddle::checkCollision(const Lore::Rectangle &rect)
 void Paddle::initSprites()
 {
     m_basePosition = Lore::Vector2(100, 200);
-    struct AnimationInfo
-    {
-        Lore::Sprite                 sprite;
-        std::vector<Lore::Rectangle> frames;
-        int                          frameIndex;
-        CoreClock::Clock             timer;
-
-        void start();
-        void draw(const Lore::Vector2 &pos, int yOffset);
-
-    };
 
     //Init the sprite and frames.
     Lore::Sprite sprite("Paddle.png");
