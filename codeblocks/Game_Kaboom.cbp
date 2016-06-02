@@ -47,6 +47,7 @@
 		</Linker>
 		<Unit filename="../../include/AssetsManager.h" />
 		<Unit filename="../../include/Color.h" />
+		<Unit filename="../../include/ErrorControl.h" />
 		<Unit filename="../../include/Font.h" />
 		<Unit filename="../../include/GameManager.h" />
 		<Unit filename="../../include/GameObject.h" />
@@ -55,6 +56,7 @@
 		<Unit filename="../../include/IUpdatable.h" />
 		<Unit filename="../../include/InputManager.h" />
 		<Unit filename="../../include/Lore_Utils.h" />
+		<Unit filename="../../include/MathHelper.h" />
 		<Unit filename="../../include/Rectangle.h" />
 		<Unit filename="../../include/SDLHelpers.h" />
 		<Unit filename="../../include/Scene.h" />
@@ -88,12 +90,14 @@
 		<Unit filename="../../lib/CoreRandom/src/Random.cpp" />
 		<Unit filename="../../src/AssetsManager.cpp" />
 		<Unit filename="../../src/Color.cpp" />
+		<Unit filename="../../src/ErrorControl.cpp" />
 		<Unit filename="../../src/Font.cpp" />
 		<Unit filename="../../src/GameManager.cpp" />
 		<Unit filename="../../src/GameObject.cpp" />
 		<Unit filename="../../src/IDrawable.cpp" />
 		<Unit filename="../../src/ITransformable.cpp" />
 		<Unit filename="../../src/InputManager.cpp" />
+		<Unit filename="../../src/MathHelper.cpp" />
 		<Unit filename="../../src/Rectangle.cpp" />
 		<Unit filename="../../src/SDLHelpers.cpp" />
 		<Unit filename="../../src/SoundManager.cpp" />
@@ -102,14 +106,23 @@
 		<Unit filename="../../src/Texture.cpp" />
 		<Unit filename="../../src/Vector2.cpp" />
 		<Unit filename="../../src/WindowManager.cpp" />
+		<Unit filename="../../src/private/include/Log.h" />
+		<Unit filename="../../src/private/include/Lore_Private_Utils.h" />
+		<Unit filename="../../src/private/src/Log.cpp" />
 		<Unit filename="../include/Bomb.h" />
+		<Unit filename="../include/BombManager.h" />
 		<Unit filename="../include/Bomber.h" />
+		<Unit filename="../include/GameBackground.h" />
 		<Unit filename="../include/GameKaboom_Utils.h" />
 		<Unit filename="../include/GameScene.h" />
+		<Unit filename="../include/GameScene_Constants.h" />
 		<Unit filename="../include/MenuScene.h" />
 		<Unit filename="../include/Paddle.h" />
+		<Unit filename="../include/TurnInfo.h" />
 		<Unit filename="../src/Bomb.cpp" />
+		<Unit filename="../src/BombManager.cpp" />
 		<Unit filename="../src/Bomber.cpp" />
+		<Unit filename="../src/GameBackground.cpp" />
 		<Unit filename="../src/GameScene.cpp" />
 		<Unit filename="../src/MenuScene.cpp" />
 		<Unit filename="../src/Paddle.cpp" />
