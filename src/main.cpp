@@ -3,6 +3,7 @@
 #include "Lore.h"
 //Game_Kaboom
 #include "GameKaboom_Utils.h"
+#include "SplashScene.h"
 #include "MenuScene.h"
 #include "GameScene.h"
 
@@ -35,7 +36,7 @@ int main()
 
     gameMgr->initialize(0, 60);
 
-    gameMgr->run(std::unique_ptr<Lore::Scene>(new GameScene()));
+    gameMgr->run(std::unique_ptr<Lore::Scene>(new SplashScene()));
 
     winMgr->shutdown();
     gameMgr->shutdown();
