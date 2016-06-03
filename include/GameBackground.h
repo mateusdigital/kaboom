@@ -9,9 +9,21 @@ NS_GAMEKABOOM_BEGIN
 
 class GameBackground
 {
+    // CTOR / DTOR //
+public:
+    GameBackground();
+
+    // Public Methods //
 public:
      void draw();
 
+     void explode();
+     void setNormalColor();
+
+     // iVars //
+private:
+    Lore::Color m_skyColor;
+    Lore::Color m_groundColor;
 };
 
 NS_GAMEKABOOM_END
