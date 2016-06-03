@@ -13,7 +13,7 @@ constexpr int kSpriteFramesCount_Exploded = 3;
 
 constexpr float kTimerSpriteFrameChange_Alive     = 0.10f;
 constexpr float kTimerSpriteFrameChange_Exploding = 0.07f;
-constexpr int   kRepeatCount_Exploding = 3;
+constexpr int   kRepeatCount_Exploding = 5;
 
 
 ////////////////////////////////////////////////////////////////////////////////
