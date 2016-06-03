@@ -232,6 +232,7 @@ void GameScene::onAllBombsCaught()
 {
     KABOOM_DLOG("GameScene::onAllBombsCaught");
 
+    m_bomber.makeLoseTurn();
     gameStateHelper_PlayingToVictory();
 }
 
@@ -239,17 +240,25 @@ void GameScene::onAllBombsCaught()
 void GameScene::onBombReachTarget()
 {
     KABOOM_DLOG("GameScene::onBombReachTarget");
+
+    m_bomber.makeWinTurn  ();
+    m_bomber.stopDropBombs();
 }
 
 
 void GameScene::onBombExplode()
 {
     KABOOM_DLOG("GameScene::onBombExplode");
+    m_background.explode();
 }
 
 void GameScene::onAllBombsExploded()
 {
     KABOOM_DLOG("GameScene::onAllBombsExploded");
+    m_background.setNormalColor();
+
+    m_paddle.kill();
+    gameStateHelper_PlayingToDefeat();
 }
 
 
@@ -264,10 +273,10 @@ void GameScene::resetTurn()
 
     //COWTODO: Create this correctly.
     TurnInfo turnInfo {
-        .turnNumber = m_turnNumber,
-        .bombsCount = 1,
-        .bombSpeed = 200,
-        .bomberSpeed = 200,
+        .turnNumber  = m_turnNumber,
+        .bombsCount  =   5 + (m_turnNumber *  5),
+        .bombSpeed   = 200 + (m_turnNumber * 10),
+        .bomberSpeed = 200 + (m_turnNumber * 20),
     };
 
     //Reset the game objects for this level.
@@ -303,8 +312,8 @@ void GameScene::updateHelper_Playing(float dt)
     }
 
     //Update the Game Objects.
-    m_paddle.update       (dt);
-    m_bomber.update       (dt);
+    m_paddle.update     (dt);
+    m_bomber.update     (dt);
     m_bombManager.update(dt);
 
     //Collisions.
@@ -392,12 +401,12 @@ void GameScene::soundHelper_Stop(const std::string &name)
 
 void GameScene::soundHelper_Unmute()
 {
-    Lore::SoundManager::instance()->setVolume(0);
+    Lore::SoundManager::instance()->setEffectsVolume(0);
 }
 
 void GameScene::soundHelper_Mute()
 {
-    Lore::SoundManager::instance()->setVolume(1);
+    Lore::SoundManager::instance()->setEffectsVolume(1);
 }
 
 
@@ -407,19 +416,37 @@ void GameScene::soundHelper_Mute()
 //Playing / Paused
 void GameScene::gameStateHelper_PlayingToPaused()
 {
+    KABOOM_DLOG("GameScene::gameStateHelper_PlayingToPaused");
 
+    soundHelper_Unmute();
+
+    m_pauseBlinkTimer.start();
+    m_pauseText.setIsVisible(true);
+
+    m_state = GameScene::State::Paused;
 }
 
 void GameScene::gameStateHelper_PausedToPlaying()
 {
+    KABOOM_DLOG("GameScene::gameStateHelper_PausedToPlaying");
 
+    soundHelper_Mute();
+
+    m_pauseBlinkTimer.stop();
+    m_pauseText.setIsVisible(false);
+
+    m_state = GameScene::State::Playing;
 }
 
 
 //Playing / Defeat
 void GameScene::gameStateHelper_PlayingToDefeat()
 {
+    KABOOM_DLOG("GameScene::gameStateHelper_PlayingToDefeat");
 
+    soundHelper_Play(kSoundName_Defeat);
+
+    m_state = GameScene::State::Defeat;
 }
 
 void GameScene::gameStateHelper_DefeatToPlaying()
@@ -444,7 +471,12 @@ void GameScene::gameStateHelper_PlayingToVictory()
 
 void GameScene::gameStateHelper_VictoryToPlaying()
 {
+    KABOOM_DLOG("GameScene::gameStateHelper_VictoryToPlaying");
 
+    soundHelper_Play(kSoundName_LevelStart);
+
+    resetNewTurn();
+    m_state = GameScene::State::Playing;
 }
 
 
