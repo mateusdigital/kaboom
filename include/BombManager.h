@@ -62,7 +62,6 @@ public:
 
     // Private Methods //
 private:
-    void sortBombs();
     void createBombHelper();
     void explodeNextBomb();
 
@@ -76,7 +75,8 @@ private:
     void playDroppingEffect();
     void stopDroppingEffect();
 
-    void playCaughtEffect();
+    void playCaughtEffect ();
+    void playExplodeEffect();
 
     // Bombs Callbacks //
 private:
@@ -94,6 +94,7 @@ private:
     int      m_bombsCaught;
     int      m_aliveBombs;
     int      m_maxBombY;
+    bool     m_isExplodingBombs;
     bool     m_isPlayingDroppingEffect;
 
     //Callbacks

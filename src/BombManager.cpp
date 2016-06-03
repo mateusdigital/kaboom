@@ -36,31 +36,13 @@ BombManager::~BombManager()
 void BombManager::update(float dt)
 {
     for(auto &bomb : m_bombsVec)
-    {
-        //We know that bombs vec are sorted
-        //So all bombs after the first dead
-        //one will be dead too.
-        if(bomb->getState() == Bomb::State::Dead)
-            return;
-
         bomb->update(dt);
-    }
-
-    sortBombs();
 }
 
 void BombManager::draw()
 {
     for(auto &bomb : m_bombsVec)
-    {
-        //We know that bombs vec are sorted
-        //So all bombs after the first dead
-        //one will be dead too.
-        if(bomb->getState() == Bomb::State::Dead)
-            return;
-
         bomb->draw();
-    }
 }
 
 
@@ -69,9 +51,10 @@ void BombManager::draw()
 ////////////////////////////////////////////////////////////////////////////////
 void BombManager::reset(const TurnInfo &turnInfo)
 {
-    m_turnInfo    = turnInfo;
-    m_bombsCaught = 0;
-    m_aliveBombs  = m_turnInfo.bombsCount;
+    m_turnInfo         = turnInfo;
+    m_aliveBombs       = 0;
+    m_bombsCaught      = 0;
+    m_isExplodingBombs = false;
 
     //Create the needed bombs for this level.
     for(int i = 0; i < m_bombsVec.size() - m_turnInfo.bombsCount; ++i)
@@ -85,25 +68,29 @@ void BombManager::dropBombAt(const Lore::Vector2 &pos)
 {
     playDroppingEffect();
 
-    //COWTODO: We can improve it by search the m_alivesBombs;
     for(auto &bomb : m_bombsVec)
     {
         if(bomb->getState() == Bomb::State::Dead)
         {
             bomb->setPosition(pos);
             bomb->startDropping();
+            m_aliveBombs++;
 
-            return;
+            break;
         }
-
     }
 }
 
 void BombManager::checkCollision(Paddle &paddle)
 {
-    for(int i = 0; i < m_aliveBombs; ++i)
+    if(m_isExplodingBombs)
+        return;
+
+    for(auto &bomb : m_bombsVec)
     {
-        auto &bomb = m_bombsVec[i];
+        //Dead bomb.
+        if(bomb->getState() != Bomb::State::Alive)
+            continue;
 
         //Did not collide with paddle.
         if(!paddle.checkCollision(bomb->getHitBox()))
@@ -124,7 +111,7 @@ void BombManager::checkCollision(Paddle &paddle)
         playCaughtEffect();
 
         //Check if Player won this level and inform the listeners.
-        if(m_aliveBombs == 0)
+        if(m_bombsCaught == m_turnInfo.bombsCount)
         {
             stopDroppingEffect();
             m_onAllBombsCaughtCallback();
@@ -173,19 +160,6 @@ void BombManager::setOnAllBombsExplodedCallback(const AllBombsExplodedCallback &
 ////////////////////////////////////////////////////////////////////////////////
 // Private Methods                                                            //
 ////////////////////////////////////////////////////////////////////////////////
-void BombManager::sortBombs()
-{
-    //Sorts the in the order of {Alive..., Exploding..., Dead...}
-    std::sort(std::begin(m_bombsVec),
-              std::end  (m_bombsVec),
-              [](const std::unique_ptr<Bomb> &bomb1,
-                 const std::unique_ptr<Bomb> &bomb2) {
-                    return static_cast<int>(bomb1->getState()) <
-                           static_cast<int>(bomb2->getState());
-              }
-    );
-}
-
 void BombManager::createBombHelper()
 {
     auto bomb = std::unique_ptr<Bomb>(new Bomb());
@@ -202,8 +176,33 @@ void BombManager::createBombHelper()
 
 void BombManager::explodeNextBomb()
 {
-    if(m_bombsVec[0]->getState() == Bomb::State::Alive)
-        m_bombsVec[0]->explode();
+    Bomb *lowerBomb = nullptr;
+
+    for(auto &bomb : m_bombsVec)
+    {
+        //Bomb isn't alive... - Do not interest us.
+        if(bomb->getState() != Bomb::State::Alive)
+            continue;
+
+        //Edge case - There is not lower bomb yet...
+        if(!lowerBomb)
+        {
+            lowerBomb = bomb.get();
+            continue;
+        }
+
+        //Current bomb is at bottom of the "current" lower bomb.
+        if(bomb->getPosition().y > lowerBomb->getPosition().y)
+            lowerBomb = bomb.get();
+    }
+
+    //There is any bomb to explode?
+    if(lowerBomb)
+    {
+        lowerBomb->explode();
+        playExplodeEffect();
+        m_onBombExplodeCallback();
+    }
 }
 
 void BombManager::stopAllBombs()
@@ -247,6 +246,10 @@ void BombManager::playDroppingEffect()
 {
     if(!m_isPlayingDroppingEffect)
     {
+        KABOOM_DLOG("BombManager::playDroppingEffect - Start Playing");
+
+        m_isPlayingDroppingEffect = true;
+
         Lore::SoundManager::instance()->playEffect(
             kSoundName_Dropping,
             Lore::SoundManager::kPlayForever
@@ -266,6 +269,11 @@ void BombManager::playCaughtEffect()
     Lore::SoundManager::instance()->playEffect(kSoundName_Caught);
 }
 
+void BombManager::playExplodeEffect()
+{
+    auto name = CoreGame::StringUtils::format(kSoundName_ExplodeFmt, 0);
+    Lore::SoundManager::instance()->playEffect(name);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Bombs Callbacks                                                            //
@@ -273,8 +281,10 @@ void BombManager::playCaughtEffect()
 void BombManager::onBombReachTarget()
 {
     KABOOM_DLOG("BombManager::onBombReachTarget - Bomb reach target");
+
     m_onBombReachTargetCallback();
 
+    m_isExplodingBombs = true;
     stopAllBombs();
 
     //Start exploding the bombs.
@@ -284,8 +294,6 @@ void BombManager::onBombReachTarget()
 void BombManager::onBombExplodeFinished()
 {
     KABOOM_DLOG("BombManager::onBombExplodeFinished - Bomb Explode Finished");
-
-    //COWTODO: Play the explode effect.
 
     --m_aliveBombs;
     if(m_aliveBombs == 0)
