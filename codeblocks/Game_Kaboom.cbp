@@ -21,12 +21,11 @@
 				<Option object_output="obj/Release/" />
 				<Option type="0" />
 				<Option compiler="gcc" />
+				<Option projectCompilerOptionsRelation="2" />
 				<Compiler>
-					<Add option="-O2" />
+					<Add option="-g" />
+					<Add option="-DNDEBUG" />
 				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
@@ -118,6 +117,7 @@
 		<Unit filename="../include/GameScene_Constants.h" />
 		<Unit filename="../include/MenuScene.h" />
 		<Unit filename="../include/Paddle.h" />
+		<Unit filename="../include/SplashScene.h" />
 		<Unit filename="../include/TurnInfo.h" />
 		<Unit filename="../src/Bomb.cpp" />
 		<Unit filename="../src/BombManager.cpp" />
@@ -126,6 +126,7 @@
 		<Unit filename="../src/GameScene.cpp" />
 		<Unit filename="../src/MenuScene.cpp" />
 		<Unit filename="../src/Paddle.cpp" />
+		<Unit filename="../src/SplashScene.cpp" />
 		<Unit filename="../src/main.cpp" />
 		<Extensions>
 			<code_completion />
