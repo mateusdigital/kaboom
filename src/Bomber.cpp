@@ -19,6 +19,7 @@ constexpr int kBombOffsetX =   5;
 constexpr int kBombOffsetY = -45;
 
 constexpr int kMoveMinDisplacement = 50;
+constexpr int kMoveMaxDisplacement = 200;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,11 +39,9 @@ Bomber::Bomber() :
     //m_turnInfo - Initialized in reset.
     m_bombsDropped   (0),
     m_bombsRemaining (0),
-    m_isDroppingBombs(0),
+    m_isDroppingBombs(0)
     //Callbacks
-    // m_bombDroppedCallback - Default initialized.
-    //Other
-    m_random(CoreRandom::Random::kRandomSeed)
+    //m_bombDroppedCallback - Default initialized.
 {
     initSprites();
 }
@@ -202,23 +201,23 @@ void Bomber::changeSpriteFrame(int frameIndex)
 
 void Bomber::deciceNextDropSpot()
 {
-    m_dropSpot = m_random.next(m_minBounds, m_maxBounds);
+    auto gm = Lore::GameManager::instance();
 
-    if(m_dropSpot < m_sprite.getPosition().x)
+    int displacement = gm->getRandomNumber(kMoveMinDisplacement,
+                                           kMoveMaxDisplacement);
+    int direction = (gm->getRandomBool()) ? -1 : 1;
+    int currX     = m_sprite.getPosition().x;
+
+    //Bomber will go out of bounds - Go to the other direction instead.
+    if(currX - displacement < m_minBounds && direction < 0||
+       currX + displacement > m_maxBounds && direction > 0)
     {
-        m_dropSpot -= kMoveMinDisplacement;
-        m_speed.x = -m_turnInfo.bomberSpeed;
-    }
-    else
-    {
-        m_dropSpot += kMoveMinDisplacement;
-        m_speed.x = +m_turnInfo.bomberSpeed;
+        direction *= -1;
     }
 
-    m_dropSpot = static_cast<int>(Lore::MathHelper::clamp(m_dropSpot,
-                                                          m_minBounds,
-                                                          m_maxBounds));
-}
+    m_speed.x  = m_turnInfo.bomberSpeed * direction;
+    m_dropSpot = currX + (displacement * direction);
+ }
 
 void Bomber::dropBomb()
 {

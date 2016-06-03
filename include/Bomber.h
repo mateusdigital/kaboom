@@ -93,9 +93,6 @@ private:
     //Callbacks
     BombDroppedCallback m_bombDroppedCallback;
 
-    //Other
-    CoreRandom::Random m_random;
-
     MoveState m_moveState;
     float     m_dropSpot;
 };
