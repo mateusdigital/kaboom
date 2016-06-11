@@ -122,7 +122,7 @@ private:
 
     //Playing / GameOver
     void gameStateHelper_PlayingToGameOver();
-    void gameStateHelper_GameOverToPlaying();
+    void gameStateHelper_GameOverToMenu   ();
 
 
     // iVars //
@@ -134,8 +134,8 @@ private:
     BombManager    m_bombManager;
 
     //Texts
-    Lore::Text       m_pauseText;
-    CoreClock::Clock m_pauseBlinkTimer;
+    Lore::Text       m_statusText;
+    CoreClock::Clock m_statusBlinkTimer;
 
     Lore::Text m_scoreText;
     Lore::Text m_turnText;

@@ -1,7 +1,8 @@
 //Header
 #include "GameScene.h"
-//GameScene
-#include "GameScene_Constants.h"
+//Game
+#include "MenuScene.h"
+#include "Game_Constants.h"
 
 //Usings
 USING_NS_GAMEKABOOM;
@@ -92,7 +93,7 @@ void GameScene::draw()
     m_paddle.draw();
 
     //Texts.
-    m_pauseText.draw();
+    m_statusText.draw();
     m_scoreText.draw();
     m_turnText.draw ();
 }
@@ -146,38 +147,42 @@ void GameScene::initTexts()
 {
     auto winRect = Lore::WindowManager::instance()->getWindowRect();
 
-    //Pause Text
-    initHelper_Text(m_pauseText,
-                    kFontName, kFontSize_PauseText,
+    //Status Text
+    initHelper_Text(m_statusText,
+                    kFontName, kFontSize_StatusText,
                     "Paused",
                     Lore::ITransformable::OriginHelpers::Center(),
                     winRect.getCenter());
-    m_pauseText.setIsVisible(false);
+    m_statusText.setIsVisible(false);
 
     //Score Text
-    initHelper_Text(m_scoreText,
-                    kFontName, kFontSize_ScoreText,
-                    CoreGame::StringUtils::format(kStringFormat_Score, 0),
-                    Lore::ITransformable::OriginHelpers::TopLeft(),
-                    winRect.getTopLeft() + Lore::Vector2(kTextOffset));
+    initHelper_Text(
+        m_scoreText,
+        kFontName, kFontSize_ScoreText,
+        CoreGame::StringUtils::format(kStringFormat_Score, 0),
+        Lore::ITransformable::OriginHelpers::TopLeft(),
+        winRect.getTopLeft() + Lore::Vector2(kGameScene_TextOffset)
+    );
 
     //Turn Text
-    initHelper_Text(m_turnText,
-                    kFontName, kFontSize_TurnText,
-                    CoreGame::StringUtils::format(kStringFormat_Level, 0),
-                    Lore::ITransformable::OriginHelpers::TopRight(),
-                    winRect.getTopRight() +
-                        Lore::Vector2(-kTextOffset, kTextOffset));
+    initHelper_Text(
+        m_turnText,
+        kFontName, kFontSize_TurnText,
+        CoreGame::StringUtils::format(kStringFormat_Level, 0),
+        Lore::ITransformable::OriginHelpers::TopRight(),
+        winRect.getTopRight() +
+            Lore::Vector2(-kGameScene_TextOffset, kGameScene_TextOffset)
+    );
 
 
-    //Pause Timer
-    m_pauseBlinkTimer.setInterval(kClockInterval_PauseText);
-    m_pauseBlinkTimer.setRepeatCount(CoreClock::Clock::kRepeatForever);
-    m_pauseBlinkTimer.setTickCallback([this]() {
-        auto visible = (m_pauseBlinkTimer.getTickCount() % 2 == 0);
-        m_pauseText.setIsVisible(visible);
+    //Status Timer
+    m_statusBlinkTimer.setInterval(kClockInterval_StatusText);
+    m_statusBlinkTimer.setRepeatCount(CoreClock::Clock::kRepeatForever);
+    m_statusBlinkTimer.setTickCallback([this]() {
+        auto visible = (m_statusBlinkTimer.getTickCount() % 2 == 0);
+        m_statusText.setIsVisible(visible);
     });
-    m_pauseBlinkTimer.start();
+    m_statusBlinkTimer.start();
 
 
     updateScoreText     ();
@@ -258,7 +263,11 @@ void GameScene::onAllBombsExploded()
     m_background.setNormalColor();
 
     m_paddle.kill();
-    gameStateHelper_PlayingToDefeat();
+
+    if(m_paddle.getLives() > 0)
+        gameStateHelper_PlayingToDefeat();
+    else
+        gameStateHelper_PlayingToGameOver();
 }
 
 
@@ -275,8 +284,8 @@ void GameScene::resetTurn()
     TurnInfo turnInfo {
         .turnNumber  = m_turnNumber,
         .bombsCount  =   5 + (m_turnNumber *  5),
-        .bombSpeed   = 200 + (m_turnNumber * 10),
-        .bomberSpeed = 200 + (m_turnNumber * 20),
+        .bombSpeed   = 200 + (m_turnNumber * 20),
+        .bomberSpeed = 200 + (m_turnNumber * 30),
     };
 
     //Reset the game objects for this level.
@@ -329,7 +338,7 @@ void GameScene::updateHelper_Paused(float dt)
         return;
     }
 
-    m_pauseBlinkTimer.update(dt);
+    m_statusBlinkTimer.update(dt);
 }
 
 void GameScene::updateHelper_Victory(float dt)
@@ -363,9 +372,12 @@ void GameScene::updateHelper_GameOver(float dt)
     //Input.
     if(_Helper_IsKeyClick(SDL_SCANCODE_SPACE))
     {
-        gameStateHelper_GameOverToPlaying();
+        gameStateHelper_GameOverToMenu();
         return;
     }
+
+    //Update the timer...
+    m_statusBlinkTimer.update(dt);
 }
 
 
@@ -378,11 +390,11 @@ void GameScene::initHelper_Text(Lore::Text &text,
                                 const Lore::Vector2 &origin,
                                 const Lore::Vector2 &position)
 {
-    text.loadFont          (fontName, fontSize);
-    text.setString         (str);
+    text.loadFont          (fontName, fontSize  );
+    text.setString         (str                 );
     text.setForegroundColor(Lore::Color::White());
-    text.setOrigin         (origin);
-    text.setPosition       (position);
+    text.setOrigin         (origin              );
+    text.setPosition       (position            );
 }
 
 
@@ -420,8 +432,9 @@ void GameScene::gameStateHelper_PlayingToPaused()
 
     soundHelper_Unmute();
 
-    m_pauseBlinkTimer.start();
-    m_pauseText.setIsVisible(true);
+    m_statusBlinkTimer.start();
+    m_statusText.setString("Paused");
+    m_statusText.setIsVisible(true);
 
     m_state = GameScene::State::Paused;
 }
@@ -432,8 +445,8 @@ void GameScene::gameStateHelper_PausedToPlaying()
 
     soundHelper_Mute();
 
-    m_pauseBlinkTimer.stop();
-    m_pauseText.setIsVisible(false);
+    m_statusBlinkTimer.stop();
+    m_statusText.setIsVisible(false);
 
     m_state = GameScene::State::Playing;
 }
@@ -483,10 +496,19 @@ void GameScene::gameStateHelper_VictoryToPlaying()
 //Playing / GameOver
 void GameScene::gameStateHelper_PlayingToGameOver()
 {
+    KABOOM_DLOG("GameScene::gameStateHelper_PlayingToGameOver");
 
+    m_statusBlinkTimer.start();
+    m_statusText.setString("Game Over");
+    m_statusText.setIsVisible(true);
+
+    m_state = GameScene::State::GameOver;
 }
 
-void GameScene::gameStateHelper_GameOverToPlaying()
+void GameScene::gameStateHelper_GameOverToMenu()
 {
+    KABOOM_DLOG("GameScene::gameStateHelper_GameOverToMenu");
 
+    auto gameMgr = Lore::GameManager::instance();
+    gameMgr->changeScene(std::unique_ptr<Lore::Scene>(new MenuScene()));
 }
