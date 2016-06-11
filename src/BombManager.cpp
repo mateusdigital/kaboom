@@ -57,7 +57,7 @@ void BombManager::reset(const TurnInfo &turnInfo)
     m_isExplodingBombs = false;
 
     //Create the needed bombs for this level.
-    for(int i = 0; i < m_bombsVec.size() - m_turnInfo.bombsCount; ++i)
+    for(int i = 0; i < m_turnInfo.bombsCount - (int)m_bombsVec.size(); ++i)
         createBombHelper();
 
     //Reset them.
