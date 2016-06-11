@@ -1,7 +1,7 @@
 //Header
 #include "GameBackground.h"
-//GameScene
-#include "GameScene_Constants.h"
+//Game
+#include "Game_Constants.h"
 
 //Usings
 USING_NS_GAMEKABOOM;
