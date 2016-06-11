@@ -27,7 +27,7 @@ BombManager::BombManager()
 
 BombManager::~BombManager()
 {
-
+    //Empty...
 }
 
 
