@@ -10,8 +10,12 @@
 //
 #include "CoreGame.h"
 
-#define KABOOM_DLOG(_fmt_, ...) \
-    COREGAME_DLOG(CoreGame::Log::Type::Debug1, (_fmt_), ##__VA_ARGS__)
+#ifdef KABOOM_DEBUG
+    #define KABOOM_DLOG(_fmt_, ...) \
+        COREGAME_DLOG(CoreGame::Log::Type::Debug1, (_fmt_), ##__VA_ARGS__)
+#else
+        #define KABOOM_DLOG(_fmt_, ...)
+#endif
 
 //Lore
 #include "Lore.h"
