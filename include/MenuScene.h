@@ -3,6 +3,7 @@
 
 //Game_Kaboom
 #include "GameKaboom_Utils.h"
+#include "GameBackground.h"
 
 NS_GAMEKABOOM_BEGIN
 
@@ -22,20 +23,26 @@ public:
 
     // Inits //
 private:
-    void initSprites();
-    void initTexts  ();
-
+    void initStuff();
 
     // iVars //
 private:
-    Lore::Sprite m_logoSprite;
-    Lore::Sprite m_bombSprite;
-    Lore::Sprite m_amazingCowSprite;
+    GameBackground m_background;
 
-    // Lore::Text m_playText;
-    // Lore::Text m_creditsText;
+    //Title
+    Lore::Text m_titleTop;
+    Lore::Text m_titleBottom;
 
-    int m_selectedIndex;
+    //AmazingCow
+    Lore::Sprite m_cowLogo;
+    Lore::Text   m_cowDesc;
+
+    //Play msg
+    Lore::Text m_playMsg;
+
+    //Help msg
+    Lore::Text m_helpMsg;
+    Lore::Text m_help2Msg;
 };
 
 NS_GAMEKABOOM_END
