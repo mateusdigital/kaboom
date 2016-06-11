@@ -33,7 +33,7 @@ Bomb::Bomb() :
     m_speed          (Lore::Vector2::Zero()),
     m_maxY           (0)
     //Callback
-    //m_reachTargetCallback      - Default initialized
+    //m_reachTargetCallback       - Default initialized
     //m_explodingFinishedCallback - Default initialized
 {
     initAnimations();
@@ -249,7 +249,8 @@ void Bomb::onExplodingAnimationFinished()
 void Bomb::AnimationInfo::start()
 {
     timer.start();
-    frameIndex = Lore::GameManager::instance()->getRandomNumber(0, framesVec.size());
+    auto gm = Lore::GameManager::instance();
+    frameIndex = gm->getRandomNumber(0, framesVec.size()-1);
     changeFrame(frameIndex);
 }
 
@@ -270,6 +271,14 @@ void Bomb::AnimationInfo::incrementFrame()
 
 void Bomb::AnimationInfo::changeFrame(int index)
 {
+    KABOOM_DLOG("Bomb::AnimationInfo::changeFrame %d", index);
+
+    COREGAME_ASSERT_ARGS(
+        index >= 0 && index < framesVec.size(),
+        "Bomb::AnimationInfo::changeFrame received an invalid index (%d)",
+        index
+    );
+
     sprite.setSourceRectangle(framesVec[index]);
 }
 
