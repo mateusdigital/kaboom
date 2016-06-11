@@ -22,7 +22,7 @@ void MenuScene::unload()
 
 
 // Update / Draw / Handle Events //
-void MenuScene::update(float dt)
+void MenuScene::update(float /* dt */)
 {
     auto inputMgr = Lore::InputManager::instance();
     if(inputMgr->isKeyClick(SDL_SCANCODE_RETURN))
@@ -71,7 +71,6 @@ void MenuScene::initStuff()
     m_titleBottom.setString("Kaboom!");
     m_titleBottom.setForegroundColor(Lore::Color::Black());
 
-    auto r = m_titleBottom.getBounds();
 
     //AmazingCow
     m_cowLogo.loadTexture("AmazingCow_Logo_Small.png");
@@ -110,5 +109,4 @@ void MenuScene::initStuff()
     m_help2Msg.setPosition(winCenter.x,
                            winRect.getHeight() - 20);
     m_help2Msg.setString("www.institutoayrtonsenna.org");
-
 }
