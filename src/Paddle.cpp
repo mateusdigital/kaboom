@@ -8,10 +8,10 @@ USING_NS_GAMEKABOOM;
 ////////////////////////////////////////////////////////////////////////////////
 // Constants                                                                  //
 ////////////////////////////////////////////////////////////////////////////////
-constexpr int kInitialLivesCount   = 3;
-constexpr int kPaddleOffsetY       = 55;
-constexpr int kFramesCount         = 4;
-constexpr float kAnimationInterval = 0.1;
+constexpr int   kInitialLivesCount   = 3;
+constexpr int   kPaddleOffsetY       = 55;
+constexpr int   kFramesCount         = 4;
+constexpr float kAnimationInterval   = 0.1;
 
 
 ////////////////////////////////////////////////////////////////////////////////
