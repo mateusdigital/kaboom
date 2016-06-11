@@ -209,8 +209,8 @@ void Bomber::deciceNextDropSpot()
     int currX     = m_sprite.getPosition().x;
 
     //Bomber will go out of bounds - Go to the other direction instead.
-    if(currX - displacement < m_minBounds && direction < 0||
-       currX + displacement > m_maxBounds && direction > 0)
+    if((currX - displacement < m_minBounds && direction < 0) ||
+       (currX + displacement > m_maxBounds && direction > 0))
     {
         direction *= -1;
     }
