@@ -2,6 +2,7 @@
 #include "SplashScene.h"
 //Game_Kaboom
 #include "GameScene.h"
+#include "MenuScene.h"
 
 //Usings
 USING_NS_GAMEKABOOM
@@ -55,7 +56,7 @@ void SplashScene::initTimers()
     m_disappearTimer.setTickCallback([this]() {
         KABOOM_DLOG("m_disapperTimer - done....");
         auto gm = Lore::GameManager::instance();
-        gm->changeScene(std::unique_ptr<Lore::Scene>(new GameScene()));
+        gm->changeScene(std::unique_ptr<Lore::Scene>(new MenuScene()));
     });
 
     m_appearTimer.setInterval(0.5f);
