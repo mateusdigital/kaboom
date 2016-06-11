@@ -177,10 +177,12 @@ void Bomb::initAnimations()
     m_aliveAnimation.name = "Alive";
     m_aliveAnimation.setupFrames("Bomb_Alive.png",
                                   kSpriteFramesCount_Alive);
+    m_aliveAnimation.changeFrame(0);
 
     m_explodingAnimation.name = "Exploding";
     m_explodingAnimation.setupFrames("Bomb_Exploded.png",
                                      kSpriteFramesCount_Exploded);
+    m_explodingAnimation.changeFrame(0);
 
     //Set the pointers.
     m_pCurrentAnimation = &m_aliveAnimation;
