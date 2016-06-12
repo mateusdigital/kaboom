@@ -5,7 +5,7 @@
 // Texts                                                                      //
 ////////////////////////////////////////////////////////////////////////////////
 // Text //
-const char * const kFontName = "nokiafc22.ttf";
+static const char * const kFontName = "nokiafc22.ttf";
 
 //Menu Scene
 constexpr int kFontSize_TitleText        = 100;
