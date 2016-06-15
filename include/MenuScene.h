@@ -44,6 +44,7 @@
 //Game_Kaboom
 #include "GameKaboom_Utils.h"
 #include "GameBackground.h"
+#include "Bomb.h"
 
 NS_GAMEKABOOM_BEGIN
 
@@ -65,6 +66,11 @@ public:
 private:
     void initStuff();
 
+
+    // Private Methods //
+private:
+    void changeSelection(int delta);
+
     // iVars //
 private:
     GameBackground m_background;
@@ -73,16 +79,13 @@ private:
     Lore::Text m_titleTop;
     Lore::Text m_titleBottom;
 
-    //AmazingCow
-    Lore::Sprite m_cowLogo;
-    Lore::Text   m_cowDesc;
+    //Play / Credits
+    Lore::Text m_playText;
+    Lore::Text m_creditsText;
 
-    //Play msg
-    Lore::Text m_playMsg;
-
-    //Help msg
-    Lore::Text m_helpMsg;
-    Lore::Text m_help2Msg;
+    //Bomb
+    Bomb m_bomb;
+    int  m_selectionIndex;
 };
 
 NS_GAMEKABOOM_END

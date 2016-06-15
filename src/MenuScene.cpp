@@ -41,15 +41,18 @@
 //Header
 #include "MenuScene.h"
 //Game
-#include "GameScene.h"
 #include "Game_Constants.h"
-
+#include "GameScene.h"
+#include "CreditsScene.h"
+#include "TurnInfo.h" //For bomb...
 
 //Usings
 USING_NS_GAMEKABOOM;
 
 
-// Load / Unload //
+////////////////////////////////////////////////////////////////////////////////
+// Load / Unload                                                              //
+////////////////////////////////////////////////////////////////////////////////
 void MenuScene::load()
 {
     initStuff();
@@ -61,14 +64,30 @@ void MenuScene::unload()
 }
 
 
-// Update / Draw / Handle Events //
-void MenuScene::update(float /* dt */)
+////////////////////////////////////////////////////////////////////////////////
+// Update / Draw                                                              //
+////////////////////////////////////////////////////////////////////////////////
+void MenuScene::update(float dt)
 {
+    m_bomb.update(dt);
+
     auto inputMgr = Lore::InputManager::instance();
-    if(inputMgr->isKeyClick(SDL_SCANCODE_RETURN))
+
+    if(inputMgr->isKeyClick(SDL_SCANCODE_UP))
+    {
+        changeSelection(-1);
+    }
+    else if(inputMgr->isKeyClick(SDL_SCANCODE_DOWN))
+    {
+        changeSelection(+1);
+    }
+    else if(inputMgr->isKeyClick(SDL_SCANCODE_RETURN))
     {
         auto gameMgr = Lore::GameManager::instance();
-        gameMgr->changeScene(std::unique_ptr<Lore::Scene>(new GameScene()));
+        if(m_selectionIndex == 0)
+            gameMgr->changeScene(std::unique_ptr<Lore::Scene>(new GameScene()));
+        else
+            gameMgr->changeScene(std::unique_ptr<Lore::Scene>(new CreditsScene()));
     }
 }
 
@@ -80,18 +99,18 @@ void MenuScene::draw()
     m_titleBottom.draw();
     m_titleTop.draw   ();
 
-    //AmazingCow
-    m_cowLogo.draw();
-    m_cowDesc.draw();
+    //Play / Credits
+    m_playText.draw   ();
+    m_creditsText.draw();
 
-    //Play / Help Message
-    m_playMsg.draw();
-    m_helpMsg.draw();
-    m_help2Msg.draw();
+    //Bomb
+    m_bomb.draw();
 }
 
 
-// Inits //
+////////////////////////////////////////////////////////////////////////////////
+// Inits                                                                      //
+////////////////////////////////////////////////////////////////////////////////
 void MenuScene::initStuff()
 {
     auto winRect   = Lore::WindowManager::instance()->getWindowRect();
@@ -100,7 +119,9 @@ void MenuScene::initStuff()
     //Title
     m_titleTop.loadFont(kFontName, kFontSize_TitleText);
     m_titleTop.setOrigin(Lore::ITransformable::OriginHelpers::Center());
-    m_titleTop.setPosition(Lore::Vector2::OffsetBy(winCenter, 0, -220));
+    m_titleTop.setPosition(
+        Lore::Vector2::OffsetBy(winCenter, 0, -220)
+    );
     m_titleTop.setString("Kaboom!");
 
     m_titleBottom.loadFont(kFontName, kFontSize_TitleText);
@@ -112,41 +133,48 @@ void MenuScene::initStuff()
     m_titleBottom.setForegroundColor(Lore::Color::Black());
 
 
-    //AmazingCow
-    m_cowLogo.loadTexture("AmazingCow_Logo_Small.png");
-    m_cowLogo.setOrigin(Lore::ITransformable::OriginHelpers::TopCenter());
-    m_cowLogo.setPosition(winCenter.x,
-                          m_titleBottom.getPosition().y +
-                          m_titleBottom.getBounds().getSize().y);
+    //Play
+    m_playText.loadFont(kFontName, kFontSize_PlayCreditsText);
+    m_playText.setString("Play");
+    m_playText.setPosition(
+        winCenter.x - (m_playText.getBounds().getWidth() / 2),
+        winCenter.y - 50
+    );
 
+    //Credits
+    m_creditsText.loadFont(kFontName, kFontSize_PlayCreditsText);
+    m_creditsText.setString("Credits");
+    m_creditsText.setPosition(
+        Lore::Vector2::OffsetBy(m_playText.getPosition(), 0, 80)
+    );
 
-    m_cowDesc.loadFont(kFontName, kFontSize_AmazingCowText);
-    m_cowDesc.setOrigin(Lore::ITransformable::OriginHelpers::TopCenter());
-    m_cowDesc.setPosition(winCenter.x,
-                          m_cowLogo.getPosition().y +
-                          m_cowLogo.getBounds().getSize().y + 20);
-    m_cowDesc.setString("www.AmazingCow.com");
+    //Bomb
+    TurnInfo info {
 
+        .turnNumber  = 0,
+        .bombsCount  = 0,
+        .bombSpeed   = 0,
+        .bomberSpeed = 0
+    };
 
-    //Play msg
-    m_playMsg.loadFont(kFontName, kFontSize_PlayMessageText);
-    m_playMsg.setOrigin(Lore::ITransformable::OriginHelpers::TopCenter());
-    m_playMsg.setPosition(winCenter.x,
-                          m_cowDesc.getPosition().y +
-                          m_cowDesc.getBounds().getSize().y + 50);
-    m_playMsg.setString("[Press ENTER to play]");
+    m_bomb.reset(info);
+    m_bomb.startDropping();
+    m_bomb.setOnReachTargetCallback([](){});
 
+    changeSelection(0); //Just to force the bomb position...
+}
 
-    //Help msg
-    m_helpMsg.loadFont(kFontName, kFontSize_HelpMessageText);
-    m_helpMsg.setOrigin(Lore::ITransformable::OriginHelpers::BottomCenter());
-    m_helpMsg.setPosition(winCenter.x,
-                          winRect.getHeight() - 50);
-    m_helpMsg.setString("Help Instituto Ayrton Senna.");
+////////////////////////////////////////////////////////////////////////////////
+// Private Methods                                                            //
+////////////////////////////////////////////////////////////////////////////////
+void MenuScene::changeSelection(int delta)
+{
+    m_selectionIndex = Lore::MathHelper::clamp(m_selectionIndex + delta, 0, 1);
+    auto position    = (m_selectionIndex == 0)
+                        ? m_playText.getPosition   ()
+                        : m_creditsText.getPosition();
 
-    m_help2Msg.loadFont(kFontName, kFontSize_Help2MessageText);
-    m_help2Msg.setOrigin(Lore::ITransformable::OriginHelpers::BottomCenter());
-    m_help2Msg.setPosition(winCenter.x,
-                           winRect.getHeight() - 20);
-    m_help2Msg.setString("www.institutoayrtonsenna.org");
+    m_bomb.setPosition(
+        Lore::Vector2::OffsetBy(position, -40, -5)
+    );
 }
