@@ -45,6 +45,7 @@
 #include "SplashScene.h"
 #include "MenuScene.h"
 #include "GameScene.h"
+#include "CreditsScene.h"
 
 //Usings
 USING_NS_GAMEKABOOM;
@@ -73,7 +74,7 @@ int main()
                          MIX_DEFAULT_CHANNELS,
                          2048);
 
-    gameMgr->initialize(0, 60);
+    gameMgr->initialize(CoreRandom::Random::kRandomSeed, 60);
 
     gameMgr->run(std::unique_ptr<Lore::Scene>(new SplashScene()));
 
