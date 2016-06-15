@@ -314,7 +314,7 @@ void Bomb::AnimationInfo::changeFrame(int index)
     KABOOM_DLOG("Bomb::AnimationInfo::changeFrame %d", index);
 
     COREGAME_ASSERT_ARGS(
-        index >= 0 && index < framesVec.size(),
+        index >= 0 && index < (int)framesVec.size(),
         "Bomb::AnimationInfo::changeFrame received an invalid index (%d)",
         index
     );
