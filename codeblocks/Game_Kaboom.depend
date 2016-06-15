@@ -8,7 +8,7 @@
 
 1465448219 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreClock/include/CoreClock_Utils.h
 
-1464259864 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreGame/src/GameCore_Macros.cpp
+1465632463 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreGame/src/GameCore_Macros.cpp
 	"../include/CoreGame_Macros.h"
 	<cstdarg>
 	<cstdio>
@@ -22,7 +22,7 @@
 	"./Macros/CoreGame_Singleton.h"
 	"./Macros/CoreGame_OnlyInDebug.h"
 
-1463499579 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreGame/include/Macros/CoreGame_Assert.h
+1465632421 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreGame/include/Macros/CoreGame_Assert.h
 
 1464259474 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreGame/include/Macros/CoreGame_Singleton.h
 
@@ -48,7 +48,7 @@
 
 1464329693 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreRandom/include/CoreRandom_Utils.h
 
-1465269165 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/src/AssetsManager.cpp
+1465624952 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/src/AssetsManager.cpp
 	"../include/AssetsManager.h"
 	"../include/SDLHelpers.h"
 	"../include/WindowManager.h"
@@ -158,9 +158,10 @@
 1465443666 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/src/Rectangle.cpp
 	"../include/Rectangle.h"
 
-1465444324 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/src/SDLHelpers.cpp
+1465633248 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/src/SDLHelpers.cpp
 	"../include/SDLHelpers.h"
 	"../include/WindowManager.h"
+	<unistd.h>
 
 1465439679 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/include/SDLHelpers.h
 	<string>
@@ -169,9 +170,10 @@
 	"Rectangle.h"
 	"Vector2.h"
 
-1465269345 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/src/SoundManager.cpp
+1465627086 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/src/SoundManager.cpp
 	"../include/SoundManager.h"
 	"../include/ErrorControl.h"
+	"./private/include/Lore_Private_Utils.h"
 	"./private/include/Log.h"
 
 1465439700 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/include/SoundManager.h
@@ -195,7 +197,7 @@
 1465439594 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/include/IDrawable.h
 	"Lore_Utils.h"
 
-1465269366 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/src/Text.cpp
+1465631535 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/src/Text.cpp
 	"../include/Text.h"
 	<cstdarg>
 	"../include/AssetsManager.h"
@@ -311,7 +313,7 @@
 	<iostream>
 	"../include/StringUtils.h"
 
-1464912093 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreGame/include/Log.h
+1465632374 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreGame/include/Log.h
 	<cstdarg>
 	<string>
 	<fstream>
@@ -334,7 +336,7 @@
 1465622868 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/game/src/Paddle.cpp
 	"Paddle.h"
 
-1464652969 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreGame/include/Macros/CoreGame_OnlyInDebug.h
+1465632446 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/lib/CoreGame/include/Macros/CoreGame_OnlyInDebug.h
 
 1465439658 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/include/MathHelper.h
 	"Lore_Utils.h"
@@ -394,4 +396,89 @@
 	"MenuScene.h"
 
 1465624267 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game-Framework/Lore/game/include/Game_Constants.h
+
+1465631147 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/Bomb.cpp
+	"Bomb.h"
+
+1464799779 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/Bomb.h
+	<functional>
+	"GameKaboom_Utils.h"
+	"TurnInfo.h"
+
+1465624746 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/GameKaboom_Utils.h
+	"CoreGame.h"
+	"Lore.h"
+
+1464799846 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/TurnInfo.h
+	"GameKaboom_Utils.h"
+
+1465627239 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/Bomber.cpp
+	"Bomber.h"
+
+1464906937 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/Bomber.h
+	<functional>
+	"GameKaboom_Utils.h"
+	"TurnInfo.h"
+
+1465630594 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/BombManager.cpp
+	"BombManager.h"
+	<algorithm>
+
+1464909625 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/BombManager.h
+	"Lore.h"
+	"GameKaboom_Utils.h"
+	"Bomb.h"
+	"Paddle.h"
+	"TurnInfo.h"
+
+1464800282 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/Paddle.h
+	"GameKaboom_Utils.h"
+
+1465618893 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/GameBackground.cpp
+	"GameBackground.h"
+	"Game_Constants.h"
+
+1464903993 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/GameBackground.h
+	"GameKaboom_Utils.h"
+
+1465629314 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/Game_Constants.h
+
+1465629587 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/GameScene.cpp
+	"GameScene.h"
+	"MenuScene.h"
+	"Game_Constants.h"
+
+1465623689 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/GameScene.h
+	"GameKaboom_Utils.h"
+	"Bomber.h"
+	"BombManager.h"
+	"GameBackground.h"
+	"Paddle.h"
+
+1465624061 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/MenuScene.h
+	"GameKaboom_Utils.h"
+	"GameBackground.h"
+
+1465625297 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/main.cpp
+	"Lore.h"
+	"GameKaboom_Utils.h"
+	"SplashScene.h"
+	"MenuScene.h"
+	"GameScene.h"
+
+1464910488 /home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/include/SplashScene.h
+	"GameKaboom_Utils.h"
+
+1465627369 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/MenuScene.cpp
+	"MenuScene.h"
+	"GameScene.h"
+	"Game_Constants.h"
+
+1465624713 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/Paddle.cpp
+	"Paddle.h"
+
+1465633580 source:/home/n2omatt/Documents/Projects/AmazingCow/AmazingCow-Game/Game_Kaboom/src/SplashScene.cpp
+	"SplashScene.h"
+	"GameScene.h"
+	"MenuScene.h"
 
