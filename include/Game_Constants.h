@@ -45,7 +45,7 @@
 // Texts                                                                      //
 ////////////////////////////////////////////////////////////////////////////////
 // Text //
-static const char * const kFontName = "nokiafc22.ttf";
+constexpr auto kFontName = "nokiafc22.ttf";
 
 //Menu Scene
 constexpr int kFontSize_TitleText        = 100;
@@ -80,15 +80,15 @@ constexpr int kScoreMutilplier = 50;
 ////////////////////////////////////////////////////////////////////////////////
 // Sounds                                                                     //
 ////////////////////////////////////////////////////////////////////////////////
-static const char * const kSoundName_LevelStart = "level_start.wav";
-static const char * const kSoundName_Victory    = "victory.wav";
-static const char * const kSoundName_Defeat     = "defeat.wav";
-static const char * const kSoundName_GameOver   = "gameover.wav";
+constexpr auto kSoundName_LevelStart = "level_start.wav";
+constexpr auto kSoundName_Victory    = "victory.wav";
+constexpr auto kSoundName_Defeat     = "defeat.wav";
+constexpr auto kSoundName_GameOver   = "gameover.wav";
 
 ////////////////////////////////////////////////////////////////////////////////
 // String Formats                                                             //
 ////////////////////////////////////////////////////////////////////////////////
-static const char * kStringFormat_Score = "Score %06d";
-static const char * kStringFormat_Level = "Level %03d";
+constexpr auto kStringFormat_Score = "Score %06d";
+constexpr auto kStringFormat_Level = "Level %03d";
 
 #endif // __Game_Kaboom_include_Game_Constants_h__ //
