@@ -45,25 +45,26 @@
 // Texts                                                                      //
 ////////////////////////////////////////////////////////////////////////////////
 // Text //
-constexpr auto kFontName = "nokiafc22.ttf";
+constexpr auto kFontName         = "nokiafc22.ttf";
+constexpr auto kFontName_Credits = "SourceCodePro-Regular.ttf";
 
 //Menu Scene
 constexpr int kFontSize_TitleText        = 100;
-constexpr int kFontSize_AmazingCowText   = 20;
-constexpr int kFontSize_PlayMessageText  = 40;
-constexpr int kFontSize_HelpMessageText  = 20;
-constexpr int kFontSize_Help2MessageText = 15;
-
+constexpr int kFontSize_PlayCreditsText  = 40;
 //Game Scene
 constexpr int kFontSize_StatusText   = 100;
 constexpr int kFontSize_ScoreText    = 20;
 constexpr int kFontSize_TurnText     = 20;
 constexpr int kGameScene_TextOffset  = 20;
+//Credits Scene
+constexpr int kFontSize_CreditsMsg = 20;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Timers                                                                     //
 ////////////////////////////////////////////////////////////////////////////////
 constexpr float kClockInterval_StatusText = 0.5; //Half a second.
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Positions / Sizes                                                          //
@@ -72,10 +73,12 @@ constexpr int kSize_SkyHeight = 150;
 constexpr int kPos_Bomber     = kSize_SkyHeight;
 constexpr int kPos_Player     = 400;
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // Score                                                                      //
 ////////////////////////////////////////////////////////////////////////////////
 constexpr int kScoreMutilplier = 50;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sounds                                                                     //
@@ -84,6 +87,7 @@ constexpr auto kSoundName_LevelStart = "level_start.wav";
 constexpr auto kSoundName_Victory    = "victory.wav";
 constexpr auto kSoundName_Defeat     = "defeat.wav";
 constexpr auto kSoundName_GameOver   = "gameover.wav";
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // String Formats                                                             //
