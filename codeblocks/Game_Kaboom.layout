@@ -1,64 +1,69 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
-	<ActiveTarget name="Release" />
-	<File name="../../../AmazingCow-Game-Framework/Lore/lib/CoreClock/src/Clock.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<ActiveTarget name="Debug" />
+	<File name="../lib/Lore/src/Font.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="5653" topLine="138" />
+			<Cursor1 position="3986" topLine="73" />
 		</Cursor>
 	</File>
-	<File name="../../../AmazingCow-Game-Framework/Lore/src/GameManager.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../lib/Lore/include/Text.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4301" topLine="87" />
+			<Cursor1 position="3553" topLine="57" />
 		</Cursor>
 	</File>
-	<File name="../../../AmazingCow-Game-Framework/Lore/include/Lore_Utils.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/Bomb.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3653" topLine="47" />
+			<Cursor1 position="5348" topLine="100" />
 		</Cursor>
 	</File>
-	<File name="../../../AmazingCow-Game-Framework/Lore/src/Font.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../lib/Lore/src/Text.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3530" topLine="45" />
+			<Cursor1 position="5904" topLine="168" />
 		</Cursor>
 	</File>
-	<File name="../../../AmazingCow-Game-Framework/Lore/lib/CoreGame/src/GameCore_Macros.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/CreditsScene.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1042" topLine="31" />
+			<Cursor1 position="5625" topLine="129" />
+		</Cursor>
+	</File>
+	<File name="../lib/Lore/src/Texture.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5292" topLine="127" />
+		</Cursor>
+	</File>
+	<File name="../lib/Lore/src/SDLHelpers.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6512" topLine="150" />
+		</Cursor>
+	</File>
+	<File name="../lib/Lore/src/GameManager.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4302" topLine="125" />
+		</Cursor>
+	</File>
+	<File name="../lib/Lore/lib/CoreClock/src/Clock.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5563" topLine="130" />
 		</Cursor>
 	</File>
 	<File name="../src/MenuScene.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1206" topLine="93" />
+			<Cursor1 position="6502" topLine="151" />
 		</Cursor>
 	</File>
-	<File name="../../../AmazingCow-Game-Framework/Lore/src/Text.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../include/CreditsScene.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4997" topLine="134" />
+			<Cursor1 position="3516" topLine="53" />
 		</Cursor>
 	</File>
-	<File name="../../../AmazingCow-Game-Framework/Lore/src/AssetsManager.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../lib/Lore/src/ITransformable.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4659" topLine="97" />
+			<Cursor1 position="7797" topLine="240" />
 		</Cursor>
 	</File>
-	<File name="../src/SplashScene.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../lib/Lore/src/WindowManager.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1187" topLine="54" />
-		</Cursor>
-	</File>
-	<File name="../src/BombManager.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1940" topLine="61" />
-		</Cursor>
-	</File>
-	<File name="../src/Bomb.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="7188" topLine="240" />
-		</Cursor>
-	</File>
-	<File name="../../../AmazingCow-Game-Framework/Lore/src/SDLHelpers.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="7416" topLine="161" />
+			<Cursor1 position="4521" topLine="83" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
