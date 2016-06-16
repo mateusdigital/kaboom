@@ -48,8 +48,10 @@
 USING_NS_GAMEKABOOM
 
 
-// Load / Unload //
-void SplashScene::load()
+////////////////////////////////////////////////////////////////////////////////
+// CTOR / DTOR                                                                //
+////////////////////////////////////////////////////////////////////////////////
+SplashScene::SplashScene()
 {
     Lore::WindowManager::instance()->setClearColor(Lore::Color::White());
 
@@ -57,13 +59,9 @@ void SplashScene::load()
     initTimers ();
 }
 
-void SplashScene::unload()
-{
-    //Empty...
-}
-
-
-// Update / Draw / Handle Events //
+////////////////////////////////////////////////////////////////////////////////
+// Update / Draw                                                              //
+////////////////////////////////////////////////////////////////////////////////
 void SplashScene::update(float dt)
 {
     //Update the timers.
@@ -77,7 +75,9 @@ void SplashScene::draw()
 }
 
 
-// Inits //
+////////////////////////////////////////////////////////////////////////////////
+// Inits                                                                      //
+////////////////////////////////////////////////////////////////////////////////
 void SplashScene::initSprites()
 {
     auto winCenter = Lore::WindowManager::instance()->getWindowRect().getCenter();

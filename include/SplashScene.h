@@ -48,10 +48,9 @@ NS_GAMEKABOOM_BEGIN
 
 class SplashScene : public Lore::Scene
 {
-    // Load / Unload //
+    // CTOR / DTOR //
 public:
-    virtual void load  () override;
-    virtual void unload() override;
+    SplashScene();
 
 
     // Update / Draw / Handle Events //
@@ -64,6 +63,7 @@ public:
 private:
     void initSprites();
     void initTimers ();
+
 
     // iVars //
 private:
