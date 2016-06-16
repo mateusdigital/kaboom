@@ -1,4 +1,3 @@
-
 //----------------------------------------------------------------------------//
 //               █      █                                                     //
 //               ████████                                                     //
@@ -50,20 +49,19 @@
 USING_NS_GAMEKABOOM;
 
 
-// Load / Unload //
-void CreditsScene::load()
+////////////////////////////////////////////////////////////////////////////////
+// CTOR / DTOR                                                                //
+////////////////////////////////////////////////////////////////////////////////
+CreditsScene::CreditsScene()
 {
     Lore::WindowManager::instance()->setClearColor(Lore::Color::White());
     initStuff();
 }
 
-void CreditsScene::unload()
-{
-    //Empty...
-}
 
-
-// Update / Draw / Handle Events //
+////////////////////////////////////////////////////////////////////////////////
+// Update / Draw                                                              //
+////////////////////////////////////////////////////////////////////////////////
 void CreditsScene::update(float /* dt */)
 {
     auto inputMgr = Lore::InputManager::instance();
@@ -83,7 +81,9 @@ void CreditsScene::draw()
 }
 
 
-// Inits //
+////////////////////////////////////////////////////////////////////////////////
+// Inits                                                                      //
+////////////////////////////////////////////////////////////////////////////////
 void CreditsScene::initStuff()
 {
     auto winRect   = Lore::WindowManager::instance()->getWindowRect();

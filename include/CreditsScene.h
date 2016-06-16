@@ -53,10 +53,9 @@ NS_GAMEKABOOM_BEGIN
 
 class CreditsScene : public Lore::Scene
 {
-    // Load / Unload //
+    // CTOR / DTOR  //
 public:
-    virtual void load  () override;
-    virtual void unload() override;
+    CreditsScene();
 
 
     // Update / Draw / Handle Events //
@@ -68,6 +67,7 @@ public:
     // Inits //
 private:
     void initStuff();
+
 
     // iVars //
 private:
