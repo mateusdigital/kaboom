@@ -40,21 +40,11 @@
 
 //Header
 #include "BombManager.h"
-//std
-#include <algorithm>
+//Game_Kaboom
+#include "Game_Constants.h"
 
 //Usings
 USING_NS_GAMEKABOOM;
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Constants                                                                  //
-////////////////////////////////////////////////////////////////////////////////
-const char * const kSoundName_Dropping   = "bomb.wav";
-const char * const kSoundName_ExplodeFmt = "bomb_explode%d.wav";
-const char * const kSoundName_Caught     = "bomb_caught.wav";
-
-constexpr int kSoundExplode_Count = 1;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +87,10 @@ void BombManager::reset(const TurnInfo &turnInfo)
     m_isExplodingBombs = false;
 
     //Create the needed bombs for this level.
-    for(int i = 0; i < m_turnInfo.bombsCount - (int)m_bombsVec.size(); ++i)
+    auto bombsToCreate = m_turnInfo.bombsCount - (int)m_bombsVec.size();
+    KABOOM_DLOG("BombManager::reset - Needs create %d bombs", bombsToCreate);
+
+    for(int i = 0; i < bombsToCreate; ++i)
         createBombHelper();
 
     //Reset them.
@@ -116,9 +109,12 @@ void BombManager::dropBombAt(const Lore::Vector2 &pos)
             bomb->startDropping();
             m_aliveBombs++;
 
-            break;
+            return;
         }
     }
+
+    //Cannot happen...
+    COREGAME_ASSERT(false, "CANNOT FIND A DEAD BOMB");
 }
 
 void BombManager::checkCollision(Paddle &paddle)
@@ -275,7 +271,7 @@ void BombManager::initSounds()
     soundMgr->loadEffect(kSoundName_Caught);
 
     //Exploded
-    for(int i = 0; i < kSoundExplode_Count; ++i)
+    for(int i = 1; i <= kSoundExplode_Count; ++i)
     {
         auto name = CoreGame::StringUtils::format(kSoundName_ExplodeFmt, i);
         soundMgr->loadEffect(name);
@@ -311,9 +307,16 @@ void BombManager::playCaughtEffect()
 
 void BombManager::playExplodeEffect()
 {
-    auto name = CoreGame::StringUtils::format(kSoundName_ExplodeFmt, 0);
+    int index = (m_aliveBombs >= 5) ? kSoundExplode_Count : m_aliveBombs;
+    COREGAME_DLOG(CoreGame::Log::Type::Debug1,
+        "BombManager::playExplodeEffect - Playing index: %d",
+        index
+    );
+
+    auto name = CoreGame::StringUtils::format(kSoundName_ExplodeFmt, index);
     Lore::SoundManager::instance()->playEffect(name);
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Bombs Callbacks                                                            //
