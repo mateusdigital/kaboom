@@ -51,16 +51,11 @@ USING_NS_GAMEKABOOM;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Load / Unload                                                              //
+// CTOR / DTOR                                                                //
 ////////////////////////////////////////////////////////////////////////////////
-void MenuScene::load()
+MenuScene::MenuScene()
 {
     initStuff();
-}
-
-void MenuScene::unload()
-{
-    //Empty...
 }
 
 
@@ -76,18 +71,18 @@ void MenuScene::update(float dt)
     if(inputMgr->isKeyClick(SDL_SCANCODE_UP))
     {
         changeSelection(-1);
+        Lore::SoundManager::instance()->playEffect(kSoundName_MenuSelect);
     }
     else if(inputMgr->isKeyClick(SDL_SCANCODE_DOWN))
     {
         changeSelection(+1);
+        Lore::SoundManager::instance()->playEffect(kSoundName_MenuSelect);
     }
+
     else if(inputMgr->isKeyClick(SDL_SCANCODE_RETURN))
     {
-        auto gameMgr = Lore::GameManager::instance();
-        if(m_selectionIndex == 0)
-            gameMgr->changeScene(std::unique_ptr<Lore::Scene>(new GameScene()));
-        else
-            gameMgr->changeScene(std::unique_ptr<Lore::Scene>(new CreditsScene()));
+        m_bomb.explode();
+        Lore::SoundManager::instance()->playEffect(kSoundName_ExplodeLast);
     }
 }
 
@@ -116,7 +111,8 @@ void MenuScene::initStuff()
     auto winRect   = Lore::WindowManager::instance()->getWindowRect();
     auto winCenter = winRect.getCenter();
 
-    //Title
+
+    //Title Text
     m_titleTop.loadFont(kFontName, kFontSize_TitleText);
     m_titleTop.setOrigin(Lore::ITransformable::OriginHelpers::Center());
     m_titleTop.setPosition(
@@ -133,7 +129,7 @@ void MenuScene::initStuff()
     m_titleBottom.setForegroundColor(Lore::Color::Black());
 
 
-    //Play
+    //Play Text
     m_playText.loadFont(kFontName, kFontSize_PlayCreditsText);
     m_playText.setString("Play");
     m_playText.setPosition(
@@ -141,16 +137,17 @@ void MenuScene::initStuff()
         winCenter.y - 50
     );
 
-    //Credits
+
+    //Credits Text
     m_creditsText.loadFont(kFontName, kFontSize_PlayCreditsText);
     m_creditsText.setString("Credits");
     m_creditsText.setPosition(
         Lore::Vector2::OffsetBy(m_playText.getPosition(), 0, 80)
     );
 
+
     //Bomb
     TurnInfo info {
-
         .turnNumber  = 0,
         .bombsCount  = 0,
         .bombSpeed   = 0,
@@ -159,10 +156,22 @@ void MenuScene::initStuff()
 
     m_bomb.reset(info);
     m_bomb.startDropping();
-    m_bomb.setOnReachTargetCallback([](){});
+    m_bomb.setOnExplodeFinishedCallback(
+        COREGAME_CALLBACK_0(MenuScene::onBombExplode, this)
+    );
 
+
+    //Selection Index
+    m_selectionIndex = 0;
     changeSelection(0); //Just to force the bomb position...
+
+
+    //Sounds
+    auto soundMgr = Lore::SoundManager::instance();
+    soundMgr->loadEffect(kSoundName_ExplodeLast);
+    soundMgr->loadEffect(kSoundName_MenuSelect );
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private Methods                                                            //
@@ -175,6 +184,15 @@ void MenuScene::changeSelection(int delta)
                         : m_creditsText.getPosition();
 
     m_bomb.setPosition(
-        Lore::Vector2::OffsetBy(position, -40, -5)
+        Lore::Vector2::OffsetBy(position, -50, -5)
     );
+}
+
+void MenuScene::onBombExplode()
+{
+    auto gameMgr = Lore::GameManager::instance();
+    if(m_selectionIndex == 0)
+        gameMgr->changeScene(std::unique_ptr<Lore::Scene>(new GameScene()));
+    else
+        gameMgr->changeScene(std::unique_ptr<Lore::Scene>(new CreditsScene()));
 }

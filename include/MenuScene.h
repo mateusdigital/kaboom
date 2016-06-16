@@ -50,10 +50,9 @@ NS_GAMEKABOOM_BEGIN
 
 class MenuScene : public Lore::Scene
 {
-    // Load / Unload //
+    // CTOR / DTOR //
 public:
-    virtual void load  () override;
-    virtual void unload() override;
+    MenuScene();
 
 
     // Update / Draw / Handle Events //
@@ -70,6 +69,8 @@ private:
     // Private Methods //
 private:
     void changeSelection(int delta);
+    void onBombExplode();
+
 
     // iVars //
 private:
