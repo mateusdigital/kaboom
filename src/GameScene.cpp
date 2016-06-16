@@ -75,16 +75,7 @@ bool _Helper_IsKeyClick(Lore::InputManager::KeyScanCodeType key)
 ////////////////////////////////////////////////////////////////////////////////
 // CTOR / DTOR                                                                //
 ////////////////////////////////////////////////////////////////////////////////
-GameScene::~GameScene()
-{
-    KABOOM_DLOG("GameScene DTOR");
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Load / Unload                                                              //
-////////////////////////////////////////////////////////////////////////////////
-void GameScene::load()
+GameScene::GameScene()
 {
     m_score       = 0;
     m_turnNumber  = 1;
@@ -95,11 +86,6 @@ void GameScene::load()
     initBombs ();
     initTexts ();
     initSounds();
-}
-
-void GameScene::unload()
-{
-    //Empty...
 }
 
 

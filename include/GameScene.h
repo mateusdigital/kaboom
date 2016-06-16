@@ -67,13 +67,7 @@ public:
 
     // CTOR / DTOR //
 public:
-    virtual ~GameScene();
-
-
-    // Load / Unload //
-public:
-    virtual void load  () override;
-    virtual void unload() override;
+    GameScene();
 
 
     // Update / Draw //
