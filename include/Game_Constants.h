@@ -88,6 +88,14 @@ constexpr auto kSoundName_Victory    = "victory.wav";
 constexpr auto kSoundName_Defeat     = "defeat.wav";
 constexpr auto kSoundName_GameOver   = "gameover.wav";
 
+constexpr auto kSoundName_Dropping   = "bomb_dropping.wav";
+constexpr auto kSoundName_ExplodeFmt = "bomb_explode%d.wav";
+constexpr auto kSoundName_Caught     = "bomb_caught.wav";
+
+constexpr int kSoundExplode_Count = 5;
+constexpr auto kSoundName_ExplodeLast = "bomb_explode5.wav";
+
+constexpr auto kSoundName_MenuSelect = "menu_select.wav";
 
 ////////////////////////////////////////////////////////////////////////////////
 // String Formats                                                             //
