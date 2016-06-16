@@ -53,12 +53,14 @@ class GameBackground
 public:
     GameBackground();
 
+
     // Public Methods //
 public:
      void draw();
 
      void explode();
      void setNormalColor();
+
 
      // iVars //
 private:
