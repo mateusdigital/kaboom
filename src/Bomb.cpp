@@ -52,8 +52,8 @@ constexpr int kSpriteFramesCount_Alive    = 4;
 constexpr int kSpriteFramesCount_Exploded = 3;
 
 constexpr float kTimerSpriteFrameChange_Alive     = 0.10f;
-constexpr float kTimerSpriteFrameChange_Exploding = 0.07f;
-constexpr int   kRepeatCount_Exploding = 5;
+constexpr float kTimerSpriteFrameChange_Exploding = 0.04f;
+constexpr int   kRepeatCount_Exploding            = 5;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,11 +71,12 @@ Bomb::Bomb() :
     //Movement / Bounds
     m_pos            (Lore::Vector2::Zero()),
     m_speed          (Lore::Vector2::Zero()),
-    m_maxY           (0)
+    m_maxY           (0),
     //Callback
-    //m_reachTargetCallback       - Default initialized
-    //m_explodingFinishedCallback - Default initialized
+    m_reachTargetCallback     (nullptr),
+    m_explodedFinishedCallback(nullptr)
 {
+    setOnReachTargetCallback(ReachTargetCallback());
     initAnimations();
     initTimers    ();
 }
@@ -103,7 +104,7 @@ void Bomb::update(float dt)
     {
         setPosition(getPosition() + (m_speed * dt));
 
-        if(getPosition().y >= m_maxY)
+        if(getPosition().y >= m_maxY && m_reachTargetCallback)
             m_reachTargetCallback();
     }
 }
@@ -275,7 +276,8 @@ void Bomb::onExplodingAnimationTimerTick()
 void Bomb::onExplodingAnimationFinished()
 {
     m_state = Bomb::State::Dead;
-    m_explodedFinishedCallback();
+    if(m_explodedFinishedCallback)
+        m_explodedFinishedCallback();
 }
 
 
