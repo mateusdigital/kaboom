@@ -68,7 +68,7 @@ private:
 
     // Private Methods //
 private:
-    void changeSelection(int delta);
+    void changeSelection(int delta, bool playSound = true);
     void onBombExplode();
 
 
@@ -83,6 +83,9 @@ private:
     //Play / Credits
     Lore::Text m_playText;
     Lore::Text m_creditsText;
+
+    //AmazingCow
+    Lore::Text m_amazingcowText;
 
     //Bomb
     Bomb m_bomb;

@@ -71,12 +71,10 @@ void MenuScene::update(float dt)
     if(inputMgr->isKeyClick(SDL_SCANCODE_UP))
     {
         changeSelection(-1);
-        Lore::SoundManager::instance()->playEffect(kSoundName_MenuSelect);
     }
     else if(inputMgr->isKeyClick(SDL_SCANCODE_DOWN))
     {
         changeSelection(+1);
-        Lore::SoundManager::instance()->playEffect(kSoundName_MenuSelect);
     }
 
     else if(inputMgr->isKeyClick(SDL_SCANCODE_RETURN))
@@ -97,6 +95,10 @@ void MenuScene::draw()
     //Play / Credits
     m_playText.draw   ();
     m_creditsText.draw();
+
+    //AmazingCow
+    m_amazingcowText.draw();
+
 
     //Bomb
     m_bomb.draw();
@@ -146,6 +148,13 @@ void MenuScene::initStuff()
     );
 
 
+    //AmazingCow
+    m_amazingcowText.loadFont(kFontName, kFontSize_AmazingCowText);
+    m_amazingcowText.setString("amazingcow - 2016");
+    m_amazingcowText.setPosition(winCenter.x, winRect.getHeight() - 20);
+    m_amazingcowText.setOrigin(Lore::ITransformable::OriginHelpers::BottomCenter());
+
+
     //Bomb
     TurnInfo info {
         .turnNumber  = 0,
@@ -161,24 +170,32 @@ void MenuScene::initStuff()
     );
 
 
-    //Selection Index
-    m_selectionIndex = 0;
-    changeSelection(0); //Just to force the bomb position...
-
-
     //Sounds
     auto soundMgr = Lore::SoundManager::instance();
     soundMgr->loadEffect(kSoundName_ExplodeLast);
     soundMgr->loadEffect(kSoundName_MenuSelect );
+
+
+    //Selection Index
+    m_selectionIndex = -1;
+    changeSelection(1, false); //Just to force the bomb position...
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private Methods                                                            //
 ////////////////////////////////////////////////////////////////////////////////
-void MenuScene::changeSelection(int delta)
+void MenuScene::changeSelection(int delta, bool playSound)
 {
-    m_selectionIndex = Lore::MathHelper::clamp(m_selectionIndex + delta, 0, 1);
+    auto newSelection = Lore::MathHelper::clamp(m_selectionIndex + delta, 0, 1);
+
+    if(newSelection == m_selectionIndex)
+        return;
+
+    if(playSound)
+        Lore::SoundManager::instance()->playEffect(kSoundName_MenuSelect);
+
+    m_selectionIndex = newSelection;
     auto position    = (m_selectionIndex == 0)
                         ? m_playText.getPosition   ()
                         : m_creditsText.getPosition();
