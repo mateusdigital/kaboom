@@ -48,9 +48,12 @@
 constexpr auto kFontName         = "nokiafc22.ttf";
 constexpr auto kFontName_Credits = "SourceCodePro-Regular.ttf";
 
+//Splash Scene
+constexpr int kFontSize_AmazingCowLogoText = 30;
 //Menu Scene
 constexpr int kFontSize_TitleText        = 100;
 constexpr int kFontSize_PlayCreditsText  = 40;
+constexpr int kFontSize_AmazingCowText   = 20;
 //Game Scene
 constexpr int kFontSize_StatusText   = 100;
 constexpr int kFontSize_ScoreText    = 20;
@@ -83,6 +86,8 @@ constexpr int kScoreMutilplier = 50;
 ////////////////////////////////////////////////////////////////////////////////
 // Sounds                                                                     //
 ////////////////////////////////////////////////////////////////////////////////
+constexpr auto kSoundName_AmazingIntro = "amazing_intro.wav";
+
 constexpr auto kSoundName_LevelStart = "level_start.wav";
 constexpr auto kSoundName_Victory    = "victory.wav";
 constexpr auto kSoundName_Defeat     = "defeat.wav";
