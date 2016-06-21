@@ -61,7 +61,7 @@ int main()
     auto inputMgr  = Lore::InputManager::instance ();
     auto soundMgr  = Lore::SoundManager::instance ();
 
-    winMgr->initialize("Amazing Cow - Kaboom - v0.0.0",
+    winMgr->initialize("Amazing Cow - Kaboom - v1.0.0",
                         800, 600,
                         800, 600,
                         0, 0);
