@@ -61,15 +61,19 @@ int main()
     auto inputMgr  = Lore::InputManager::instance ();
     auto soundMgr  = Lore::SoundManager::instance ();
 
-    winMgr->initialize("Lore Test",
+    winMgr->initialize("Amazing Cow - Kaboom - v0.0.0",
                         800, 600,
                         800, 600,
                         0, 0);
 
-    assetsMgr->initialize("./assets");
+    std::vector<std::string> paths = {
+        "./assets",
+        "/usr/local/share/amazingcow_game_kaboom/assets"
+    };
+
+    assetsMgr->initialize(paths);
     inputMgr->initialize();
-    soundMgr->initialize("./assets",
-                         MIX_DEFAULT_FREQUENCY,
+    soundMgr->initialize(MIX_DEFAULT_FREQUENCY,
                          MIX_DEFAULT_FORMAT,
                          MIX_DEFAULT_CHANNELS,
                          2048);
