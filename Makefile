@@ -79,8 +79,8 @@ install: dev-build
 	@ ## Install new stuff...
 	@ mkdir -p $(_COW_SHARE)/assets/
 
-	@ cp -rf ./bin/$(_GAME_NAME) $(_COW_BIN)/$(_GAME_NAME) ## Binary
-	@ cp -rf ./assets            $(_COW_SHARE)     	       ## Assets
+	@ cp -rf ./build/$(_GAME_NAME) $(_COW_BIN)/$(_GAME_NAME) ## Binary
+	@ cp -rf ./assets              $(_COW_SHARE)             ## Assets
 
 	@ echo "---> Done... We **really** hope that you have fun :D"
 
@@ -106,6 +106,7 @@ gen-binary:
 
 
 gen-archive:
+	rm -rf   ./archives
 	mkdir -p ./archives
 
 	git-archive-all ./archives/source_$(_GAME_NAME)_$(_GIT_TAG).zip
