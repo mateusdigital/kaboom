@@ -41,6 +41,7 @@
 //Header
 #include "SplashScene.h"
 //Game_Kaboom
+#include "Game_Constants.h"
 #include "GameScene.h"
 #include "MenuScene.h"
 
@@ -57,6 +58,7 @@ SplashScene::SplashScene()
 
     initSprites();
     initTimers ();
+    initSounds ();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,13 +67,34 @@ SplashScene::SplashScene()
 void SplashScene::update(float dt)
 {
     //Update the timers.
-    m_appearTimer.update   (dt);
-    m_disappearTimer.update(dt);
+    m_timer.update(dt);
+
+    if(!m_updateColors)
+        return;
+
+    constexpr int step = 5;
+    auto currColor = m_sprite.getColor();
+
+    // Red
+    if     (currColor.r > m_targetColor.r) currColor.r -= step;
+    else if(currColor.r < m_targetColor.r) currColor.r += step;
+    // Blue
+    if     (currColor.g > m_targetColor.g) currColor.g -= step;
+    else if(currColor.g < m_targetColor.g) currColor.g += step;
+    //Green
+    if     (currColor.b > m_targetColor.b) currColor.b -= step;
+    else if(currColor.b < m_targetColor.b) currColor.b += step;
+
+    m_sprite.setColor(currColor);
 }
 
 void SplashScene::draw()
 {
-    m_logoSprite.draw();
+    if(!m_updateColors)
+        return;
+
+    m_sprite.draw();
+    m_text.draw();
 }
 
 
@@ -80,30 +103,63 @@ void SplashScene::draw()
 ////////////////////////////////////////////////////////////////////////////////
 void SplashScene::initSprites()
 {
+    auto gm = Lore::GameManager::instance();
     auto winCenter = Lore::WindowManager::instance()->getWindowRect().getCenter();
 
-    //Logo Sprite
-    m_logoSprite.loadTexture("AmazingCow_Logo.png");
-    m_logoSprite.setOrigin(Lore::ITransformable::OriginHelpers::Center());
-    m_logoSprite.setPosition(winCenter);
-    m_logoSprite.setIsVisible(false);
+    //Color
+    m_targetColor = Lore::Color(
+                        gm->getRandomNumber(0, 255),
+                        gm->getRandomNumber(0, 255),
+                        gm->getRandomNumber(0, 255)
+                    );
+
+    //Sprite
+    m_sprite.loadTexture("AmazingCow_Logo_Big.png");
+    m_sprite.setOrigin(Lore::ITransformable::OriginHelpers::TopCenter());
+    m_sprite.setPosition(
+        Lore::Vector2::OffsetBy(winCenter, 0, -m_sprite.getBounds().getHeight())
+    );
+
+    //Text
+    m_text.loadFont(kFontName, kFontSize_AmazingCowLogoText);
+    m_text.setString("amazingcow");
+    m_text.setOrigin(Lore::ITransformable::OriginHelpers::TopCenter());
+    m_text.setPosition(
+        winCenter.x,
+        m_sprite.getBounds().getBottom() + 20
+    );
+    m_text.setForegroundColor(Lore::Color::Black());
+
+
+    //Others
+    m_updateColors = false;
 }
 
 void SplashScene::initTimers()
 {
-    m_disappearTimer.setInterval(1.5f);
-    m_disappearTimer.setRepeatCount(1);
-    m_disappearTimer.setTickCallback([this]() {
+    m_timer.setInterval(0.4f);
+    m_timer.setRepeatCount(5);
+
+    m_timer.setTickCallback([this](){
+        if(!m_updateColors)
+        {
+            auto soundMgr = Lore::SoundManager::instance();
+            soundMgr->playEffect(kSoundName_AmazingIntro);
+            m_updateColors = true;
+        }
+    });
+
+    m_timer.setDoneCallback([this]() {
         KABOOM_DLOG("m_disapperTimer - done....");
         auto gm = Lore::GameManager::instance();
         gm->changeScene(std::unique_ptr<Lore::Scene>(new MenuScene()));
     });
 
-    m_appearTimer.setInterval(0.5f);
-    m_appearTimer.setRepeatCount(1);
-    m_appearTimer.setTickCallback([this]() {
-        m_logoSprite.setIsVisible(true);
-        m_disappearTimer.start();
-    });
-    m_appearTimer.start();
+    m_timer.start();
+}
+
+void SplashScene::initSounds()
+{
+    auto soundMgr = Lore::SoundManager::instance();
+    soundMgr->loadEffect(kSoundName_AmazingIntro);
 }

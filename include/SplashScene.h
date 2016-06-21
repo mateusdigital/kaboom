@@ -63,13 +63,16 @@ public:
 private:
     void initSprites();
     void initTimers ();
-
+    void initSounds ();
 
     // iVars //
 private:
-    Lore::Sprite     m_logoSprite;
-    CoreClock::Clock m_appearTimer;
-    CoreClock::Clock m_disappearTimer;
+    Lore::Sprite     m_sprite;
+    Lore::Text       m_text;
+    Lore::Color      m_targetColor;
+    CoreClock::Clock m_timer;
+
+    bool m_updateColors;
 };
 
 NS_GAMEKABOOM_END
