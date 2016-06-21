@@ -114,15 +114,17 @@ void CreditsScene::initStuff()
         "This means that you're welcome to",
         "SHARE and HACK IT (!!!)",
         "",
-        "You can found the sources at:",
+        "You can find the sources at:",
         "opensource.amazingcow.com",
         "",
         "Dev / Graphics / Sound by N2OMatt",
         "","",
         "THANKS FOR PLAYING..."
-        "", "", "",
-        "Help the Instituto Ayrton Senna",
-        "www.institutoayrtonsenna.org.br"
+        "", "",
+        "Instituto Ayrton Senna helps poor children in Brazil",
+        "get better life opportunities by improving their education.",
+        "Why you don't look and help their work? <3",
+        "www.InstitutoAyrtonSenna.org.br"
     };
 
     float startOffset = 140;
