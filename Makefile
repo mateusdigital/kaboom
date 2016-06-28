@@ -88,8 +88,7 @@ install: dev-build
 ################################################################################
 ## Release                                                                    ##
 ################################################################################
-gen-binary:
-
+gen-binary: dev-build
 	mkdir -p ./bin/$(_GAME_NAME)
 
 	cp -r ./assets/              ./bin/$(_GAME_NAME)/assets
