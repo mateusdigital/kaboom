@@ -5,7 +5,7 @@
 //            ███  █  █  ███        main.cpp                                  //
 //            █ █        █ █        Game_Kaboom                               //
 //             ████████████                                                   //
-//           █              █       Copyright (c) 2016                        //
+//           █              █       Copyright (c) 2016, 2017                  //
 //          █     █    █     █      AmazingCow - www.AmazingCow.com           //
 //          █     █    █     █                                                //
 //           █              █       N2OMatt - n2omatt@amazingcow.com          //
@@ -38,6 +38,12 @@
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
 
+//C
+#include <dlfcn.h>
+//std
+#include <sstream>
+#include <vector>
+#include <string>
 //Lore
 #include "Lore.h"
 //Game_Kaboom
@@ -51,8 +57,53 @@
 USING_NS_GAMEKABOOM;
 
 
+#define GAME_NAME    "Amazing Cow Labs - Kaboom!"
+#define GAME_VERSION "v1.1.0"
+#define GAME_FULL_NAME GAME_NAME " - " GAME_VERSION
+
+void checkSharedObjectFiles()
+{
+    std::vector<std::string> libs = {
+        "libSDL2-2.0.so.0",
+        "libSDL2_image-2.0.so.0",
+        "libSDL2_ttf-2.0.so.0",
+        "libSDL2_mixer-2.0.so.0"
+    };
+
+    std::stringstream libs_sstream;
+    for(auto &libName : libs)
+    {
+        auto pHandle = dlopen(libName.c_str(), RTLD_NOLOAD | RTLD_LAZY);
+        if(pHandle == nullptr)
+            libs_sstream << "   " << libName << std::endl;
+    }
+
+    if(libs_sstream.str().size() != 0)
+    {
+        std::stringstream msg_sstream;
+        msg_sstream << "Sorry, missing .so files:" << std::endl;
+        msg_sstream << libs_sstream.str()          << std::endl;
+        msg_sstream << "Please install SDL2."      << std::endl;
+        msg_sstream << "For help send a email to:" << std::endl;
+        msg_sstream << "help@amazingcow.com with ";
+        msg_sstream << "[kaboom] as subject!"      << std::endl;
+
+        Lore::SDLHelpers::MessageBox_Error(
+            GAME_FULL_NAME,
+            msg_sstream.str()
+        );
+
+        exit(1);
+    }
+}
+
+
 int main()
 {
+    //Before all check if we have the .so files.
+    checkSharedObjectFiles();
+
+
     Lore::ErrorControl::DieMode = Lore::ErrorControl::LORE_ERROR_DIE_ON_ALL_ERRORS;
 
     auto winMgr    = Lore::WindowManager::instance();
@@ -61,10 +112,10 @@ int main()
     auto inputMgr  = Lore::InputManager::instance ();
     auto soundMgr  = Lore::SoundManager::instance ();
 
-    winMgr->initialize("Amazing Cow - Kaboom - v1.0.0",
-                        800, 600,
-                        800, 600,
-                        0, 0);
+    winMgr->initialize(GAME_FULL_NAME,
+                       800, 600,
+                       800, 600,
+                       0, 0);
 
     std::vector<std::string> paths = {
         "./assets",
