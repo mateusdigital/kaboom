@@ -5,7 +5,7 @@
 ##            ███  █  █  ███        Makefile                                  ##
 ##            █ █        █ █        Game_Kaboom                               ##
 ##             ████████████                                                   ##
-##           █              █       Copyright (c) 2016                        ##
+##           █              █       Copyright (c) 2016, 2017                  ##
 ##          █     █    █     █      AmazingCow - www.AmazingCow.com           ##
 ##          █     █    █     █                                                ##
 ##           █              █       N2OMatt - n2omatt@amazingcow.com          ##
@@ -49,27 +49,54 @@ HOST="linux_x64"
 ################################################################################
 _GAME_NAME=kaboom
 
+_LORE_INCLUDE_DIR       =  ./lib/Lore
+_CORECLOCK_INCLUDE_DIR  =  ./lib/Lore/lib/CoreClock/include
+_COREGAME_INCLUDE_DIR   =  ./lib/Lore/lib/CoreGame/include
+_CORERANDOM_INCLUDE_DIR =  ./lib/Lore/lib/CoreRandom/include
+_GAME_INCLUDE_DIR       =  ./include
 
-_COW_BIN=/usr/local/bin
-_COW_SHARE=/usr/local/share/amazingcow_game_$(_GAME_NAME)
-_GIT_TAG=`git describe --tags --abbrev=0 | tr . _`
+_SDLFLAGS=`sdl2-config --libs --cflags` \
+          -lSDL2_image                  \
+          -lSDL2_ttf                    \
+          -lSDL2_mixer
+
+CC = g++ -std=c++11                    \
+         -I $(_LORE_INCLUDE_DIR)       \
+         -I $(_CORECLOCK_INCLUDE_DIR)  \
+         -I $(_COREGAME_INCLUDE_DIR)   \
+         -I $(_CORERANDOM_INCLUDE_DIR) \
+         -I $(_GAME_INCLUDE_DIR)
+
+################################################################################
+## Compilation                                                                ##
+################################################################################
+# File names
+EXEC    = ./build/$(_GAME_NAME)
+SOURCES = $(shell find . -name '*.cpp')
+OBJECTS = $(SOURCES:.cpp=.o)
+
+# Main target
+$(EXEC): $(OBJECTS)
+	mkdir ./build
+	$(CC) $(OBJECTS) -o $(EXEC) $(_SDLFLAGS) -ldl
+
+# To obtain object files
+%.o: %.cpp
+	$(CC) -c $< -o $@
+
+# To remove generated files
+clean:
+	rm -f $(EXEC) $(OBJECTS)
 
 
-_LORE_DIR=./lib/Lore
-_CORECLOCK_DIR=$(_LORE_DIR)/lib/CoreClock
-_COREGAME_DIR=$(_LORE_DIR)/lib/CoreGame
-_CORERANDOM_DIR=$(_LORE_DIR)/lib/CoreRandom
-
-
-_SDLFLAGS=`sdl2-config --libs --cflags` -lSDL2_image -lSDL2_ttf -lSDL2_mixer
-_CC=g++ -Ofast -std=c++11 -Wall -Wextra -Wno-comment  -DCOREGAME_RELEASE -DLORE_RELEASE
-_CC_DEBUG=g++ -g -std=c++11 -Wall -Wextra -Wno-comment
+debug: CC += -DDEBUG -g
+debug: $(EXEC)
 
 
 ################################################################################
 ## End user                                                                   ##
 ################################################################################
-install: dev-build
+install: $(EXEC)
 	@ echo "---> Installing...".
 
 	@ ## Deleting old stuff...
@@ -88,7 +115,7 @@ install: dev-build
 ################################################################################
 ## Release                                                                    ##
 ################################################################################
-gen-binary: dev-build
+gen-binary: $(EXEC)
 	mkdir -p ./bin/$(_GAME_NAME)
 
 	cp -r ./assets/              ./bin/$(_GAME_NAME)/assets
@@ -109,47 +136,23 @@ gen-archive:
 	mkdir -p ./archives
 
 	git-archive-all ./archives/source_$(_GAME_NAME)_$(_GIT_TAG).zip
-	git-archive-all  ./archives/source_$(_GAME_NAME)_$(_GIT_TAG).tar.gz
+	git-archive-all ./archives/source_$(_GAME_NAME)_$(_GIT_TAG).tar.gz
 
 
-################################################################################
-## Dev                                                                        ##
-################################################################################
-dev-build:
-	rm -rf ./build/
-	mkdir -p ./build/
+gen-archive-bin:
+	#Clean up the destination folder.
+	rm -rf   ./archives-bin
+	mkdir -p ./archives-bin
 
-	$(_CC) -o ./build/$(_GAME_NAME)           \
-	       -I $(_LORE_DIR)                    \
-	       -I $(_CORECLOCK_DIR)/include       \
-	       -I $(_COREGAME_DIR)/include        \
-	       -I $(_CORERANDOM_DIR)/include      \
-	       -I ./include                       \
-	                                          \
-	       $(_LORE_DIR)/src/*.cpp             \
-	       $(_LORE_DIR)/src/private/src/*.cpp \
-	       $(_CORECLOCK_DIR)/src/*.cpp        \
-	       $(_COREGAME_DIR)/src/*.cpp         \
-	       $(_CORERANDOM_DIR)/src/*.cpp       \
-	       ./src/*.cpp                        \
-	$(_SDLFLAGS)
+	#Clean up the temp folder.
+	rm -rf   $(_GAME_NAME)_game;
+	mkdir -p $(_GAME_NAME)_game;
+
+	cp ./build/$(_GAME_NAME) $(_GAME_NAME)_game;
+	cp -R ./assets           $(_GAME_NAME)_game;
+
+	zip -r    ./archives-bin/$(_GAME_NAME)_$(_GIT_TAG).zip    $(_GAME_NAME)_game
+	tar -czvf ./archives-bin/$(_GAME_NAME)_$(_GIT_TAG).tar.gz $(_GAME_NAME)_game
 
 
-dev-debug:
-	rm -rf ./build/
-	mkdir -p ./build/
 
-	$(_CC_DEBUG) -o ./build/$(_GAME_NAME)     \
-	       -I $(_LORE_DIR)                    \
-	       -I $(_CORECLOCK_DIR)/include       \
-	       -I $(_COREGAME_DIR)/include        \
-	       -I $(_CORERANDOM_DIR)/include      \
-	       -I ./include                       \
-	                                          \
-	       $(_LORE_DIR)/src/*.cpp             \
-	       $(_LORE_DIR)/src/private/src/*.cpp \
-	       $(_CORECLOCK_DIR)/src/*.cpp        \
-	       $(_COREGAME_DIR)/src/*.cpp         \
-	       $(_CORERANDOM_DIR)/src/*.cpp       \
-	       ./src/*.cpp                        \
-	$(_SDLFLAGS)
