@@ -41,31 +41,40 @@
 ################################################################################
 ## Public Vars                                                                ##
 ################################################################################
-HOST="linux_x64"
+HOST=`uname -s`_`uname -m`
 
 
 ################################################################################
 ## Private Vars                                                               ##
 ################################################################################
+## Definitions ##
 _GAME_NAME=kaboom
+_COW_SHARE           = /usr/local/share/amazingcow_game_kaboom
+_COW_BIN             = /usr/local/bin
+_INSTALL_DIR_DESKTOP = /usr/share/applications
+_DESKTOP_FILENAME    = "$(_GAME_NAME).desktop"
 
+## Includes ##
 _LORE_INCLUDE_DIR       =  ./lib/Lore
 _CORECLOCK_INCLUDE_DIR  =  ./lib/Lore/lib/CoreClock/include
 _COREGAME_INCLUDE_DIR   =  ./lib/Lore/lib/CoreGame/include
 _CORERANDOM_INCLUDE_DIR =  ./lib/Lore/lib/CoreRandom/include
 _GAME_INCLUDE_DIR       =  ./include
 
+## Flags ##
 _SDLFLAGS=`sdl2-config --libs --cflags` \
           -lSDL2_image                  \
           -lSDL2_ttf                    \
           -lSDL2_mixer
 
-CC = g++ -std=c++11                    \
+## CC ##
+CC = g++-5 -std=c++14                    \
          -I $(_LORE_INCLUDE_DIR)       \
          -I $(_CORECLOCK_INCLUDE_DIR)  \
          -I $(_COREGAME_INCLUDE_DIR)   \
          -I $(_CORERANDOM_INCLUDE_DIR) \
          -I $(_GAME_INCLUDE_DIR)
+
 
 ################################################################################
 ## Compilation                                                                ##
@@ -78,7 +87,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 # Main target
 $(EXEC): $(OBJECTS)
 	mkdir -p ./build
-	$(CC) $(OBJECTS) -o $(EXEC) $(_SDLFLAGS) -ldl
+	$(CC) $(OBJECTS) -o $(EXEC) $(_SDLFLAGS) -ldl -lstdc++fs
 
 # To obtain object files
 %.o: %.cpp
@@ -96,18 +105,19 @@ debug: $(EXEC)
 ################################################################################
 ## End user                                                                   ##
 ################################################################################
-install: $(EXEC)
+install:
 	@ echo "---> Installing...".
 
 	@ ## Deleting old stuff...
-	@ rm -rf $(_COW_SHARE)
-	@ rm -rf $(_COW_BIN)/$(_GAME_NAME)
+	 rm -rf $(_COW_SHARE)
+	 rm -rf $(_COW_BIN)/$(_GAME_NAME)
 
 	@ ## Install new stuff...
-	@ mkdir -p $(_COW_SHARE)/assets/
+	mkdir -p $(_COW_SHARE)/assets/
 
-	@ cp -rf ./build/$(_GAME_NAME) $(_COW_BIN)/$(_GAME_NAME) ## Binary
-	@ cp -rf ./assets              $(_COW_SHARE)             ## Assets
+	cp -rf ./build/$(_GAME_NAME) $(_COW_BIN)/$(_GAME_NAME) ## Binary
+	cp -rf ./assets              $(_COW_SHARE)             ## Assets
+	cp -f $(_DESKTOP_FILENAME)   $(_INSTALL_DIR_DESKTOP)   ## .desktop
 
 	@ echo "---> Done... We **really** hope that you have fun :D"
 
