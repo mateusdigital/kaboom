@@ -152,6 +152,17 @@ void checkAllAssetsFiles()
 }
 
 
+std::vector<std::string> getAssetsPaths()
+{
+    std::vector<std::string> paths = {
+        "./assets",
+        "/usr/local/share/amazingcow_game_kaboom/assets"
+    };
+
+    return paths;
+}
+
+
 int main()
 {
     //Before all check if we have the .so files.
@@ -165,33 +176,41 @@ int main()
     auto inputMgr  = Lore::InputManager::instance ();
     auto soundMgr  = Lore::SoundManager::instance ();
 
-    winMgr->initialize(GAME_FULL_NAME,
-                       800, 600,
-                       800, 600,
-                       0, 0);
+    winMgr->initialize(
+        GAME_FULL_NAME,
+        800, 600,
+        800, 600,
+        0, 0
+    );
 
-    std::vector<std::string> paths = {
-        "./assets",
-        "/usr/local/share/amazingcow_game_kaboom/assets"
-    };
 
     //Init the AssetsManager and check if all
     //required assets are present.
-    assetsMgr->initialize(paths);
+    assetsMgr->initialize(getAssetsPaths());
     checkAllAssetsFiles  ();
 
-    inputMgr->initialize();
-    soundMgr->initialize(MIX_DEFAULT_FREQUENCY,
-                         MIX_DEFAULT_FORMAT,
-                         MIX_DEFAULT_CHANNELS,
-                         2048);
+    //Set the Window Icon.
+    winMgr->setIcon("kaboom_icon.png");
 
-    gameMgr->initialize(CoreRandom::Random::kRandomSeed, 60);
+    inputMgr->initialize();
+
+    soundMgr->initialize(
+        MIX_DEFAULT_FREQUENCY,
+        MIX_DEFAULT_FORMAT,
+        MIX_DEFAULT_CHANNELS,
+        2048
+    );
+
+    gameMgr->initialize(
+        CoreRandom::Random::kRandomSeed,
+        60
+    );
 
     gameMgr->run(std::unique_ptr<Lore::Scene>(new SplashScene()));
 
-    winMgr->shutdown();
+
     gameMgr->shutdown();
+    winMgr->shutdown ();
 
     return 0;
 }
