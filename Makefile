@@ -53,6 +53,7 @@ _COW_SHARE           = /usr/local/share/amazingcow_game_kaboom
 _COW_BIN             = /usr/local/bin
 _INSTALL_DIR_DESKTOP = /usr/share/applications
 _DESKTOP_FILENAME    = "$(_GAME_NAME).desktop"
+_GIT_TAG             = `git tag | sort | tail -1`
 
 ## Includes ##
 _LORE_INCLUDE_DIR       =  ./lib/Lore
@@ -68,12 +69,13 @@ _SDLFLAGS=`sdl2-config --libs --cflags` \
           -lSDL2_mixer
 
 ## CC ##
-CC = g++-5 -std=c++14                    \
+CC = g++-5 -std=c++14                  \
          -I $(_LORE_INCLUDE_DIR)       \
          -I $(_CORECLOCK_INCLUDE_DIR)  \
          -I $(_COREGAME_INCLUDE_DIR)   \
          -I $(_CORERANDOM_INCLUDE_DIR) \
          -I $(_GAME_INCLUDE_DIR)
+
 
 
 ################################################################################
@@ -97,6 +99,11 @@ $(EXEC): $(OBJECTS)
 clean:
 	rm -f $(EXEC) $(OBJECTS)
 
+
+release: CC += -Ofast -Wall -Wextra -Wno-comment \
+               -DCOREGAME_RELEASE                \
+               -DLORE_RELEASE
+release: $(EXEC)
 
 debug: CC += -DDEBUG -g
 debug: $(EXEC)
@@ -158,11 +165,16 @@ gen-archive-bin:
 	rm -rf   $(_GAME_NAME)_game;
 	mkdir -p $(_GAME_NAME)_game;
 
-	cp ./build/$(_GAME_NAME) $(_GAME_NAME)_game;
-	cp -R ./assets           $(_GAME_NAME)_game;
+	cp    ./build/$(_GAME_NAME) $(_GAME_NAME)_game;
+	cp -R ./assets              $(_GAME_NAME)_game;
+	cp    $(_DESKTOP_FILENAME)  $(_GAME_NAME)_game;
+	cp    Read_Me.txt           $(_GAME_NAME)_game;
 
 	zip -r    ./archives-bin/$(_GAME_NAME)_$(_GIT_TAG).zip    $(_GAME_NAME)_game
 	tar -czvf ./archives-bin/$(_GAME_NAME)_$(_GIT_TAG).tar.gz $(_GAME_NAME)_game
 
+
+	#Clean up the temp folder.
+	rm -rf $(_GAME_NAME)_game;
 
 
