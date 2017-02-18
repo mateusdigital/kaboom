@@ -77,7 +77,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 
 # Main target
 $(EXEC): $(OBJECTS)
-	mkdir ./build
+	mkdir -p ./build
 	$(CC) $(OBJECTS) -o $(EXEC) $(_SDLFLAGS) -ldl
 
 # To obtain object files
