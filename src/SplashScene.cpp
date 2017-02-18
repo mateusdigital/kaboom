@@ -122,7 +122,7 @@ void SplashScene::initSprites()
 
     //Text
     m_text.loadFont(kFontName, kFontSize_AmazingCowLogoText);
-    m_text.setString("amazingcow");
+    m_text.setString("amazing cow labs");
     m_text.setOrigin(Lore::ITransformable::OriginHelpers::TopCenter());
     m_text.setPosition(
         winCenter.x,

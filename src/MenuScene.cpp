@@ -77,7 +77,8 @@ void MenuScene::update(float dt)
         changeSelection(+1);
     }
 
-    else if(inputMgr->isKeyClick(SDL_SCANCODE_RETURN))
+    else if(inputMgr->isKeyClick(SDL_SCANCODE_RETURN) ||
+            inputMgr->isKeyClick(SDL_SCANCODE_SPACE))
     {
         m_bomb.explode();
         Lore::SoundManager::instance()->playEffect(kSoundName_ExplodeLast);
@@ -150,7 +151,7 @@ void MenuScene::initStuff()
 
     //AmazingCow
     m_amazingcowText.loadFont(kFontName, kFontSize_AmazingCowText);
-    m_amazingcowText.setString("amazingcow - 2016");
+    m_amazingcowText.setString("amazing cow labs - 2016, 2017");
     m_amazingcowText.setPosition(winCenter.x, winRect.getHeight() - 20);
     m_amazingcowText.setOrigin(Lore::ITransformable::OriginHelpers::BottomCenter());
 
@@ -201,7 +202,7 @@ void MenuScene::changeSelection(int delta, bool playSound)
                         : m_creditsText.getPosition();
 
     m_bomb.setPosition(
-        Lore::Vector2::OffsetBy(position, -50, -5)
+        Lore::Vector2::OffsetBy(position, -60, -5)
     );
 }
 

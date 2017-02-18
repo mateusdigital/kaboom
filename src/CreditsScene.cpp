@@ -65,7 +65,9 @@ CreditsScene::CreditsScene()
 void CreditsScene::update(float /* dt */)
 {
     auto inputMgr = Lore::InputManager::instance();
-    if(inputMgr->isKeyClick(SDL_SCANCODE_RETURN))
+    if(inputMgr->isKeyClick(SDL_SCANCODE_RETURN) ||
+       inputMgr->isKeyClick(SDL_SCANCODE_SPACE ) ||
+       inputMgr->isKeyClick(SDL_SCANCODE_ESCAPE))
     {
         auto gameMgr = Lore::GameManager::instance();
         gameMgr->changeScene(std::unique_ptr<Lore::Scene>(new MenuScene()));
@@ -103,7 +105,7 @@ void CreditsScene::initStuff()
 
     //Message
     std::vector<std::string> msg {
-        "This remake was made with <3 by Amazing Cow.",
+        "This remake was made with <3 by Amazing Cow Labs.",
         "We hope that you enjoy this little game (!)"
         "",
         "We have other projects at:",
