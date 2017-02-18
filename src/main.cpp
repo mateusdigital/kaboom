@@ -58,7 +58,7 @@ USING_NS_GAMEKABOOM;
 
 
 #define GAME_NAME    "Amazing Cow Labs - Kaboom!"
-#define GAME_VERSION "v1.1.0"
+#define GAME_VERSION "v1.2.0"
 #define GAME_FULL_NAME GAME_NAME " - " GAME_VERSION
 
 void checkSharedObjectFiles()
@@ -81,10 +81,12 @@ void checkSharedObjectFiles()
     if(libs_sstream.str().size() != 0)
     {
         std::stringstream msg_sstream;
-        msg_sstream << "Sorry, missing .so files:" << std::endl;
-        msg_sstream << libs_sstream.str()          << std::endl;
-        msg_sstream << "Please install SDL2."      << std::endl;
-        msg_sstream << "For help send a email to:" << std::endl;
+        msg_sstream << "Sorry, missing .so files:"  << std::endl;
+        msg_sstream << libs_sstream.str()           << std::endl;
+        msg_sstream << "Please install SDL2:"       << std::endl;
+        msg_sstream << "    https://libsdl.org"     << std::endl;
+        msg_sstream                                 << std::endl;
+        msg_sstream << "For help send a email to:"  << std::endl;
         msg_sstream << "help@amazingcow.com with ";
         msg_sstream << "[kaboom] as subject!"      << std::endl;
 
