@@ -97,12 +97,65 @@ void checkSharedObjectFiles()
     }
 }
 
+void checkAllAssetsFiles()
+{
+    std::vector<std::string> requiredFiles {
+        //Icon
+        "kaboom_icon.png",
+        //Images
+        "AmazingCow_Logo_Big.png",
+        "AmazingCow_Logo_Small.png",
+        "amazing_intro.wav",
+        "Bomb_Alive.png",
+        "Bomber.png",
+        "Paddle.png",
+        //Sounds
+        "bomb_caught.wav",
+        "bomb_dropping.wav",
+        "bomb_explode1.wav",
+        "bomb_explode2.wav",
+        "bomb_explode3.wav",
+        "bomb_explode4.wav",
+        "bomb_explode5.wav",
+        "Bomb_Exploded.png",
+        "defeat.wav",
+        "gameover.wav",
+        "level_start.wav",
+        "menu_select.wav",
+        "victory.wav",
+        //Fonts
+        "nokiafc22.ttf",
+        "SourceCodePro-Regular.ttf"
+    };
+
+    auto missingFiles = Lore::AssetsManager::instance()->checkFilesExists(
+        requiredFiles
+    );
+
+    if(missingFiles.size() != 0)
+    {
+        std::stringstream msg_sstream;
+
+        msg_sstream << "Sorry, missing assets files!" << std::endl;
+        msg_sstream << "Please install the game."     << std::endl;
+        msg_sstream << "For help send a email to:"    << std::endl;
+        msg_sstream << "help@amazingcow.com with ";
+        msg_sstream << "[kaboom] as subject!"         << std::endl;
+
+        Lore::SDLHelpers::MessageBox_Error(
+            GAME_FULL_NAME,
+            msg_sstream.str()
+        );
+
+        exit(1);
+    }
+}
+
 
 int main()
 {
     //Before all check if we have the .so files.
     checkSharedObjectFiles();
-
 
     Lore::ErrorControl::DieMode = Lore::ErrorControl::LORE_ERROR_DIE_ON_ALL_ERRORS;
 
@@ -122,7 +175,11 @@ int main()
         "/usr/local/share/amazingcow_game_kaboom/assets"
     };
 
+    //Init the AssetsManager and check if all
+    //required assets are present.
     assetsMgr->initialize(paths);
+    checkAllAssetsFiles  ();
+
     inputMgr->initialize();
     soundMgr->initialize(MIX_DEFAULT_FREQUENCY,
                          MIX_DEFAULT_FORMAT,
