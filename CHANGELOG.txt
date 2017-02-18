@@ -1,6 +1,16 @@
 ################################################################################
 ## Version 1.x.x                                                              ##
 ################################################################################
+Version 1.2.0 - Fev 17, 2017
+-- General --
+    - Add README for realease.
+    - Improve makefile
+    - Add icon.
+    - Add .desktop file.
+    - Improve the verification for required files.
+    - Add the QtCreator ide files.
+
+--------------------------------------------------------------------------------
 Version 1.1.0 - Fev 17, 2017
 -- General --
     - Update the copyright years in source and display.
