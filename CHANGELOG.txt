@@ -1,7 +1,26 @@
 ################################################################################
 ## Version 1.x.x                                                              ##
 ################################################################################
+Version 1.1.0 - Fev 17, 2017
+-- General --
+    - Update the copyright years in source and display.
+    - Improve the Makefile.
+    - Update the Lore lib.
+    - Change the ownership to AmazingCow Labs.
+    - Add constants to identify the game.
+    - Add a verification to check if player has the
+      SDL2 lib installed and if not show a message box
+
+-- Game Play --
+    - Update the action keys in menu navigation.
+
+-- Makefile --
+    - Add target to generate the compressed (tar.gz, zip)
+      release files.
+
+
+--------------------------------------------------------------------------------
 Version 1.0.0
     - Finish the basic implementation of game ;D
       We really hope that you enjoy this little game.
-      
+
