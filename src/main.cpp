@@ -52,13 +52,13 @@
 #include "MenuScene.h"
 #include "GameScene.h"
 #include "CreditsScene.h"
+#include "Version.h"
 
 //Usings
 USING_NS_GAMEKABOOM;
 
 
 #define GAME_NAME    "Amazing Cow Labs - Kaboom!"
-#define GAME_VERSION "v1.2.0"
 #define GAME_FULL_NAME GAME_NAME " - " GAME_VERSION
 
 void checkSharedObjectFiles()
