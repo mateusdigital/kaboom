@@ -1,3 +1,21 @@
+##~---------------------------------------------------------------------------##
+##                        _      _                 _   _                      ##
+##                    ___| |_ __| |_ __ ___   __ _| |_| |_                    ##
+##                   / __| __/ _` | '_ ` _ \ / _` | __| __|                   ##
+##                   \__ \ || (_| | | | | | | (_| | |_| |_                    ##
+##                   |___/\__\__,_|_| |_| |_|\__,_|\__|\__|                   ##
+##                                                                            ##
+##  File      : CMakeLists.txt                                                ##
+##  Project   : kaboom                                                        ##
+##  Date      : Mar 15, 2020                                                  ##
+##  License   : GPLv3                                                         ##
+##  Author    : stdmatt <stdmatt@pixelwizards.io>                             ##
+##  Copyright : stdmatt 2020                                                  ##
+##                                                                            ##
+##  Description :                                                             ##
+##                                                                            ##
+##---------------------------------------------------------------------------~##
+
 ## External Vars...
 ## @TODO(stdmatt): Add  an output saying that we need to export this vars...
 set(PROJECT_NAME $ENV{PROJECT_NAME})
