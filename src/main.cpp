@@ -167,8 +167,8 @@ std::vector<std::string> getAssetsPaths()
 
 int main()
 {
-    //Before all check if we have the .so files.
-    checkSharedObjectFiles();
+    // //Before all check if we have the .so files.
+    // checkSharedObjectFiles();
 
     Lore::ErrorControl::DieMode = Lore::ErrorControl::LORE_ERROR_DIE_ON_ALL_ERRORS;
 
