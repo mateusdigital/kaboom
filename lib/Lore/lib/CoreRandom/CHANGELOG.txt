@@ -1,0 +1,98 @@
+--------------------------------------------------------------------------------
+| Version 0.4.x                                                                |
+--------------------------------------------------------------------------------
+v0.4.1 - Jun 29, 2016
+-- General --
+    - Now Random class throws a std::invalid_argument
+      exception if the range doesn't satisfies the min < max.
+    - Update documentation.
+
+--------------------------------------------------------------------------------
+v0.4.0 - May 27, 2016
+-- General --
+    - Update the COW_CORERANDOM_VERSION define.
+      now it will be the concat of the version components.
+
+    - Add the update version script
+      We were forgetting to update the versions.
+
+    - SINCE NOW WE WILL STOP SAYING THAT WE
+      UPDATE THE VERSION NUMBERS IN CHANGELOG.
+
+--------------------------------------------------------------------------------
+| Version 0.3.x                                                                |
+--------------------------------------------------------------------------------
+[Version v0.3.0] - May 27, 2016
+-- General --
+    - Add new helper methods.
+
+-- Source --
+    include/CoreRandom_Utils.h
+        - Update the version numbers.
+
+    include/Random.h
+    src/Random.cpp
+        - Add the nextBool method.
+        - Add a new distribution only to the bool stuff.
+          So we don't need to stay reseting the int distribution
+          every time.
+        - Update the CTOR to do a one time initialization on
+          the bool distribution.
+
+
+--------------------------------------------------------------------------------
+| Version 0.2.x                                                                |
+--------------------------------------------------------------------------------
+[Version v0.2.2] - April 30, 2016
+-- General --
+    - Add some documentation.
+    - New README.
+    - Add doxygen stuff.
+
+-- Source --
+    include/CoreRandom_Utils.h
+        - Update version numbers.
+    include/Random.h
+        - Add more documentation.
+
+-- Info Files --
+    README.md
+        - Rewrite the README to consistency with other
+          Amazing Cow's READMEs.
+
+    CHANGELOG.txt
+        - Split the CHANGELOG entry in sections.
+
+    mainpage.dox
+        - Add the mainpage doxygen documentation.
+
+-- Others --
+    Doxyfile
+        - Add the doxygen configuration.
+
+
+--------------------------------------------------------------------------------
+[Version v0.2.1] - April 11, 2016
+    - Fix the misspelled word in license headers.
+    - Make some cosmetic changes.
+    - Change the version Numbers.
+
+    - Update the CHANGELOG.
+
+    - Update the README.
+        - Add info about COWTODO in TODO section.
+        - Add separators.
+
+--------------------------------------------------------------------------------
+[Version v0.2.0] - April 8, 2016
+    - Add typedefs to the Number Generator and Integer Distribution.
+    - Add methods to get the internal Number Generator and Integer Distribution.
+    - Fix some typos on comments.
+    - Change the format of CHANGELOG - Now each topic will start with a dash (-)
+
+
+--------------------------------------------------------------------------------
+| Version 0.1.x                                                                |
+--------------------------------------------------------------------------------
+[Version v0.1.0] - April 7, 2016 **HAPPY BIRTHDAY MY BELOVED BROTHER**
+    - Initial release :D

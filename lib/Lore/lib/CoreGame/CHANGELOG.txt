@@ -1,0 +1,130 @@
+--------------------------------------------------------------------------------
+| Version 0.0.x                                                                |
+--------------------------------------------------------------------------------
+- 0.0.13 - Jun 29, 2016
+-- General --
+    - Finish the COREGAME_ONLY_IN_DEBUG macro.
+
+-- Sources --
+    include/Macros/CoreGame_OnlyInDebug.h
+        - Add the macro expansion for when in COREGAME_RELEASE.
+
+
+--------------------------------------------------------------------------------
+- 0.0.12 - Jun 22, 2016
+-- General --
+    - Add the COREGAME_VERIFY macro.
+    - Fix some include guards.
+    - Add the info files.
+    - Add the update version script.
+
+
+--------------------------------------------------------------------------------
+- 0.0.11 - Jun 12, 2016
+-- General --
+    Change the NDEBUG define to COREGAME_RELEASE
+    This way we can create release builds but yet
+    enable CoreGame do some stuff.
+    When we are sure that is an actual release (i.e to public)
+    we can just define it with -DCOREGAME_RELEASE
+
+
+--------------------------------------------------------------------------------
+- 0.0.10 - Jun 2, 2016
+    include/Log.h
+        - The macro doesn't need to be enclosed.
+
+--------------------------------------------------------------------------------
+- v0.0.9 - Jun 1, 2016
+    include/Macros/CoreGame_Disallow.h
+        - Add comment separators.
+        - Add new macros.
+    include/Log.h
+        - Add a overload for log().
+
+--------------------------------------------------------------------------------
+- v0.0.8 - May 30, 2016
+    - Add the COREGAME_ONLY_IN_DEBUG macro to allow
+      we add code that should be compiled only in debug mode.
+
+--------------------------------------------------------------------------------
+- v0.0.7 - May 26, 2016
+    include/CoreGame.h
+        - Include the StringUtils header.
+
+    include/CoreGame_Utils.h
+        - Update the version numbers.
+
+    include/Macros/CoreGame_Singleton.h
+        - Cosmetic changes.
+
+    src/GameCore_Macros.cpp
+        - Cosmetic changes.
+        - Start using the StringUtils functions.
+
+    include/Log.h
+    src/Log.cpp
+        - Change the signature of logAt method.
+        - Cosmetic changes.
+        - Start using the StringUtils functions.
+
+    include/StringUtils.h
+    src/StringUtils.cpp
+        - Add the StringUtils.
+
+--------------------------------------------------------------------------------
+- v0.0.6 - May 25, 2016
+    include/Log.h
+    include/Log.cpp
+        - Add the comment separators.
+        - Add overload << operator for Log::Type.
+        - Add the static GetDefaultLogger.
+        - Fix a bug on log() method.
+          We're vsnprintf two times.
+        - Refactor the log out into the logAt() method.
+        - Add a macro COREGAME_DLOG() to log only in debug.
+
+    include/CoreGame_Utils.h
+        - Update the version numbers.
+
+--------------------------------------------------------------------------------
+- v0.0.5 - May 25, 2016
+     - Add the first implementation of Log class.
+     - Update the version numbers.
+
+--------------------------------------------------------------------------------
+- v0.0.4 - May 19, 2016
+    include/Macros/CoreGame_Callbacks.h
+        - Add the Callback macros.
+          Thanks Cocos2d-x <3.
+
+    include/CoreGame_Macros.h
+        - Sort the includes.
+        - Add the CoreGame_Callbacks header.
+
+--------------------------------------------------------------------------------
+- v0.0.3 - May 17, 2016
+    include/Macros/CoreGame_Disallow.h
+        - Fix the macro name.
+        - Add the other disallow macros.
+
+--------------------------------------------------------------------------------
+- v0.0.2 - May 12, 2016
+    include/Macros/CoreGame_Singleton.h
+        - Add the singleton macro.
+
+    include/Macros/CoreGame_Disallow.h
+        - Add the disallow ctors and assignment macros.
+
+    include/Macros/CoreGame_Assert.h
+        - Add the assert macros.
+
+    include/CoreGame_Macros.h
+        - Split the macros into separated files to
+        better organization.
+
+    - Fix the include guard.
+
+--------------------------------------------------------------------------------
+- v0.0.1 - Start project.
+

@@ -1,0 +1,117 @@
+================================================================================
+| Version 0.4.x                                                                |
+================================================================================
+v0.4.1 - Jun 09, 2016
+-- General -- 
+     - [BUGFIX] Was passing wrong argument to ctor.
+     - Remove some COWTODOs.
+     
+     
+--------------------------------------------------------------------------------
+v0.4.0 - May 27, 2016
+-- General -- 
+    - Update the COW_CORECLOCK_VERSION define.
+      now it will be the concat of the version components.
+    
+    - Add the update version script 
+      We were forgetting to update the versions.
+      
+    - SINCE NOW WE WILL STOP SAYING THAT WE 
+      UPDATE THE VERSION NUMBERS IN CHANGELOG.
+
+
+================================================================================
+| Version 0.3.x                                                                |
+================================================================================
+v0.3.0 - May 27, 2016
+-- General --
+    - Add new callbacks (for when the clock is done) and methods
+      to ease the clock manipulation.
+    - Fix a bug in one of the CTOR.
+    
+-- Source 
+    include/CoreClock_Utils.h
+        - Update the version numbers.
+    
+    include/Clock.h
+    src/Clock.cpp
+        - Change the signature of the CTORs to 
+          add the new doneCallback.
+        - Cosmetic changes.
+        - Add the new isDone() method to check
+          if the clock finished ticking.
+        - Add some COWTODOs.
+
+
+================================================================================
+| Version 0.2.x                                                                |
+================================================================================
+v0.2.4 - [Apr 30 2016]
+-- General --
+    - Fix some documentation errors.
+    - New README.
+    - Add doxygen stuff.
+
+-- Source --
+    include/CoreClock_Utils.h
+        - Update version numbers.
+
+    include/Clock.h
+        - The the wrong documentation of Clock::stop().
+        - Fix typo.
+
+-- Info Files --
+    README.md
+        - Rewrite the README to consistency with other Amazing Cow's READMEs.
+
+    CHANGELOG.txt
+        - Split the CHANGELOG entry in sections.
+
+    mainpage.dox
+        - Add the mainpage doxygen documentation.
+
+-- Others --
+    Doxyfile
+        - Add the doxygen configuration.
+
+--------------------------------------------------------------------------------
+v0.2.3 - [Apr 10 2016]
+    - Some cosmetic changes.
+    - Update the README
+        - Add comments separators.
+        - Add info in TODO section.
+        - Make the examples be colored.
+    - Update the CHANGELOG
+        - Change the sort order (Now the newer entries are in top).
+
+--------------------------------------------------------------------------------
+v0.2.2 - [Jan 19 2016]
+    - Change the license headers - The old way is better.
+
+--------------------------------------------------------------------------------
+v0.2.1 - [Jan 18 2016]
+    - Add the doxygen comments.
+
+--------------------------------------------------------------------------------
+v0.2.0 - [Jan 28 2016]
+    - Change the license headers - Now they're bit less verbose.
+    - Remove the usage section of README.
+
+
+
+================================================================================
+| Version 0.1.x                                                                |
+================================================================================
+v0.1.4 - [Nov 30 2015]
+    - Fix the update method.
+
+v0.1.3 - [Nov 30 2015]
+    - Add the info files.
+
+v0.1.2 - ????
+
+v0.1.1 - ????
+
+v0.1.0 - Initial version.
+
+

@@ -1,0 +1,21 @@
+/**
+@mainpage The CoreRandom documentation.
+
+__CoreRandom__ is a easy to use random number generator inspired in C#
+System.Random class.
+
+You may find interesting take a look in:
+
+- @ref Random class documentation - The fun is there.
+\n\n
+
+- [Project Page](http://opensource.amazingcow.com/gamecore/corerandom/). \n
+- [Project GitHub](https://www.github.com/AmazingCow-Game-Core/CoreRandom/). \n
+- [Game Core Website](http://opensource.amazingcow.com/gamecore/). \n
+- [AmazingCow Open Source Projects](http://opensource.amazingcow.com).
+
+
+You are __very welcomed__ to __share__ and __hack__ it.
+
+Thank you and we hope that you enjoy __CoreRandom__.
+*/

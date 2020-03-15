@@ -1,0 +1,23 @@
+/**
+@mainpage The CoreClock documentation.
+
+__CoreClock__ is a small library intended to easy the time tracking in games,
+but it general enough to be used in a myriad of situations. \n
+It can be used to _fire events_ after some time, giving a very flexible way
+to handle animations, callbacks and other stuff.
+
+You may find interesting take a look in:
+
+- @ref Clock class documentation - The fun is there.
+\n\n
+
+- [Project Page](http://opensource.amazingcow.com/gamecore/coreclock/). \n
+- [Project GitHub](https://www.github.com/AmazingCow-Game-Core/CoreClock/). \n
+- [Game Core Website](http://opensource.amazingcow.com/gamecore/). \n
+- [AmazingCow Open Source Projects](http://opensource.amazingcow.com).
+
+
+You are __very welcomed__ to __share__ and __hack__ it.
+
+Thank you and we hope that you enjoy __CoreClock__.
+*/

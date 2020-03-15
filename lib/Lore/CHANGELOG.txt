@@ -1,0 +1,113 @@
+--------------------------------------------------------------------------------
+| Version 0.1.x                                                                |
+--------------------------------------------------------------------------------
+[Version 0.1.7] - Fev 18, 2017
+-- General --
+    - Add method to set the game icon.
+    - Add method to load surface.
+    - Update the copyright years.
+
+
+[Version 0.1.6] - Fev 18, 2017
+-- General --
+    Add way to check if a given set of files are
+    present in filesystem.
+
+
+--------------------------------------------------------------------------------
+[Version 0.1.5] - Fev 17, 2017
+-- General --
+    Add MessageBox function to show critical errors.
+    Update the .gitignore to handle  object files.
+    Update the copyright info in the affected headers.
+
+
+--------------------------------------------------------------------------------
+[Version 0.1.4] - Jun 21, 2016
+-- General --
+    Now we have a way to specify multiple search paths,
+    but yet only one will be used in the end.
+
+    Change the initialize signature from AssetsManager and SoundManager.
+
+-- Sources --
+    include/AssetsManager.h
+    src/AssetsManager.cpp
+        - Add a new way to intialize the AssetsManager.
+          Now we can pass an array of strigns with possible
+          searchpaths. The first one that exists will be selected
+          as the "real" search path.
+
+    include/SoundManager.h
+    src/SoundManager.cpp
+        - Change the signature of initialize method.
+        - Make the SoundManager use the facilities provided
+          by the AssetsManager.
+
+
+--------------------------------------------------------------------------------
+[Version 0.1.3] - Jun 16, 2016.
+-- General --
+    - Remove the Load/Unload methods from Scene
+      They're doing what is CTOR/DTOR are
+      supposed to do.
+
+--------------------------------------------------------------------------------
+[Version 0.1.2] - Jun 16, 2016.
+-- General --
+    A lot of bugfixes and assertions adding.
+
+-- Sources --
+    include/SDLHelpers.h
+    src/SDLHelpers.cpp
+        - [BUGFIX] SDL cannot create textures with size 0
+          so make sure that this cannot happens.
+
+    src/ITranformable.cpp
+        - Add assertions.
+
+    include/Texture.h
+    src/Texture.cpp
+        - Add an unique_ptr typedef.
+        - Change the name of iVar to better reflect that it's
+          a SDL Type.
+        - Add assertions.
+        - Cosmetic Changes.
+
+    include/Font.h
+    src/Font.cpp
+        - Change the return type of prepareTexture to Texture::UPtr
+          Strangely (or for some ignorance of my part) with the
+          std::shared_ptr we were getting segmentation fault errors.
+          Now it seems to be fixed.
+        - Change the iVar name to better reflect that it's a SDL type.
+        - Add assertions.
+        - Change the prepareTexture method to only do the job if
+          there is a string.
+
+    include/Text.h
+    src/Text.cpp
+        - Fix the CTOR initialization.
+        - Only draw if there is a valid texture.
+        - Change the calculate method.
+
+--------------------------------------------------------------------------------
+[Version 0.1.1] - Jun 15, 2016.
+-- General --
+    - Change from NDEBUG to LORE_RELEASE
+      This enable us to generate "NDEBUG" (for std stuff)
+      while have logs for Lore. When the we are ready
+      we can just use -DLORE_RELEASE to get rid of them.
+
+-- Sources --
+    src/private/include.log
+        - Cosmetic changes.
+        - Change from NDEBUG to LORE_RELEASE.
+
+
+--------------------------------------------------------------------------------
+[Version 0.1.0] - Jun 12, 2016.
+-- General --
+    - Finish the **very** basic implementation of Lore.
+      This is version used in Game_Kaboom.
+
