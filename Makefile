@@ -69,7 +69,7 @@ _SDLFLAGS=`sdl2-config --libs --cflags` \
           -lSDL2_mixer
 
 ## CC ##
-CC = g++ -std=c++14                  \
+CC = g++ -std=c++14                    \
          -I $(_LORE_INCLUDE_DIR)       \
          -I $(_CORECLOCK_INCLUDE_DIR)  \
          -I $(_COREGAME_INCLUDE_DIR)   \
@@ -89,7 +89,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 # Main target
 $(EXEC): $(OBJECTS)
 	mkdir -p ./build
-	$(CC) $(OBJECTS) -o $(EXEC) $(_SDLFLAGS) -ldl -lstdc++fs
+	$(CC) $(OBJECTS) -o $(EXEC) $(_SDLFLAGS)
 
 # To obtain object files
 %.o: %.cpp
