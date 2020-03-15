@@ -1,9 +1,0 @@
-[Desktop Entry]
-Categories=Game;Action;
-Encoding=UTF-8
-Name=Kaboom!
-Comment=Kaboom! is remake made with <3 by Amazing Cow Labs
-Exec=kaboom
-Icon=/usr/local/share/amazingcow_kaboom/assets/kaboom_icon.png
-Type=Application
-Name[en_US]=Kaboom!
