@@ -6,3 +6,4 @@ build/
 gmon.out
 archives-bin/
 .DS_Store
+dist/
