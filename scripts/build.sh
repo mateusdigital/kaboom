@@ -121,6 +121,10 @@ cd -;
 ## Create the distribution file.
 if [ -n "$(pw_getopt_exists "--dist" "$@")" ]; then
     PLATFORM=$(pw_os_get_simple_name);
+    if [ "$PLATFORM" == "$(PW_OS_WSL)" ]; then
+        PLATFORM="$(PW_OS_GNU_LINUX)";
+    fi;
+
     echo "Packaging (${PROJECT_NAME}) version: (${PROJECT_VERSION}) for platform: (${PLATFORM})";
 
     PACKAGE_NAME="${PROJECT_NAME}_${PLATFORM}_${PROJECT_VERSION}";
