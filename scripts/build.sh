@@ -1,4 +1,22 @@
 #!/usr/bin/env bash
+##----------------------------------------------------------------------------##
+##                   .                                           .   _        ##
+##    , _ , _    ___ /_    ___ ,   .  ____       ___   ___ .___ _/_  /        ##
+##    |' `|' `. /   `|   .'   `|   | (    .---'.'   ` /   `/   \ |   |,---.   ##
+##    |   |   ||    ||   |----'|   | `--.      |----'|    ||   ' |   |'   `   ##
+##    /   '   /`.__/|\__/`.___,`._/|\___.'     `.___,`.__/|/     \__//    |   ##
+##                        https://mateus.earth                                ##
+##                                                                            ##
+##  File      : build.sh                                                      ##
+##  Project   : Kaboom                                                        ##
+##  Date      : 22-09-30                                                      ##
+##  License   : GPLv3                                                         ##
+##  Author    : mateus-earth <matt@cosmicpig.digital>                         ##
+##  Copyright : mateus-earth - 2022                                           ##
+##                                                                            ##
+##  Description:                                                              ##
+##                                                                            ##
+##----------------------------------------------------------------------------##
 
 ## Important directories.
 declare -r SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)";
@@ -25,6 +43,7 @@ declare PLATFORM_NAME="$(uname)"; ## @todo: check on mac os...
 ##
 ## Parse the command line.
 ##
+
 function show_help()
 {
     echo "invalid arg: ($1)";
@@ -94,8 +113,9 @@ popd;
 ##
 
 if [ -n "${CREATE_DIST_PACKAGE}" ]; then
-    declare -r game_dist_dir="${DIST_ROOT}/${GAME_NAME}-${GAME_VERSION}-${PLATFORM_NAME}-${GAME_BUILD_TYPE}";
-    declare -r game_zip_filename="${DIST_ROOT}/${GAME_NAME}-${GAME_VERSION}-${PLATFORM_NAME}.zip";
+    declare -r full_filename="${GAME_NAME}-${GAME_VERSION}-${PLATFORM_NAME}-${GAME_BUILD_TYPE}";
+    declare -r game_dist_dir="${DIST_ROOT}/${full_filename}";
+    declare -r game_zip_filename="${DIST_ROOT}/${full_filename}.zip";
 
     echo "Creating the distribution file...";
 
