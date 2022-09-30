@@ -4,17 +4,17 @@
 declare -r SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)";
 declare -r ROOT_DIR="$(dirname "$SCRIPT_DIR")";
 
-declare -r BUILD_DIR="${ROOT_DIR}/build"; ## Build artifacts
-declare -r DIST_DIR="${ROOT_DIR}/dist";   ## Final release artifacts.
+declare -r BUILD_ROOT="${ROOT_DIR}/build"; ## Build artifacts.
+declare -r DIST_ROOT="${ROOT_DIR}/dist";   ## Final release artifacts.
 
 declare -r LIBS_ROOT_DIR="${ROOT_DIR}/lib/Cooper";
 declare -r GAME_ROOT_DIR="${ROOT_DIR}/game";
 declare -r ASSETS_DIR="${ROOT_DIR}/assets";
 
-declare CREATE_DIST_PACKAGE="";  ## Should create release package?
+declare CREATE_DIST_PACKAGE="true";  ## Should create release package?
 
 declare -r GAME_NAME="kaboom";
-declare -r GAME_VERSION=$(cat "${ROOT_DIR}/game/version" | tr -d "\""); ## without any quotes...
+declare -r GAME_VERSION="1.4.0";
 
 declare GAME_BUILD_TYPE="Release"; ## Passed to Cmake.
 declare GAME_BUILD_TARGET="pc";    ## Passed to Cmake.
@@ -44,7 +44,7 @@ while true; do
         "--pc"      ) GAME_BUILD_TARGET="pc";     ;;
         "--web"     ) GAME_BUILD_TARGET="web";    ;;
         "--package" ) CREATE_DIST_PACKAGE="true"; ;;
-        *) show_help "$1";                        ;;
+        *) test -n "$1" && show_help "$1";        ;;
     esac;
     shift;
     if [ $# -eq 0 ]; then
@@ -58,55 +58,53 @@ echo "   GAME_BUILD_TYPE:     (${GAME_BUILD_TYPE})";
 echo "   GAME_BUILD_TARGET:   (${GAME_BUILD_TARGET})";
 echo "   CREATE_DIST_PACKAGE: (${CREATE_DIST_PACKAGE})";
 
+
 ##
 ## Build the game.
 ##
 
-function build_game()
-{
-    local target_platform="$1";
+VERSION_HEADER="${ROOT_DIR}/game/include/Version.h";
+echo -e "#pragma once\n#define GAME_VERSION \"${GAME_VERSION}\"" > "${VERSION_HEADER}";
 
-    echo "Building game for platform: (${target_platform})";
+declare -r BUILD_DIR="${BUILD_ROOT}/${GAME_BUILD_TARGET}/${GAME_BUILD_TYPE}";
 
-    mkdir -p "${BUILD_DIR}";
-    pushd "${BUILD_DIR}";
-        cmake                                                  \
-            -DGAME_NAME="${GAME_NAME}"                         \
-            -DGAME_ROOT_DIR="${ROOT_DIR}"                      \
-            -DGAME_BUILD_TYPE="${GAME_BUILD_TYPE}"             \
-                                                               \
-            -DCMAKE_MODULE_PATH="${ROOT_DIR}/cmake/cmake_find" \
-                                                               \
-            -S"${ROOT_DIR}/game"                               \
-        ;
+echo "Building game for platform: (${GAME_BUILD_TARGET})";
 
-        cmake                             \
-            --build .                     \
-            --config "${GAME_BUILD_TYPE}" \
-        ;
-    popd;
-}
+mkdir -p "${BUILD_DIR}";
+pushd "${BUILD_DIR}" || exit 1;
+    cmake                                                  \
+        -DGAME_NAME="${GAME_NAME}"                         \
+        -DGAME_ROOT_DIR="${ROOT_DIR}"                      \
+        -DGAME_BUILD_TYPE="${GAME_BUILD_TYPE}"             \
+                                                           \
+        -DCMAKE_MODULE_PATH="${ROOT_DIR}/cmake/cmake_find" \
+                                                           \
+        -S"${ROOT_DIR}/game"                               \
+    ;
 
-
-test "${GAME_BUILD_TARGET}" == "pc"   && build_game "pc";
-# test "${GAME_BUILD_TARGET}" == "web"  && build_game "web";
+    cmake                             \
+        --build .                     \
+        --config "${GAME_BUILD_TYPE}" \
+    ;
+popd;
 
 
 ##
 ## Package if needed...
 ##
 
-# if [ -n "$CREATE_DIST_PACKAGE" ]; then
-    # GAME_DIST_DIR="${DIST_DIR}/cosmic-intruders-${GAME_VERSION}-${PLATFORM_NAME}-${BUILD_TYPE}";
-    # GAME_ZIP_FILENAME="${DIST_DIR}/cosmic-intruders-${GAME_VERSION}-${PLATFORM_NAME}.zip";
-#
-    # mkdir -p "${GAME_DIST_DIR}"                          \
-        # && cd  "${GAME_DIST_DIR}"                        \
-        # && cp     "${ROOT_DIR}/build/cosmic-intruders" . \
-        # && cp  -R "${ROOT_DIR}/assets"                 . \
-        # && zip -r "${GAME_ZIP_FILENAME}"               . \
-    # ;
-#
-    # echo "Generated zip at: $GAME_ZIP_FILENAME";
-# fi;
-#
+if [ -n "${CREATE_DIST_PACKAGE}" ]; then
+    declare -r game_dist_dir="${DIST_ROOT}/${GAME_NAME}-${GAME_VERSION}-${PLATFORM_NAME}-${GAME_BUILD_TYPE}";
+    declare -r game_zip_filename="${DIST_ROOT}/${GAME_NAME}-${GAME_VERSION}-${PLATFORM_NAME}.zip";
+
+    echo "Creating the distribution file...";
+
+    mkdir -p "${game_dist_dir}";
+    pushd "${game_dist_dir}" || exit 1;
+        cp     "${BUILD_DIR}/${GAME_NAME}" . ;
+        cp  -R "${ROOT_DIR}/assets"        . ;
+        zip -r "${game_zip_filename}"      . ;
+    popd;
+
+    echo "Generated zip at: ${game_zip_filename}";
+fi;

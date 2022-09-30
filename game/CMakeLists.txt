@@ -31,7 +31,7 @@ if(NOT GAME_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-IF(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+IF(${CMAKE_BUILD_TYPE} MATCHES "Release")
     message("[Setting debug additional defines]")
     add_definitions(-DCOREGAME_RELEASE)
     add_definitions(-DLORE_RELEASE)
