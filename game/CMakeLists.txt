@@ -16,14 +16,8 @@
 ##                                                                            ##
 ##---------------------------------------------------------------------------~##
 
-## External Vars...
-## @TODO(stdmatt): Add  an output saying that we need to export this vars...
-set(PROJECT_NAME $ENV{PROJECT_NAME})
-set(PROJECT_ROOT $ENV{PROJECT_ROOT})
-
 cmake_minimum_required(VERSION 3.5)
-project(${PROJECT_NAME})
-
+project(${GAME_NAME})
 
 ##----------------------------------------------------------------------------##
 ## Compiler Definitions                                                       ##
@@ -31,7 +25,8 @@ project(${PROJECT_NAME})
 set(CMAKE_CXX_STANDARD          14)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 
-if(NOT CMAKE_BUILD_TYPE)
+set(CMAKE_BUILD_TYPE Release)
+if(NOT GAME_BUILD_TYPE)
     message("[Setting build type to Debug]")
     set(CMAKE_BUILD_TYPE Debug)
 endif()
@@ -44,7 +39,6 @@ ENDIF()
 
 message("[Build type is configure to: ${CMAKE_BUILD_TYPE}]")
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake_find")
 find_package(SDL2       REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(SDL2_ttf   REQUIRED)
@@ -61,62 +55,28 @@ include_directories(
 )
 
 include_directories(
-    ${PROJECT_ROOT}/lib/Lore
-    ${PROJECT_ROOT}/lib/Lore/lib/CoreClock/include
-    ${PROJECT_ROOT}/lib/Lore/lib/CoreGame/include
-    ${PROJECT_ROOT}/lib/Lore/lib/CoreRandom/include
-    ${PROJECT_ROOT}/include
+    ${GAME_ROOT_DIR}/lib/Lore
+    ${GAME_ROOT_DIR}/lib/Lore/lib/CoreClock/include
+    ${GAME_ROOT_DIR}/lib/Lore/lib/CoreGame/include
+    ${GAME_ROOT_DIR}/lib/Lore/lib/CoreRandom/include
+
+    ${GAME_ROOT_DIR}/game/include
 )
 
 
 ##----------------------------------------------------------------------------##
 ## Source Files                                                               ##
 ##----------------------------------------------------------------------------##
-set(SOURCE_FILES
-    ${PROJECT_ROOT}/lib/Lore/lib/CoreClock/src/Clock.cpp
-    ${PROJECT_ROOT}/lib/Lore/lib/CoreGame/src/Log.cpp
-    ${PROJECT_ROOT}/lib/Lore/lib/CoreGame/src/Status.cpp
-    ${PROJECT_ROOT}/lib/Lore/lib/CoreGame/src/GameCore_Macros.cpp
-    ${PROJECT_ROOT}/lib/Lore/lib/CoreGame/src/StringUtils.cpp
-    ${PROJECT_ROOT}/lib/Lore/lib/CoreRandom/src/Random.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/InputManager.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/Sprite.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/SDLHelpers.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/Rectangle.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/Font.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/WindowManager.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/Text.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/IDrawable.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/Color.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/MathHelper.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/GameManager.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/ITransformable.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/private/src/Log.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/GameObject.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/SoundManager.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/Texture.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/AssetsManager.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/Vector2.cpp
-    ${PROJECT_ROOT}/lib/Lore/src/ErrorControl.cpp
-    ${PROJECT_ROOT}/src/CreditsScene.cpp
-    ${PROJECT_ROOT}/src/MenuScene.cpp
-    ${PROJECT_ROOT}/src/SplashScene.cpp
-    ${PROJECT_ROOT}/src/Bomber.cpp
-    ${PROJECT_ROOT}/src/GameBackground.cpp
-    ${PROJECT_ROOT}/src/BombManager.cpp
-    ${PROJECT_ROOT}/src/Bomb.cpp
-    ${PROJECT_ROOT}/src/Paddle.cpp
-    ${PROJECT_ROOT}/src/GameScene.cpp
-    ${PROJECT_ROOT}/src/main.cpp
-)
+file(GLOB_RECURSE LIB_SRC  ${GAME_ROOT_DIR}/lib/*.cpp)
+file(GLOB_RECURSE GAME_SRC ${GAME_ROOT_DIR}/game/*.cpp)
 
 ##----------------------------------------------------------------------------##
 ## Executable Definitions                                                     ##
 ##----------------------------------------------------------------------------##
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_executable(${GAME_NAME} ${LIB_SRC} ${GAME_SRC})
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIR}        )
-target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_IMAGE_INCLUDE_DIRS} )
+target_include_directories(${GAME_NAME} PUBLIC ${SDL2_INCLUDE_DIR}        )
+target_include_directories(${GAME_NAME} PUBLIC ${SDL2_IMAGE_INCLUDE_DIRS} )
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_MIXER_INCLUDE_DIRS} )
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_TTF_INCLUDE_DIRS}   )
 

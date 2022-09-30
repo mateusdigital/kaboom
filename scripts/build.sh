@@ -1,145 +1,112 @@
 #!/usr/bin/env bash
-##~---------------------------------------------------------------------------##
-##                        _      _                 _   _                      ##
-##                    ___| |_ __| |_ __ ___   __ _| |_| |_                    ##
-##                   / __| __/ _` | '_ ` _ \ / _` | __| __|                   ##
-##                   \__ \ || (_| | | | | | | (_| | |_| |_                    ##
-##                   |___/\__\__,_|_| |_| |_|\__,_|\__|\__|                   ##
-##                                                                            ##
-##  File      : build.sh                                                      ##
-##  Project   : kaboom                                                        ##
-##  Date      : Mar 15, 2020                                                  ##
-##  License   : GPLv3                                                         ##
-##  Author    : stdmatt <stdmatt@pixelwizards.io>                             ##
-##  Copyright : stdmatt 2020                                                  ##
-##                                                                            ##
-##  Description :                                                             ##
-##                                                                            ##
-##---------------------------------------------------------------------------~##
 
-##----------------------------------------------------------------------------##
-## Imports                                                                    ##
-##----------------------------------------------------------------------------##
-source /usr/local/src/stdmatt/shellscript_utils/main.sh
+## Important directories.
+declare -r SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)";
+declare -r ROOT_DIR="$(dirname "$SCRIPT_DIR")";
 
-##----------------------------------------------------------------------------##
-## Constants                                                                  ##
-##----------------------------------------------------------------------------##
-PROJECT_NAME="kaboom";
+declare -r BUILD_DIR="${ROOT_DIR}/build"; ## Build artifacts
+declare -r DIST_DIR="${ROOT_DIR}/dist";   ## Final release artifacts.
+
+declare -r LIBS_ROOT_DIR="${ROOT_DIR}/lib/Cooper";
+declare -r GAME_ROOT_DIR="${ROOT_DIR}/game";
+declare -r ASSETS_DIR="${ROOT_DIR}/assets";
+
+declare CREATE_DIST_PACKAGE="";  ## Should create release package?
+
+declare -r GAME_NAME="kaboom";
+declare -r GAME_VERSION=$(cat "${ROOT_DIR}/game/version" | tr -d "\""); ## without any quotes...
+
+declare GAME_BUILD_TYPE="Release"; ## Passed to Cmake.
+declare GAME_BUILD_TARGET="pc";    ## Passed to Cmake.
+
+declare PLATFORM_NAME="$(uname)"; ## @todo: check on mac os...
 
 
-##----------------------------------------------------------------------------##
-## Vars                                                                       ##
-##----------------------------------------------------------------------------##
-## Dirs
-SCRIPT_DIR="$(pw_get_script_dir)";
-PROJECT_ROOT=$(pw_abspath "$SCRIPT_DIR/..");
-BUILD_DIR=$(pw_abspath "$PROJECT_ROOT/build");
-DIST_DIR=$(pw_abspath "$PROJECT_ROOT/dist");
-
-## Info
-MODE="debug";
-PLATFORM="desktop";
-PLATFORM_BUILD_SCRIPT="";
-PROJECT_VERSION="$(bump-the-version     \
-    "${PROJECT_ROOT}/include/Version.h" \
-    "#define GAME_VERSION"              \
-    "show")";
-
-DIST_FILES="                   \
-    ${BUILD_DIR}/$PROJECT_NAME \
-    ${PROJECT_ROOT}/assets/    \
-";
-
-
-##----------------------------------------------------------------------------##
-## Functions                                                                  ##
-##----------------------------------------------------------------------------##
-##------------------------------------------------------------------------------
-show_help()
+##
+## Parse the command line.
+##
+function show_help()
 {
-    cat << END_TEXT
-Usage:
-    build.sh
-      --help                        - Show this info.
-      --clean                       - Cleans the build files.
-      --mode <*debug | release>     - Compile mode.
-      --dist                        - Generate the release zip file.
+    echo "invalid arg: ($1)";
 
-    Options marked with * is assumed to be the default if none is given.
-END_TEXT
-
-    exit $1
+    echo "Usage:";
+    echo "   --release  --debug -> Build Modes";
+    echo "   --pc       --web   -> Build Targets";
+    echo "   --package          -> Make distribution zip?";
+    exit 1;
 }
 
 
-##------------------------------------------------------------------------------
-clean()
-{
-    pw_func_log "Cleaning files...";
-
-    pw_func_log "   Build path: $(pw_FC $BUILD_DIR)";
-    rm -rf "${BUILD_DIR}";
-
-    pw_func_log "   Dist path: $(pw_FC $DIST_DIR)";
-    rm -rf "${DIST_DIR}"
-}
-
-
-##----------------------------------------------------------------------------##
-## Script                                                                     ##
-##----------------------------------------------------------------------------##
-cd "${PROJECT_ROOT}";
-
-##
-## Parse the command line arguments.
-if [ -n "$(pw_getopt_exists "--clean" "$@")" ]; then
-    clean;
-    exit 0;
-fi;
-
-##
-## Build ;D
-echo "Bulding (${PROJECT_NAME})";
-echo "Build Script directory : $(pw_FC $SCRIPT_DIR     )";
-echo "Build directory        : $(pw_FC $BUILD_DIR      )";
-echo "Dist  directory        : $(pw_FC $DIST_DIR       )";
-echo "Compile mode           : $(pw_FC $MODE           )";
-echo "Current version        : $(pw_FC $PROJECT_VERSION)";
-echo "";
-
-mkdir -p "$BUILD_DIR";
-
-export PROJECT_ROOT="$PROJECT_ROOT";
-export PROJECT_NAME="$PROJECT_NAME";
-cmake "${SCRIPT_DIR}/CMakeLists.txt" -B "${BUILD_DIR}";
-cd ${BUILD_DIR}
-    make;
-cd -;
-
-##
-## Create the distribution file.
-if [ -n "$(pw_getopt_exists "--dist" "$@")" ]; then
-    PLATFORM=$(pw_os_get_simple_name);
-    if [ "$PLATFORM" == "$(PW_OS_WSL)" ]; then
-        PLATFORM="$(PW_OS_GNU_LINUX)";
+while true; do
+    case "$1" in
+        "--release" ) GAME_BUILD_TYPE="Release";  ;;
+        "--debug"   ) GAME_BUILD_TYPE="Debug";    ;;
+        "--pc"      ) GAME_BUILD_TARGET="pc";     ;;
+        "--web"     ) GAME_BUILD_TARGET="web";    ;;
+        "--package" ) CREATE_DIST_PACKAGE="true"; ;;
+        *) show_help "$1";                        ;;
+    esac;
+    shift;
+    if [ $# -eq 0 ]; then
+        break;
     fi;
+done;
 
-    echo "Packaging (${PROJECT_NAME}) version: (${PROJECT_VERSION}) for platform: (${PLATFORM})";
+echo "   GAME_NAME:           (${GAME_NAME})";
+echo "   GAME_ROOT_DIR:       (${GAME_ROOT_DIR})";
+echo "   GAME_BUILD_TYPE:     (${GAME_BUILD_TYPE})";
+echo "   GAME_BUILD_TARGET:   (${GAME_BUILD_TARGET})";
+echo "   CREATE_DIST_PACKAGE: (${CREATE_DIST_PACKAGE})";
 
-    PACKAGE_NAME="${PROJECT_NAME}_${PLATFORM}_${PROJECT_VERSION}";
-    PACKAGE_DIR="${DIST_DIR}/${PACKAGE_NAME}";
+##
+## Build the game.
+##
 
-    ## Clean the directory.
-    rm    -rf "${PACKAGE_DIR}";
-    mkdir -p  "${PACKAGE_DIR}";
+function build_game()
+{
+    local target_platform="$1";
 
-    ## Copy the files to the directory.
-    for ITEM in $DIST_FILES; do
-        cp -R "$ITEM" "${PACKAGE_DIR}";
-    done;
+    echo "Building game for platform: (${target_platform})";
 
-    cd "${DIST_DIR}"
-    zip -r "${PACKAGE_NAME}.zip" "./${PACKAGE_NAME}";
-    cd -
-fi;
+    mkdir -p "${BUILD_DIR}";
+    pushd "${BUILD_DIR}";
+        cmake                                                  \
+            -DGAME_NAME="${GAME_NAME}"                         \
+            -DGAME_ROOT_DIR="${ROOT_DIR}"                      \
+            -DGAME_BUILD_TYPE="${GAME_BUILD_TYPE}"             \
+                                                               \
+            -DCMAKE_MODULE_PATH="${ROOT_DIR}/cmake/cmake_find" \
+                                                               \
+            -S"${ROOT_DIR}/game"                               \
+        ;
+
+        cmake                             \
+            --build .                     \
+            --config "${GAME_BUILD_TYPE}" \
+        ;
+    popd;
+}
+
+
+test "${GAME_BUILD_TARGET}" == "pc"   && build_game "pc";
+# test "${GAME_BUILD_TARGET}" == "web"  && build_game "web";
+
+
+##
+## Package if needed...
+##
+
+# if [ -n "$CREATE_DIST_PACKAGE" ]; then
+    # GAME_DIST_DIR="${DIST_DIR}/cosmic-intruders-${GAME_VERSION}-${PLATFORM_NAME}-${BUILD_TYPE}";
+    # GAME_ZIP_FILENAME="${DIST_DIR}/cosmic-intruders-${GAME_VERSION}-${PLATFORM_NAME}.zip";
+#
+    # mkdir -p "${GAME_DIST_DIR}"                          \
+        # && cd  "${GAME_DIST_DIR}"                        \
+        # && cp     "${ROOT_DIR}/build/cosmic-intruders" . \
+        # && cp  -R "${ROOT_DIR}/assets"                 . \
+        # && zip -r "${GAME_ZIP_FILENAME}"               . \
+    # ;
+#
+    # echo "Generated zip at: $GAME_ZIP_FILENAME";
+# fi;
+#
